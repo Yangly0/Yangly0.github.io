@@ -12,14 +12,14 @@
     <generator>Hugo -- 0.139.2</generator>
     <language>en</language>
     <copyright>Yangly0</copyright>
-    <lastBuildDate>Sun, 24 Nov 2024 02:02:24 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 23 Nov 2024 21:51:51 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>First_post</title>
-      <link>https://yangly0.github.io/posts/first_post/</link>
-      <pubDate>Sun, 24 Nov 2024 02:02:24 +0800</pubDate>
-      <guid>https://yangly0.github.io/posts/first_post/</guid>
-      <description>&lt;p&gt;摘要：Contains posts related to PaperMod&lt;/p&gt;</description>
+      <title>如何搭建一个博客系统？</title>
+      <link>https://yangly0.github.io/posts/20241123215151/</link>
+      <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20241123215151/</guid>
+      <description>&lt;p&gt;摘要：本文介绍了如何通过hugo 快速搭建一个博客网站，然后设置PaperMod 主题，最后构建一个Github自动发布的博客系统。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
