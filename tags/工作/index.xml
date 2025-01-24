@@ -28,5 +28,12 @@
       <guid>https://yangly0.github.io/posts/output/2025/20250118232106/</guid>
       <description>&lt;p&gt;摘要：一次非常非常难的coredump排查经历！&lt;/p&gt;</description>
     </item>
+    <item>
+      <title>Breakpad</title>
+      <link>https://yangly0.github.io/post/2024/20241223231838/</link>
+      <pubDate>Mon, 23 Dec 2024 23:18:38 +0000</pubDate>
+      <guid>https://yangly0.github.io/post/2024/20241223231838/</guid>
+      <description>&lt;p&gt;摘要：breakpad，支持无符号的发布版本应用的崩溃报告抓取，以较低的代价恢复应用崩溃现场的调用栈。&lt;/p&gt;</description>
+    </item>
   </channel>
 </rss>
