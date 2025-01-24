@@ -12,21 +12,14 @@
     <generator>Hugo -- 0.142.0</generator>
     <language>en</language>
     <copyright>Yangly0</copyright>
-    <lastBuildDate>Sun, 19 Jan 2025 21:10:49 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Dec 2024 23:18:38 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/%E5%B7%A5%E4%BD%9C/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>虚函数为什么比较慢？</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250119211049/</link>
-      <pubDate>Sun, 19 Jan 2025 21:10:49 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250119211049/</guid>
-      <description>&lt;p&gt;摘要：虚函数性能问题的原因和解决方案。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>记录一次coredump排查经历！</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250118232106/</link>
-      <pubDate>Sat, 18 Jan 2025 23:21:06 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250118232106/</guid>
-      <description>&lt;p&gt;摘要：一次非常非常难的coredump排查经历！&lt;/p&gt;</description>
+      <title>Breakpad</title>
+      <link>https://yangly0.github.io/posts/output/2024/20241223231838/</link>
+      <pubDate>Mon, 23 Dec 2024 23:18:38 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/output/2024/20241223231838/</guid>
+      <description>&lt;p&gt;摘要：breakpad，支持无符号的发布版本应用的崩溃报告抓取，以较低的代价恢复应用崩溃现场的调用栈。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

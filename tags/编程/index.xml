@@ -12,28 +12,14 @@
     <generator>Hugo -- 0.142.0</generator>
     <language>en</language>
     <copyright>Yangly0</copyright>
-    <lastBuildDate>Mon, 20 Jan 2025 22:50:31 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Dec 2024 23:18:38 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>设计模式之策略模式</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250120225031/</link>
-      <pubDate>Mon, 20 Jan 2025 22:50:31 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250120225031/</guid>
-      <description>&lt;p&gt;摘要：一种设计模式——策略模式！&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>pimpl模式</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250120223603/</link>
-      <pubDate>Mon, 20 Jan 2025 22:36:03 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250120223603/</guid>
-      <description>&lt;p&gt;摘要：一种特殊的设计模式！&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>虚函数为什么比较慢？</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250119211049/</link>
-      <pubDate>Sun, 19 Jan 2025 21:10:49 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250119211049/</guid>
-      <description>&lt;p&gt;摘要：虚函数性能问题的原因和解决方案。&lt;/p&gt;</description>
+      <title>Breakpad</title>
+      <link>https://yangly0.github.io/posts/output/2024/20241223231838/</link>
+      <pubDate>Mon, 23 Dec 2024 23:18:38 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/output/2024/20241223231838/</guid>
+      <description>&lt;p&gt;摘要：breakpad，支持无符号的发布版本应用的崩溃报告抓取，以较低的代价恢复应用崩溃现场的调用栈。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
