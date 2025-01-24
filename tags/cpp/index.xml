@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>编程 on 个人博客</title>
-    <link>https://yangly0.github.io/tags/%E7%BC%96%E7%A8%8B/</link>
-    <description>Recent content in 编程 on 个人博客</description>
+    <title>Cpp on 个人博客</title>
+    <link>https://yangly0.github.io/tags/cpp/</link>
+    <description>Recent content in Cpp on 个人博客</description>
     <image>
       <title>个人博客</title>
       <url>https://yangly0.github.io/images/papermod-cover.png</url>
@@ -13,7 +13,7 @@
     <language>en</language>
     <copyright>Yangly0</copyright>
     <lastBuildDate>Mon, 20 Jan 2025 22:50:31 +0000</lastBuildDate>
-    <atom:link href="https://yangly0.github.io/tags/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://yangly0.github.io/tags/cpp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>设计模式之策略模式</title>
       <link>https://yangly0.github.io/posts/output/2025/20250120225031/</link>
@@ -27,13 +27,6 @@
       <pubDate>Mon, 20 Jan 2025 22:36:03 +0000</pubDate>
       <guid>https://yangly0.github.io/posts/output/2025/20250120223603/</guid>
       <description>&lt;p&gt;摘要：一种特殊的设计模式！&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>虚函数为什么比较慢？</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250119211049/</link>
-      <pubDate>Sun, 19 Jan 2025 21:10:49 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250119211049/</guid>
-      <description>&lt;p&gt;摘要：虚函数性能问题的原因和解决方案。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
