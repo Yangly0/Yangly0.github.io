@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>个人博客</title>
-    <link>https://yangly0.github.io/</link>
-    <description>Recent content on 个人博客</description>
+    <title>编程 on 个人博客</title>
+    <link>https://yangly0.github.io/tags/%E7%BC%96%E7%A8%8B/</link>
+    <description>Recent content in 编程 on 个人博客</description>
     <image>
       <title>个人博客</title>
       <url>https://yangly0.github.io/images/papermod-cover.png</url>
@@ -12,15 +12,8 @@
     <generator>Hugo -- 0.142.0</generator>
     <language>en</language>
     <copyright>Yangly0</copyright>
-    <lastBuildDate>Wed, 22 Jan 2025 09:44:38 +0000</lastBuildDate>
-    <atom:link href="https://yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>FastBev</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250122094438/</link>
-      <pubDate>Wed, 22 Jan 2025 09:44:38 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250122094438/</guid>
-      <description>&lt;p&gt;摘要：&lt;/p&gt;</description>
-    </item>
+    <lastBuildDate>Mon, 20 Jan 2025 22:50:31 +0000</lastBuildDate>
+    <atom:link href="https://yangly0.github.io/tags/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>设计模式之策略模式</title>
       <link>https://yangly0.github.io/posts/output/2025/20250120225031/</link>
@@ -41,20 +34,6 @@
       <pubDate>Sun, 19 Jan 2025 21:10:49 +0000</pubDate>
       <guid>https://yangly0.github.io/posts/output/2025/20250119211049/</guid>
       <description>&lt;p&gt;摘要：虚函数性能问题的原因和解决方案。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>记录一次coredump排查经历！</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250118232106/</link>
-      <pubDate>Sat, 18 Jan 2025 23:21:06 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250118232106/</guid>
-      <description>&lt;p&gt;摘要：一次非常非常难的coredump排查经历！&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>如何搭建一个博客系统？</title>
-      <link>https://yangly0.github.io/posts/output/2024/20241123215151/</link>
-      <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2024/20241123215151/</guid>
-      <description>&lt;p&gt;摘要：本文介绍了如何通过hugo 快速搭建一个博客网站，然后设置PaperMod 主题，最后构建一个Github自动发布的博客系统。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
