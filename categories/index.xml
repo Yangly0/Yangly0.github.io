@@ -6,12 +6,11 @@
     <description>Recent content in Categories on 个人博客</description>
     <image>
       <title>个人博客</title>
-      <url>https://yangly0.github.io/images/papermod-cover.png</url>
-      <link>https://yangly0.github.io/images/papermod-cover.png</link>
+      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
+      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
     </image>
     <generator>Hugo -- 0.143.1</generator>
     <language>en</language>
-    <copyright>Yangly0</copyright>
     <atom:link href="https://yangly0.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

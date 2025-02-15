@@ -6,40 +6,39 @@
     <description>Recent content in Cpp on 个人博客</description>
     <image>
       <title>个人博客</title>
-      <url>https://yangly0.github.io/images/papermod-cover.png</url>
-      <link>https://yangly0.github.io/images/papermod-cover.png</link>
+      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
+      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
     </image>
     <generator>Hugo -- 0.143.1</generator>
     <language>en</language>
-    <copyright>Yangly0</copyright>
     <lastBuildDate>Fri, 07 Feb 2025 23:32:12 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/cpp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>c&#43;&#43; 模板偏特化</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250207233212/</link>
+      <link>https://yangly0.github.io/posts/20250207233212/</link>
       <pubDate>Fri, 07 Feb 2025 23:32:12 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250207233212/</guid>
+      <guid>https://yangly0.github.io/posts/20250207233212/</guid>
       <description>&lt;p&gt;摘要：内容[^01]&lt;/p&gt;</description>
     </item>
     <item>
       <title>C&#43;&#43; 如何排查多线程中的死锁问题？</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250207230532/</link>
+      <link>https://yangly0.github.io/posts/20250207230532/</link>
       <pubDate>Fri, 07 Feb 2025 23:05:32 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250207230532/</guid>
+      <guid>https://yangly0.github.io/posts/20250207230532/</guid>
       <description>&lt;p&gt;摘要：本文介绍了死锁产生的原因，并提供了多种排查和解决多线程死锁问题的方法，包括使用调试工具、代码审查、日志记录以及优化锁机制等。&lt;/p&gt;</description>
     </item>
     <item>
       <title>设计模式之策略模式</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250120225031/</link>
+      <link>https://yangly0.github.io/posts/20250120225031/</link>
       <pubDate>Mon, 20 Jan 2025 22:50:31 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250120225031/</guid>
+      <guid>https://yangly0.github.io/posts/20250120225031/</guid>
       <description>&lt;p&gt;摘要：一种设计模式——策略模式！&lt;/p&gt;</description>
     </item>
     <item>
       <title>pimpl模式</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250120223603/</link>
+      <link>https://yangly0.github.io/posts/20250120223603/</link>
       <pubDate>Mon, 20 Jan 2025 22:36:03 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250120223603/</guid>
+      <guid>https://yangly0.github.io/posts/20250120223603/</guid>
       <description>&lt;p&gt;摘要：一种特殊的设计模式！&lt;/p&gt;</description>
     </item>
   </channel>

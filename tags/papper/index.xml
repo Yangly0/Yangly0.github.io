@@ -6,26 +6,25 @@
     <description>Recent content in Papper on 个人博客</description>
     <image>
       <title>个人博客</title>
-      <url>https://yangly0.github.io/images/papermod-cover.png</url>
-      <link>https://yangly0.github.io/images/papermod-cover.png</link>
+      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
+      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
     </image>
     <generator>Hugo -- 0.143.1</generator>
     <language>en</language>
-    <copyright>Yangly0</copyright>
     <lastBuildDate>Thu, 06 Feb 2025 09:40:54 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/papper/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>速读论文M2BEV</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250206094054/</link>
+      <link>https://yangly0.github.io/posts/20250206094054/</link>
       <pubDate>Thu, 06 Feb 2025 09:40:54 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250206094054/</guid>
+      <guid>https://yangly0.github.io/posts/20250206094054/</guid>
       <description>&lt;p&gt;摘要：速读论文M2BEV: Multi-Camera Joint 3D Detection and Segmentation with Unified Bird’s-Eye View Representation。&lt;/p&gt;</description>
     </item>
     <item>
       <title>速读论文Fast-Bev</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250205211553/</link>
+      <link>https://yangly0.github.io/posts/20250205211553/</link>
       <pubDate>Wed, 05 Feb 2025 21:15:53 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250205211553/</guid>
+      <guid>https://yangly0.github.io/posts/20250205211553/</guid>
       <description>&lt;p&gt;摘要：速读论文Fast-BEV: Towards Real-time On-vehicle Bird&amp;rsquo;s-Eye View Perception。&lt;/p&gt;</description>
     </item>
   </channel>

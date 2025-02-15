@@ -6,82 +6,81 @@
     <description>Recent content in Posts on 个人博客</description>
     <image>
       <title>个人博客</title>
-      <url>https://yangly0.github.io/images/papermod-cover.png</url>
-      <link>https://yangly0.github.io/images/papermod-cover.png</link>
+      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
+      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
     </image>
     <generator>Hugo -- 0.143.1</generator>
     <language>en</language>
-    <copyright>Yangly0</copyright>
     <lastBuildDate>Sat, 08 Feb 2025 21:51:52 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Jenkins部署与集成</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250208215152/</link>
+      <link>https://yangly0.github.io/posts/20250208215152/</link>
       <pubDate>Sat, 08 Feb 2025 21:51:52 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250208215152/</guid>
+      <guid>https://yangly0.github.io/posts/20250208215152/</guid>
       <description>&lt;p&gt;摘要：内容[^01]&lt;/p&gt;</description>
     </item>
     <item>
       <title>c&#43;&#43; 模板偏特化</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250207233212/</link>
+      <link>https://yangly0.github.io/posts/20250207233212/</link>
       <pubDate>Fri, 07 Feb 2025 23:32:12 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250207233212/</guid>
+      <guid>https://yangly0.github.io/posts/20250207233212/</guid>
       <description>&lt;p&gt;摘要：内容[^01]&lt;/p&gt;</description>
     </item>
     <item>
       <title>C&#43;&#43; 如何排查多线程中的死锁问题？</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250207230532/</link>
+      <link>https://yangly0.github.io/posts/20250207230532/</link>
       <pubDate>Fri, 07 Feb 2025 23:05:32 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250207230532/</guid>
+      <guid>https://yangly0.github.io/posts/20250207230532/</guid>
       <description>&lt;p&gt;摘要：本文介绍了死锁产生的原因，并提供了多种排查和解决多线程死锁问题的方法，包括使用调试工具、代码审查、日志记录以及优化锁机制等。&lt;/p&gt;</description>
     </item>
     <item>
       <title>速读论文M2BEV</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250206094054/</link>
+      <link>https://yangly0.github.io/posts/20250206094054/</link>
       <pubDate>Thu, 06 Feb 2025 09:40:54 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250206094054/</guid>
+      <guid>https://yangly0.github.io/posts/20250206094054/</guid>
       <description>&lt;p&gt;摘要：速读论文M2BEV: Multi-Camera Joint 3D Detection and Segmentation with Unified Bird’s-Eye View Representation。&lt;/p&gt;</description>
     </item>
     <item>
       <title>速读论文Fast-Bev</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250205211553/</link>
+      <link>https://yangly0.github.io/posts/20250205211553/</link>
       <pubDate>Wed, 05 Feb 2025 21:15:53 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250205211553/</guid>
+      <guid>https://yangly0.github.io/posts/20250205211553/</guid>
       <description>&lt;p&gt;摘要：速读论文Fast-BEV: Towards Real-time On-vehicle Bird&amp;rsquo;s-Eye View Perception。&lt;/p&gt;</description>
     </item>
     <item>
       <title>设计模式之策略模式</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250120225031/</link>
+      <link>https://yangly0.github.io/posts/20250120225031/</link>
       <pubDate>Mon, 20 Jan 2025 22:50:31 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250120225031/</guid>
+      <guid>https://yangly0.github.io/posts/20250120225031/</guid>
       <description>&lt;p&gt;摘要：一种设计模式——策略模式！&lt;/p&gt;</description>
     </item>
     <item>
       <title>pimpl模式</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250120223603/</link>
+      <link>https://yangly0.github.io/posts/20250120223603/</link>
       <pubDate>Mon, 20 Jan 2025 22:36:03 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250120223603/</guid>
+      <guid>https://yangly0.github.io/posts/20250120223603/</guid>
       <description>&lt;p&gt;摘要：一种特殊的设计模式！&lt;/p&gt;</description>
     </item>
     <item>
       <title>虚函数为什么比较慢？</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250119211049/</link>
+      <link>https://yangly0.github.io/posts/20250119211049/</link>
       <pubDate>Sun, 19 Jan 2025 21:10:49 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250119211049/</guid>
+      <guid>https://yangly0.github.io/posts/20250119211049/</guid>
       <description>&lt;p&gt;摘要：虚函数性能问题的原因和解决方案。&lt;/p&gt;</description>
     </item>
     <item>
       <title>coredump排查经历！</title>
-      <link>https://yangly0.github.io/posts/output/2025/20250118232106/</link>
+      <link>https://yangly0.github.io/posts/20250118232106/</link>
       <pubDate>Sat, 18 Jan 2025 23:21:06 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2025/20250118232106/</guid>
+      <guid>https://yangly0.github.io/posts/20250118232106/</guid>
       <description>&lt;p&gt;摘要：一次非常非常难的coredump排查经历！&lt;/p&gt;</description>
     </item>
     <item>
       <title>如何搭建一个博客系统？</title>
-      <link>https://yangly0.github.io/posts/output/2024/20241123215151/</link>
+      <link>https://yangly0.github.io/posts/20241123215151/</link>
       <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/output/2024/20241123215151/</guid>
+      <guid>https://yangly0.github.io/posts/20241123215151/</guid>
       <description>&lt;p&gt;摘要：本文介绍了如何通过hugo 快速搭建一个博客网站，然后设置PaperMod 主题，最后构建一个Github自动发布的博客系统。&lt;/p&gt;</description>
     </item>
   </channel>
