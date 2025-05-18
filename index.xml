@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>个人博客</title>
     <link>https://yangly0.github.io/</link>
     <description>Recent content on 个人博客</description>
-    <generator>Hugo</generator>
+    <image>
+      <title>个人博客</title>
+      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
+      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
+    </image>
+    <generator>Hugo -- 0.147.3</generator>
     <language>en</language>
-    <copyright>[♥️2025~2025](https://github.com/Yangly0/Yangly0.github.io)</copyright>
+    <copyright>♥️2025~2025</copyright>
     <lastBuildDate>Sun, 24 Nov 2024 17:44:00 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -14,7 +19,18 @@
       <link>https://yangly0.github.io/about/</link>
       <pubDate>Sun, 24 Nov 2024 17:44:00 +0000</pubDate>
       <guid>https://yangly0.github.io/about/</guid>
-      <description>&lt;p&gt;此 &lt;a href=&#34;https://yangly1993.top/&#34;&gt;博客&lt;/a&gt;用于记录我的技术、生活和思考！&lt;/p&gt;&#xA;&lt;h2 id=&#34;关于我&#34;&gt;关于我&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;del&gt;2012.09~2019.06 - 地质资源与地质工程本硕生(地球物理学)&lt;/del&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;del&gt;2019.07~2022.05 - 计算机视觉算法工程师(智慧家庭、工业缺陷)&lt;/del&gt;&lt;/li&gt;&#xA;&lt;li&gt;2022.06~now - 自动驾驶感知算法工程师(自动泊车APA、全景影像AVM)&lt;/li&gt;&#xA;&lt;li&gt;&amp;hellip;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;联系我&#34;&gt;联系我&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;mailto:yangliuly1993@gmail.com&#34;&gt;yangliuly1993@gmail.com&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+      <description>&lt;p&gt;此 &lt;a href=&#34;https://yangly1993.top/&#34;&gt;博客&lt;/a&gt;用于记录我的技术、生活和思考！&lt;/p&gt;
+&lt;h2 id=&#34;关于我&#34;&gt;关于我&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;del&gt;2012.09~2019.06 - 地质资源与地质工程本硕生(地球物理学)&lt;/del&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;2019.07~2022.05 - 计算机视觉算法工程师(智慧家庭、工业缺陷)&lt;/del&gt;&lt;/li&gt;
+&lt;li&gt;2022.06~now - 自动驾驶感知算法工程师(自动泊车APA、全景影像AVM)&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;联系我&#34;&gt;联系我&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;mailto:yangliuly1993@gmail.com&#34;&gt;yangliuly1993@gmail.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
     </item>
     <item>
       <title>Friends</title>
