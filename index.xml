@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>个人博客</title>
-    <link>https://blog.yangly0.github.io/</link>
+    <link>https://yangly0.github.io/</link>
     <description>Recent content on 个人博客</description>
     <image>
       <title>个人博客</title>
-      <url>https://blog.yangly0.github.io/images/favicon/favicon.png</url>
-      <link>https://blog.yangly0.github.io/images/favicon/favicon.png</link>
+      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
+      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
     </image>
     <generator>Hugo -- 0.147.3</generator>
     <language>en</language>
     <copyright>♥️2025~2025</copyright>
     <lastBuildDate>Sun, 24 Nov 2024 17:44:00 +0000</lastBuildDate>
-    <atom:link href="https://blog.yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About</title>
-      <link>https://blog.yangly0.github.io/about/</link>
+      <link>https://yangly0.github.io/about/</link>
       <pubDate>Sun, 24 Nov 2024 17:44:00 +0000</pubDate>
-      <guid>https://blog.yangly0.github.io/about/</guid>
+      <guid>https://yangly0.github.io/about/</guid>
       <description>&lt;p&gt;此 &lt;a href=&#34;https://yangly1993.top/&#34;&gt;博客&lt;/a&gt;用于记录我的技术、生活和思考！&lt;/p&gt;
 &lt;h2 id=&#34;关于我&#34;&gt;关于我&lt;/h2&gt;
 &lt;ul&gt;
@@ -34,23 +34,23 @@
     </item>
     <item>
       <title>Friends</title>
-      <link>https://blog.yangly0.github.io/friends/</link>
+      <link>https://yangly0.github.io/friends/</link>
       <pubDate>Sun, 24 Nov 2024 17:44:00 +0000</pubDate>
-      <guid>https://blog.yangly0.github.io/friends/</guid>
+      <guid>https://yangly0.github.io/friends/</guid>
       <description></description>
     </item>
     <item>
       <title>如何搭建一个博客系统？</title>
-      <link>https://blog.yangly0.github.io/posts/20241123215151/</link>
+      <link>https://yangly0.github.io/posts/20241123215151/</link>
       <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
-      <guid>https://blog.yangly0.github.io/posts/20241123215151/</guid>
+      <guid>https://yangly0.github.io/posts/20241123215151/</guid>
       <description>&lt;p&gt;摘要：本文介绍了如何通过hugo 快速搭建一个博客网站，然后设置PaperMod 主题，最后构建一个Github自动发布的博客系统。&lt;/p&gt;</description>
     </item>
     <item>
       <title>2024 年工具箱</title>
-      <link>https://blog.yangly0.github.io/posts/20240713153931/</link>
+      <link>https://yangly0.github.io/posts/20240713153931/</link>
       <pubDate>Sat, 13 Jul 2024 15:39:31 +0000</pubDate>
-      <guid>https://blog.yangly0.github.io/posts/20240713153931/</guid>
+      <guid>https://yangly0.github.io/posts/20240713153931/</guid>
       <description>&lt;p&gt;摘要：个人常用工具和软件的汇总。&lt;/p&gt;</description>
     </item>
   </channel>
