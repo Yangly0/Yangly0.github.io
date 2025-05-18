@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>软件 on 个人博客</title>
     <link>https://yangly0.github.io/tags/%E8%BD%AF%E4%BB%B6/</link>
     <description>Recent content in 软件 on 个人博客</description>
-    <image>
-      <title>个人博客</title>
-      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
-      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
-    </image>
-    <generator>Hugo -- 0.144.2</generator>
+    <generator>Hugo</generator>
     <language>en</language>
+    <copyright>[♥️2025~2025](https://github.com/Yangly0/Yangly0.github.io)</copyright>
     <lastBuildDate>Sat, 23 Nov 2024 21:51:51 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/%E8%BD%AF%E4%BB%B6/index.xml" rel="self" type="application/rss+xml" />
     <item>
