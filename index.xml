@@ -9,7 +9,7 @@
       <url>https://yangly0.github.io/images/favicon/favicon.png</url>
       <link>https://yangly0.github.io/images/favicon/favicon.png</link>
     </image>
-    <generator>Hugo -- 0.147.6</generator>
+    <generator>Hugo -- 0.147.7</generator>
     <language>zh</language>
     <copyright>©Yangly0 | Since 2024</copyright>
     <lastBuildDate>Sun, 24 Nov 2024 17:44:00 +0000</lastBuildDate>
@@ -38,20 +38,6 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;mailto:yangliuly1993@gmail.com&#34;&gt;yangliuly1993@gmail.com&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <title>如何搭建一个博客系统？</title>
-      <link>https://yangly0.github.io/posts/20241123215151/</link>
-      <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/20241123215151/</guid>
-      <description>&lt;p&gt;摘要：本文介绍了如何通过hugo 快速搭建一个博客网站，然后设置PaperMod 主题，最后构建一个Github自动发布的博客系统。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>2024 年工具箱</title>
-      <link>https://yangly0.github.io/posts/20240713153931/</link>
-      <pubDate>Sat, 13 Jul 2024 15:39:31 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/20240713153931/</guid>
-      <description>&lt;p&gt;摘要：个人常用工具和软件的汇总。&lt;/p&gt;</description>
     </item>
     <item>
       <title>日常</title>
