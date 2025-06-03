@@ -12,8 +12,15 @@
     <generator>Hugo -- 0.147.7</generator>
     <language>zh</language>
     <copyright>©Yangly0 | Since 2024</copyright>
-    <lastBuildDate>Sun, 24 Nov 2024 17:44:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 11 Feb 2025 22:01:59 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>密码管理器vaultwarden</title>
+      <link>https://yangly0.github.io/posts/20250211220159/</link>
+      <pubDate>Tue, 11 Feb 2025 22:01:59 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20250211220159/</guid>
+      <description>&lt;p&gt;摘要：自建vaultwarden，实现个人密码管理。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Friends</title>
       <link>https://yangly0.github.io/friends/</link>
@@ -38,6 +45,13 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;mailto:yangliuly1993@gmail.com&#34;&gt;yangliuly1993@gmail.com&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>如何搭建一个博客系统？</title>
+      <link>https://yangly0.github.io/posts/20241123215151/</link>
+      <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20241123215151/</guid>
+      <description>&lt;p&gt;摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。&lt;/p&gt;</description>
     </item>
     <item>
       <title>日常</title>
