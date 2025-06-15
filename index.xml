@@ -9,7 +9,7 @@
       <url>https://yangly0.github.io/images/favicon/favicon.png</url>
       <link>https://yangly0.github.io/images/favicon/favicon.png</link>
     </image>
-    <generator>Hugo -- 0.147.7</generator>
+    <generator>Hugo -- 0.147.8</generator>
     <language>zh</language>
     <copyright>©Yangly0 | Since 2024</copyright>
     <lastBuildDate>Tue, 11 Feb 2025 22:01:59 +0000</lastBuildDate>
@@ -41,6 +41,9 @@
 &lt;li&gt;2022.06~now - 自动驾驶感知算法工程师(自动泊车APA、全景影像AVM)&lt;/li&gt;
 &lt;li&gt;&amp;hellip;&lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;&lt;span onclick=&#34;randomMemo()&#34;&gt;回忆&lt;/span&gt;
+&lt;span onclick=&#34;serchMemo()&#34;&gt;搜索&lt;/span&gt;
+&lt;span onclick=&#34;setOpenID()&#34;&gt;设置&lt;/span&gt;&lt;/p&gt;
 &lt;h2 id=&#34;联系我&#34;&gt;联系我&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;mailto:yangliuly1993@gmail.com&#34;&gt;yangliuly1993@gmail.com&lt;/a&gt;&lt;/li&gt;
