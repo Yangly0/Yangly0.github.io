@@ -52,10 +52,10 @@ var userNow = `
       </div>
     </div>
   </div>`
-memosDom.insertAdjacentHTML('beforebegin', userNow);
+// memosDom.insertAdjacentHTML('beforebegin', userNow);
 
 var backTop = `<div class="backtop d-none"><svg xmlns="http://www.w3.org/2000/svg" width="1.25rem" height="1.25rem" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m18 15l-6-6l-6 6"/></svg></div>`
-memosDom.insertAdjacentHTML('afterend', backTop);
+// memosDom.insertAdjacentHTML('afterend', backTop);
 
 
 var getEditor = window.localStorage && window.localStorage.getItem("memos-editor-display");
@@ -180,7 +180,7 @@ var memosEditorCont = `
     </div>
     <div class="memos-random d-none"></div>
   </div>`;
-memosDom.insertAdjacentHTML('afterbegin', memosEditorCont);
+// memosDom.insertAdjacentHTML('afterbegin', memosEditorCont);
 
 var themeTogglebtn = document.querySelector(".memos-theme-toggle");
 var myFeedsBtn = document.querySelector(".my-blog-feeds");
@@ -264,13 +264,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 themeTogglebtn.addEventListener('click', function () {
-    if (!document.body.classList.contains("dark")) {
-        document.body.classList.add("dark-theme", "dark");
-        window.localStorage && window.localStorage.setItem("theme", "dark");
-    } else {
-        document.body.classList.remove("dark-theme", "dark");
-        window.localStorage && window.localStorage.setItem("theme", "light");
-    }
+    // if (!document.body.classList.contains("dark")) {
+    //     document.body.classList.add("dark-theme", "dark");
+    //     window.localStorage && window.localStorage.setItem("theme", "dark");
+    // } else {
+    //     document.body.classList.remove("dark-theme", "dark");
+    //     window.localStorage && window.localStorage.setItem("theme", "light");
+    // }
+
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -799,39 +800,39 @@ async function getMemos(search) {
 }
 
 myFeedsBtn.addEventListener('click', function (event) {
-    loadBtn.classList.add('d-none');
-    memoDom.innerHTML = skeleton;
-    usernowBtnDom.forEach((item) => { item.classList.remove('current'); })
-    myFeedsBtn.classList.add("current")
-    let fetchUrl = "https://cf.edui.fun/all?rule=created&end=20"
-    fetch(fetchUrl).then(res => res.json()).then(resdata => {
-        let myFeedData = resdata.article_data
-        var myFeedArticle = '';
-        for (var i = 0; i < myFeedData.length; i++) {
-            var item = myFeedData[i];
-            myFeedArticle += `
-        <div class="card-item flex-fill p-3">
-          <div class="d-flex flex-fill">
-            <div class="item-avatar mr-2" style="background-image:url(${item.avatar})"></div>
-            <div class="item-sub d-flex flex-column p-1">
-              <div class="item-creator"><a href="${item.link}" target="_blank" rel="noopener nofollow" >${item.title}</a></div>
-              <span class="myfeeds-floor">${item.floor}</span>
-              <div class="item-mate mt-2 text-xs">${item.updated}</div>
-            </div>
-          </div>
-        </div>
-        `;
-        }
-        memoDom.innerHTML = `<div class="myfeeds-option row px-2 pb-2">
-        <div class="myfeeds-xml card-item px-3 py-2 mr-3" data-type="bfind" onclick="myFeedsXML(this)">BlogFinder</div>
-        <div class="myfeeds-xml card-item px-3 py-2 mr-3" data-type="boyou"  onclick="myFeedsXML(this)">博友圈</div>
-        <div class="myfeeds-xml card-item px-3 py-2 mr-3" data-type="shinian"  onclick="myFeedsXML(this)">十年之约</div>
-      </div>
-      <div class="myfeeds">${myFeedArticle}</div>`;
-        window.Lately && Lately.init({
-            target: '.item-mate'
-        });
-    })
+    // loadBtn.classList.add('d-none');
+    // memoDom.innerHTML = skeleton;
+    // usernowBtnDom.forEach((item) => { item.classList.remove('current'); })
+    // myFeedsBtn.classList.add("current")
+    // let fetchUrl = "https://cf.edui.fun/all?rule=created&end=20"
+    // fetch(fetchUrl).then(res => res.json()).then(resdata => {
+    //     let myFeedData = resdata.article_data
+    //     var myFeedArticle = '';
+    //     for (var i = 0; i < myFeedData.length; i++) {
+    //         var item = myFeedData[i];
+    //         myFeedArticle += `
+    //     <div class="card-item flex-fill p-3">
+    //       <div class="d-flex flex-fill">
+    //         <div class="item-avatar mr-2" style="background-image:url(${item.avatar})"></div>
+    //         <div class="item-sub d-flex flex-column p-1">
+    //           <div class="item-creator"><a href="${item.link}" target="_blank" rel="noopener nofollow" >${item.title}</a></div>
+    //           <span class="myfeeds-floor">${item.floor}</span>
+    //           <div class="item-mate mt-2 text-xs">${item.updated}</div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //     `;
+    //     }
+    //     memoDom.innerHTML = `<div class="myfeeds-option row px-2 pb-2">
+    //     <div class="myfeeds-xml card-item px-3 py-2 mr-3" data-type="bfind" onclick="myFeedsXML(this)">BlogFinder</div>
+    //     <div class="myfeeds-xml card-item px-3 py-2 mr-3" data-type="boyou"  onclick="myFeedsXML(this)">博友圈</div>
+    //     <div class="myfeeds-xml card-item px-3 py-2 mr-3" data-type="shinian"  onclick="myFeedsXML(this)">十年之约</div>
+    //   </div>
+    //   <div class="myfeeds">${myFeedArticle}</div>`;
+    //     window.Lately && Lately.init({
+    //         target: '.item-mate'
+    //     });
+    // })
 });
 
 function myFeedsXML(e) {
@@ -999,18 +1000,18 @@ function searchNow(serchText) {
 
 //显示订阅列表
 userlistBtn.addEventListener("click", function () {
-    let userlistDom = document.querySelector(".userlist");
-    if (userlistDom) {
-        userlistDom.remove();
-    } else {
-        let userlistDom = `<div class="userlist card-item d-flex flex-wrap mb-3 animate__animated animate__fadeIn">`;
-        for (var i = 0; i < memoList.length; i++) {
-            let nowMemo = memoList[i]
-            userlistDom += `<div onclick="getUserMemos('${nowMemo.link}', '${nowMemo.creatorId}','${nowMemo.creatorName.replace(/'/g, "’")}','${nowMemo.avatar}')" class="item-avatar" style="background-image:url(${nowMemo.avatar})"></div>`
-        }
-        userlistDom += `</div>`;
-        memosDom.insertAdjacentHTML('beforebegin', userlistDom);
-    }
+    // let userlistDom = document.querySelector(".userlist");
+    // if (userlistDom) {
+    //     userlistDom.remove();
+    // } else {
+    //     let userlistDom = `<div class="userlist card-item d-flex flex-wrap mb-3 animate__animated animate__fadeIn">`;
+    //     for (var i = 0; i < memoList.length; i++) {
+    //         let nowMemo = memoList[i]
+    //         userlistDom += `<div onclick="getUserMemos('${nowMemo.link}', '${nowMemo.creatorId}','${nowMemo.creatorName.replace(/'/g, "’")}','${nowMemo.avatar}')" class="item-avatar" style="background-image:url(${nowMemo.avatar})"></div>`
+    //     }
+    //     userlistDom += `</div>`;
+    //     memosDom.insertAdjacentHTML('beforebegin', userlistDom);
+    // }
 });
 
 //返回个人主页
@@ -1046,16 +1047,16 @@ goHomeBtn.addEventListener("click", function () {
     goHome();
 });
 goBbsBtn.addEventListener("click", function () {
-    window.localStorage && window.localStorage.setItem("memos-mode", "MEMOSBBS");
-    let tagnowHas = document.querySelector(".memos-tagnow")
-    if (tagnowHas) tagnowHas.remove();
-    goBbs()
+    // window.localStorage && window.localStorage.setItem("memos-mode", "MEMOSBBS");
+    // let tagnowHas = document.querySelector(".memos-tagnow")
+    // if (tagnowHas) tagnowHas.remove();
+    // goBbs()
 });
 randomUserBtn.addEventListener("click", function () {
-    window.localStorage && window.localStorage.setItem("memos-mode", "RANDUSER");
-    let tagnowHas = document.querySelector(".memos-tagnow")
-    if (tagnowHas) tagnowHas.remove();
-    goRandUser()
+    // window.localStorage && window.localStorage.setItem("memos-mode", "RANDUSER");
+    // let tagnowHas = document.querySelector(".memos-tagnow")
+    // if (tagnowHas) tagnowHas.remove();
+    // goRandUser()
 });
 //随机个人
 function goRandUser() {
