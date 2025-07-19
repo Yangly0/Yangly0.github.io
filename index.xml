@@ -33,7 +33,7 @@
       <link>https://yangly0.github.io/about/</link>
       <pubDate>Sun, 24 Nov 2024 17:44:00 +0000</pubDate>
       <guid>https://yangly0.github.io/about/</guid>
-      <description>&lt;p&gt;此 &lt;a href=&#34;https://yangly1993.top/&#34;&gt;博客&lt;/a&gt;用于记录我的技术、生活和思考！&lt;/p&gt;
+      <description>&lt;p&gt;此 &lt;a href=&#34;https://yangly1993.top/&#34;&gt;博客&lt;/a&gt;用于记录我的工作和生活！&lt;/p&gt;
 &lt;h2 id=&#34;关于我&#34;&gt;关于我&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;del&gt;2012.09~2019.06 - 地质资源与地质工程本硕生(地球物理学)&lt;/del&gt;&lt;/li&gt;
@@ -41,9 +41,6 @@
 &lt;li&gt;2022.06~now - 自动驾驶感知算法工程师(自动泊车APA、全景影像AVM)&lt;/li&gt;
 &lt;li&gt;&amp;hellip;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;span onclick=&#34;randomMemo()&#34;&gt;回忆&lt;/span&gt;
-&lt;span onclick=&#34;serchMemo()&#34;&gt;搜索&lt;/span&gt;
-&lt;span onclick=&#34;setOpenID()&#34;&gt;设置&lt;/span&gt;&lt;/p&gt;
 &lt;h2 id=&#34;联系我&#34;&gt;联系我&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;mailto:yangliuly1993@gmail.com&#34;&gt;yangliuly1993@gmail.com&lt;/a&gt;&lt;/li&gt;
