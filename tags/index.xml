@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>标签 on 个人博客</title>
+    <title>Tags on 所见所思</title>
     <link>https://yangly0.github.io/tags/</link>
-    <description>Recent content in 标签 on 个人博客</description>
+    <description>Recent content in Tags on 所见所思</description>
     <image>
-      <title>个人博客</title>
-      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
-      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
+      <title>所见所思</title>
+      <url>https://yangly0.github.io/avatar.webp</url>
+      <link>https://yangly0.github.io/avatar.webp</link>
     </image>
     <generator>Hugo -- 0.148.1</generator>
     <language>zh</language>
-    <copyright>©Yangly | Since 2024</copyright>
+    <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
     <lastBuildDate>Tue, 11 Feb 2025 22:01:59 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>个人博客</title>
+    <title>所见所思</title>
     <link>https://yangly0.github.io/</link>
-    <description>Recent content on 个人博客</description>
+    <description>Recent content on 所见所思</description>
     <image>
-      <title>个人博客</title>
-      <url>https://yangly0.github.io/images/favicon/favicon.png</url>
-      <link>https://yangly0.github.io/images/favicon/favicon.png</link>
+      <title>所见所思</title>
+      <url>https://yangly0.github.io/avatar.webp</url>
+      <link>https://yangly0.github.io/avatar.webp</link>
     </image>
     <generator>Hugo -- 0.148.1</generator>
     <language>zh</language>
-    <copyright>©Yangly | Since 2024</copyright>
+    <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
     <lastBuildDate>Tue, 11 Feb 2025 22:01:59 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -29,29 +29,24 @@
       <description></description>
     </item>
     <item>
-      <title>关于</title>
-      <link>https://yangly0.github.io/about/</link>
-      <pubDate>Sun, 24 Nov 2024 17:44:00 +0000</pubDate>
-      <guid>https://yangly0.github.io/about/</guid>
-      <description>&lt;p&gt;此 &lt;a href=&#34;https://yangly1993.top/&#34;&gt;博客&lt;/a&gt;用于记录我的工作和生活！&lt;/p&gt;
-&lt;h2 id=&#34;关于我&#34;&gt;关于我&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;del&gt;2012.09~2019.06 - 地质资源与地质工程本硕生(地球物理学)&lt;/del&gt;&lt;/li&gt;
-&lt;li&gt;&lt;del&gt;2019.07~2022.05 - 计算机视觉算法工程师(智慧家庭、工业缺陷)&lt;/del&gt;&lt;/li&gt;
-&lt;li&gt;2022.06~now - 自动驾驶感知算法工程师(自动泊车APA、全景影像AVM)&lt;/li&gt;
-&lt;li&gt;&amp;hellip;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;联系我&#34;&gt;联系我&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;mailto:yangliuly1993@gmail.com&#34;&gt;yangliuly1993@gmail.com&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    <item>
       <title>如何搭建一个博客系统？</title>
       <link>https://yangly0.github.io/posts/20241123215151/</link>
       <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
       <guid>https://yangly0.github.io/posts/20241123215151/</guid>
       <description>&lt;p&gt;摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>关于</title>
+      <link>https://yangly0.github.io/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://yangly0.github.io/about/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;博主&lt;/strong&gt;，作为一个i人，不知道如何更好的介绍自己，可以叫我 Yangz（杨仔），自动驾驶从业者，爱好是跑步、编程、探索。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;博客&lt;/strong&gt;，创建于2024-11-24，Hugo + PaperMod搭建静态博客页面，部署在Github Pages，域名是yangly1993.top。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;名称：所见所思
+描述：简单的想记录一下我的所见所思
+链接：https://yangly1993.top
+图标：https://yangly1993.top/avatar.webp
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;本博客内容如有侵权，请立即联系我删除，yangliuly1993@gmail.com&lt;/p&gt;</description>
     </item>
     <item>
       <title>日常</title>
