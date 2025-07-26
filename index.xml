@@ -22,18 +22,11 @@
       <description>&lt;p&gt;摘要：自建vaultwarden，实现个人密码管理。&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Friends</title>
-      <link>https://yangly0.github.io/friends/</link>
-      <pubDate>Sun, 24 Nov 2024 17:44:00 +0000</pubDate>
-      <guid>https://yangly0.github.io/friends/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>如何搭建一个博客系统？</title>
       <link>https://yangly0.github.io/posts/20241123215151/</link>
       <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
       <guid>https://yangly0.github.io/posts/20241123215151/</guid>
-      <description>&lt;p&gt;摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。&lt;/p&gt;</description>
+      <description>&lt;p&gt;摘要：快速搭建一个 hugo 博客网站，设置 PaperMod 主题，并构建一个自动发布的博客系统。&lt;/p&gt;</description>
     </item>
     <item>
       <title>关于</title>
@@ -48,13 +41,6 @@
 描述：简单的想记录一下
 &lt;/code&gt;&lt;/pre&gt;&lt;blockquote&gt;
 &lt;p&gt;本博客内容如有侵权，请立即联系我删除，yangliuly1993@gmail.com&lt;/p&gt;&lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <title>日常</title>
-      <link>https://yangly0.github.io/memos/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://yangly0.github.io/memos/</guid>
-      <description></description>
     </item>
   </channel>
 </rss>
