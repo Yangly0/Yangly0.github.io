@@ -43,18 +43,11 @@
       <description>&lt;p&gt;&lt;strong&gt;博主&lt;/strong&gt;，作为一个i人，不知道如何更好的介绍自己，可以叫我 Yangly（杨仔），自动驾驶从业者，爱好是跑步、编程、探索。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;博客&lt;/strong&gt;，创建于2024-11-24，&lt;code&gt;Hugo&lt;/code&gt; + &lt;code&gt;PaperMod&lt;/code&gt;搭建静态博客页面，部署在&lt;code&gt;Github Pages&lt;/code&gt;，域名是&lt;code&gt;blog.yangly1993.top&lt;/code&gt;。&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;名称：所见所思
-描述：简单的想记录一下
 链接：https://blog.yangly1993.top
 图标：https://blog.yangly1993.top/images/avatar.webp
+描述：简单的想记录一下
 &lt;/code&gt;&lt;/pre&gt;&lt;blockquote&gt;
 &lt;p&gt;本博客内容如有侵权，请立即联系我删除，yangliuly1993@gmail.com&lt;/p&gt;&lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <title>聚合网站</title>
-      <link>https://yangly0.github.io/aggregation/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://yangly0.github.io/aggregation/</guid>
-      <description>&lt;p&gt;这里聚合了一些有趣的网站和资源。&lt;/p&gt;</description>
     </item>
     <item>
       <title>日常</title>

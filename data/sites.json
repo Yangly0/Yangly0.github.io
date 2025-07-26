@@ -1,0 +1,22 @@
+{
+  "sites": [
+    {
+      "title": "GitHub",
+      "url": "https://github.com",
+      "description": "全球最大的代码托管平台，开发者的必备工具",
+      "tags": ["代码"]
+    },
+    {
+      "title": "Newsnow",
+      "url": "https://newsnow.yangly1993.top/",
+      "description": "优雅地阅读实时热门新闻",
+      "tags": ["热点"]
+    },
+    {
+      "title": "Memobbs",
+      "url": "https://memobbs.app/",
+      "description": "memos聚合网站",
+      "tags": ["日常"]
+    }
+  ]
+}
