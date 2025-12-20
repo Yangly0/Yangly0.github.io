@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>数据结构与算法 on 所见所思</title>
+    <link>https://yangly0.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 数据结构与算法 on 所见所思</description>
+    <image>
+      <title>所见所思</title>
+      <url>https://yangly0.github.io/images/avatar.webp</url>
+      <link>https://yangly0.github.io/images/avatar.webp</link>
+    </image>
+    <generator>Hugo -- 0.153.0</generator>
+    <language>zh</language>
+    <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
+    <lastBuildDate>Sat, 26 Oct 2024 09:57:32 +0000</lastBuildDate>
+    <atom:link href="https://yangly0.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据结构与算法 个人篇</title>
+      <link>https://yangly0.github.io/posts/20241026095732/</link>
+      <pubDate>Sat, 26 Oct 2024 09:57:32 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20241026095732/</guid>
+      <description>&lt;p&gt;摘要：本文是个人日常对数据结果与算法的学习内容。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

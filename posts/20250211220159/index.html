@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" dir="auto">
+<html lang="zh" dir="auto" data-theme="light">
 
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -122,10 +122,8 @@
 }
 </script>
 </head>
-
-<body class="" id="top">
-
-<header class="header">
+<body id="top">
+    <header class="header">
     <nav class="nav">
         <div class="logo">
             <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
@@ -154,7 +152,7 @@
     <h1 class="post-title entry-hint-parent">
       密码管理器vaultwarden
     </h1>
-    <div class="post-meta"><span title='2025-02-11 22:01:59 +0000 UTC'>二月 11, 2025</span>&nbsp;·&nbsp;Yangly
+    <div class="post-meta"><span title='2025-02-11 22:01:59 +0000 UTC'>2025年2月11日</span>&nbsp;·&nbsp;<span>Yangly</span>
 
 </div>
   </header> 
@@ -282,9 +280,14 @@
 </footer>
 
 <script>
-    let menu = document.getElementById('menu')
+    let menu = document.getElementById('menu');
     if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
         menu.onscroll = function () {
             localStorage.setItem("menu-scroll-position", menu.scrollLeft);
         }

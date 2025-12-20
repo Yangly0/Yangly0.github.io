@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" dir="auto">
+<html lang="zh" dir="auto" data-theme="light">
 
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,7 +18,7 @@
 <link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://yangly0.github.io/tags/try/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://yangly0.github.io/tags/try/index.xml" title="rss">
 <link rel="alternate" hreflang="zh" href="https://yangly0.github.io/tags/try/">
 <noscript>
     <style>
@@ -65,10 +65,8 @@
 <meta name="twitter:description" content="个人博客">
 
 </head>
-
 <body class="list" id="top">
-
-<header class="header">
+    <header class="header">
     <nav class="nav">
         <div class="logo">
             <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
@@ -113,7 +111,7 @@
     <p>摘要：自建vaultwarden，实现个人密码管理。
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2025-02-11 22:01:59 +0000 UTC'>二月 11, 2025</span>&nbsp;·&nbsp;Yangly</footer>
+  <footer class="entry-footer"><span title='2025-02-11 22:01:59 +0000 UTC'>2025年2月11日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
   <a class="entry-link" aria-label="post link to 密码管理器vaultwarden" href="https://yangly0.github.io/posts/20250211220159/"></a>
 </article>
 
@@ -126,7 +124,7 @@
     <p>摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2024-11-23 21:51:51 +0000 UTC'>十一月 23, 2024</span>&nbsp;·&nbsp;Yangly</footer>
+  <footer class="entry-footer"><span title='2024-11-23 21:51:51 +0000 UTC'>2024年11月23日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
   <a class="entry-link" aria-label="post link to 如何搭建一个博客系统？" href="https://yangly0.github.io/posts/20241123215151/"></a>
 </article>
     </main>
@@ -142,9 +140,14 @@
 </footer>
 
 <script>
-    let menu = document.getElementById('menu')
+    let menu = document.getElementById('menu');
     if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
         menu.onscroll = function () {
             localStorage.setItem("menu-scroll-position", menu.scrollLeft);
         }
