@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D | 所见所思</title>
+<meta name="keywords" content="#论文, #自动驾驶, #BEV">
+<meta name="description" content="摘要： 该论文提出了一种新的端到端架构，旨在从任意数量的摄像头图像中直接提取场景的鸟瞰图（Bird&rsquo;s-Eye-View, BEV）表示。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端运动规划。">
+<meta name="author" content="Jonah Philion, Sanja Fidler">
+<link rel="canonical" href="https://yangly0.github.io/posts/20260104150831/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20260104150831/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20260104150831/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D">
+  <meta property="og:description" content="摘要： 该论文提出了一种新的端到端架构，旨在从任意数量的摄像头图像中直接提取场景的鸟瞰图（Bird’s-Eye-View, BEV）表示。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端运动规划。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-01-04T15:08:31+00:00">
+    <meta property="article:modified_time" content="2026-01-04T15:08:31+00:00">
+    <meta property="article:tag" content="#论文">
+    <meta property="article:tag" content="#自动驾驶">
+    <meta property="article:tag" content="#BEV">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+<meta name="twitter:title" content="Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D">
+<meta name="twitter:description" content="摘要： 该论文提出了一种新的端到端架构，旨在从任意数量的摄像头图像中直接提取场景的鸟瞰图（Bird&rsquo;s-Eye-View, BEV）表示。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端运动规划。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D",
+      "item": "https://yangly0.github.io/posts/20260104150831/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D",
+  "name": "Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D",
+  "description": "摘要： 该论文提出了一种新的端到端架构，旨在从任意数量的摄像头图像中直接提取场景的鸟瞰图（Bird\u0026rsquo;s-Eye-View, BEV）表示。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端运动规划。\n",
+  "keywords": [
+    "#论文", "#自动驾驶", "#BEV"
+  ],
+  "articleBody": "摘要： 该论文提出了一种新的端到端架构，旨在从任意数量的摄像头图像中直接提取场景的鸟瞰图（Bird’s-Eye-View, BEV）表示。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端运动规划。\n“Lift”与“Splat”步骤在架构中的核心作用 在论文这一架构中，“Lift”与“Splat”是实现从多摄像头图像到统一鸟瞰图（BEV）表示转换的核心步骤。其具体作用如下：\n“Lift”（提升）步骤： 该步骤的核心作用是将每一张 2D 图像独立地转换为 3D 的“特征视锥体”（frustum of features）。由于单目相机丢失了深度信息，这一步通过隐式地将图像“反投影”到 3D 空间，为每个摄像头构建出包含特征的 3D 空间表示，从而解决 2D 图像与 3D 空间之间的维度跨越问题。 “Splat”（喷涂）步骤： 该步骤的核心作用是融合与重构。它将来自所有相机的、分散在 3D 空间中的特征视锥体统一“喷涂”（投影）到一个光栅化的鸟瞰图（Bird’s-Eye-View）网格中。通过这种方式，模型能够将来自任意数量摄像头的预测结果融合成一个单一且凝聚的场景表示，并在此过程中表现出对**标定误差（calibration error）**的鲁棒性。 核心意义总结： 这两个步骤共同协作，实现了将多传感器数据融合到单一坐标系的目标，使得后续的运动规划（Shoot 步骤）可以直接在标准化的鸟瞰图坐标下进行。\n比喻理解： 你可以把这个过程想象成 “手电筒投影”：“Lift”就像是把每张相机的平面照片贴在手电筒的光罩上，向 3D 空间投射出带颜色的光束（视锥体）；而“Splat”就像是从天花板向下俯看，将所有手电筒投射出的光影平整地收集在地板（BEV 网格）上，拼凑出一张完整的地面地图。\nLift详细实现过程 在LSS架构中，“Lift”（提升）步骤是整个架构的第一步，其核心目标是解决单目摄像头图像中缺失的深度信息问题，从而将 2D 图像数据转换到 3D 空间中。\n以下是 Lift 步骤的详细实现过程：\n1. 处理单目预测的模糊性 由于从单张 2D 图像中无法精确获得每个像素的深度，该方法放弃了寻找单一深度值的尝试，而是采用了隐式反投影（Implicit Unprojecting）的思想。对于图像中的每一个像素，模型并不只预测一个坐标点，而是预测该像素在不同深度上的概率分布。\n2. 生成特征视锥体（Frustum of Features） “Lift”的具体实现可以拆解为两个并行的预测分支：\n特征提取（Context Extraction）：对于图像中的每个像素（或特征点），网络会提取出一个特征向量 $\\mathbf{c}$。这代表了该位置的语义信息。 深度分布预测（Depth Distribution）：对于同一个像素，网络会预测它在 $D$ 个离散深度区间（Depth Bins）上的概率分布 $\\alpha$。 核心操作：模型将特征向量 $\\mathbf{c}$ 与深度概率分布 $\\alpha$ 进行外积（Outer Product）运算。这意味着，对于该像素对应的视线射线上的每一个离散深度点，都会分配一个加权后的特征向量。其结果是为每一个摄像头生成了一个特征视锥体（Frustum of Features）。\n3. 隐式 3D 转换的优势 端到端学习：这种方式不需要显式的深度图监督（虽然后续如 BEVDepth 等工作证明引入显式深度监督能进一步提升效果），而是通过最终的感知任务（如分割或规划）来倒推学习深度分布。 保留不确定性：通过在整个深度范围内分布特征，模型能够表达深度预测的不确定性。如果模型不确定某个物体的距离，它会将特征散布在多个深度区间内，而不是强行放在一个错误的地点。 4. 总结 “Lift”操作将每一张图像独立地“拉伸”到一个 3D 空间中，为后续将不同视角的特征融合到统一坐标系下打下了基础。通过这种方式，原本扁平的 2D 图像变成了充满 3D 空间的、带有语义信息的概率云。\n比喻理解： 想象你正拿着一张幻灯片（2D 图像），幻灯片后面是一个手电筒。“Lift”过程并不是要在墙上投射一个清晰的点，而是你在这台“投影仪”的前方放置了一系列半透明的滤镜（深度区间）。如果手电筒的光穿过幻灯片上的一个红色像素，而你认为这个像素有 60% 的概率在 5 米处，40% 的概率在 10 米处，那么你就在 5 米的滤镜上涂上 60% 深度的红色，在 10 米的滤镜上涂上 40% 深度的红色。最终，你得到了一束在空间中颜色浓度各异的光束，这就是“特征视锥体”。\nSplat的实现过程 在LSS框架中，**“Splat”（喷涂）**步骤紧接在“Lift”之后，其核心任务是将“Lift”阶段生成的 3D 特征视锥体（Frustum of Features）整合并投影到统一的 2D 鸟瞰图（BEV）网格中。\n以下是 Splat 步骤的详细实现过程：\n1. 坐标转换与对齐 在“Lift”阶段，每个摄像头都生成了一个独立的 3D 特征视锥体，这些特征仍处于各自的相机坐标系下。\n空间定位：利用相机的内参和外参（标定信息），模型计算出视锥体中每个“点”（即每个深度区间对应的特征点）在统一的车辆（Ego）坐标系中的精确 3D 位置。 网格分配：模型定义了一个预设范围和分辨率的 2D 鸟瞰图网格（例如一个 $X \\times Y$ 的地面区域）。“Splat”过程会将 3D 空间中的所有特征点分配到与其 $x, y$ 坐标对应的网格单元（Cell）中。 2. 特征聚合：Sum Pooling（求和池化） 当来自不同摄像头或不同深度的多个特征点落入同一个 BEV 网格单元时，需要进行聚合。\n处理重叠：由于摄像头视野（FoV）存在重叠，一个 BEV 网格可能会接收到来自多个相机的特征。 计算方式：Splat 采用池化（Pooling）操作，将落入同一网格的所有特征向量相加。这种方式能够将来自任意数量摄像头的预测结果融合成一个单一且凝聚的场景表示。 3. 高效实现：Quick Cumsum（快速累加和） 在原始论文的工程实现中，为了解决大规模点云映射到网格时的效率问题（避免慢速的原子加法），作者提出了一种高效的并行计算方法：\n排序：根据网格索引对所有特征点进行排序。 累加和：对排序后的特征使用前缀和（Cumulative Sum）操作，然后通过索引边界相减，快速得出每个网格内的特征总和。这种方法在后来的研究（如 BEVDepth）中被进一步优化为更高效的 Voxel Pooling 算子。 4. 核心优势与作用 鲁棒性：通过这种“喷涂”方式，模型能够学习如何融合多相机预测，并对**标定误差（Calibration Error）**表现出较强的鲁棒性。 端到端连接：它打破了传统方法中各相机独立感知的局限，直接输出一个可供后续运动规划（Shoot）使用的**代价图（Cost Map）**或语义图。 简化流程：相比于后来的 BEVFormer 等基于 Transformer 的方法（它们通过 Query 机制提取特征），Splat 是一种**自底向上（Bottom-up）**的显式投影过程。 比喻理解： 如果说“Lift”是把幻灯片通过手电筒投射成了一束束彩色的光，那么**“Splat”就是把这些光全部照射在半透明的磨砂地板上**。无论光束从哪个角度（不同相机）射过来，最终地板上都会根据光线的重叠和颜色深度，留下一张色彩浓缩的“影子地图”。你只要低头看这张地板上的地图，就能知道周围物体的精确位置了。\nShoot实现过程 在《Lift, Splat, Shoot》(LSS) 架构中，“Shoot”（发射）是该端到端架构的最终环节，其核心作用是利用前面步骤生成的鸟瞰图（BEV）特征进行运动规划（Motion Planning）。\n以下是基于来源信息对 Shoot 实现过程的详细解释：\n1. 生成代价图 (Cost Map Generation) 在“Splat”步骤将所有图像特征融合到统一的鸟瞰图网格后，网络会输出一个密集的鸟瞰图代价图（Bird’s-Eye-View Cost Map）。\n这个代价图本质上是一个空间网格，其中每个网格单元的数值代表了车辆经过该位置的“代价”或“风险”。 代价图不仅包含静态的地图信息（如道路边界），还隐含了动态物体（如行人、车辆）的语义表示。 2. 定义模板轨迹 (Template Trajectories) 为了实现运动规划，模型预先定义了一组候选的路径，被称为模板轨迹（Template Trajectories）。\n这些轨迹代表了自动驾驶车辆在未来短时间内可能采取的不同行驶方案（例如：直线行驶、左转、右转、不同程度的减速或加速等）。 3. “发射”与评估 (“Shooting” and Evaluation) “Shoot”这一动作形象地描述了评估候选路径的过程：\n投影评估：模型将这些预定义的模板轨迹“发射”（投影）到网络输出的 BEV 代价图中。 计算成本：对于每一条模板轨迹，模型会沿着该路径累积（积分）代价图上的数值。如果一条轨迹经过了代价较高的区域（例如障碍物或马路边缘），其总成本就会很高。 4. 做出决策 (Decision Making) 通过对所有模板轨迹进行评分，模型最终会选择累计代价最低的那条轨迹作为车辆的行驶路径。这种方法使模型能够实现可解释的端到端运动规划，因为我们可以直观地看到模型是因为避开代价图中的高风险区域而选择了某条特定路径。\n5. 核心优势 端到端学习：与传统的先检测物体、再进行几何规划的串行流程不同，“Shoot”直接利用传感器融合后的 BEV 表示进行决策，减少了中间任务（如物体检测）失败带来的影响。 可解释性：虽然是一个深度学习模型，但通过代价图和轨迹评估的过程，人类可以理解模型为什么做出特定的转向或制动决策。 比喻理解： 想象你正在玩一个走迷宫游戏。“Lift”和“Splat”就像是帮你把迷宫的俯视图画了出来，并且在有陷阱的地方涂上了红色（高代价）。而 “Shoot” 就像是你手里握着几根透明的塑料尺（模板轨迹），你把这些尺子一根根往地图上比划，看哪一根尺子压到的红色最少，你就沿着哪根尺子的方向走。\n未理解点 1、论文中提到EfficientNet性能优于ResNet，而缺点是需要更多的优化步骤才能收敛。 #todo\n2、Shoot 模块 #todo\n",
+  "wordCount" : "233",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-01-04T15:08:31Z",
+  "dateModified": "2026-01-04T15:08:31Z",
+  "author":{
+    "@type": "Person",
+    "name": "Jonah Philion, Sanja Fidler"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20260104150831/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://yangly0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://yangly0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D
+    </h1>
+    <div class="post-meta"><span title='2026-01-04 15:08:31 +0000 UTC'>2026年1月4日</span>&nbsp;·&nbsp;<span>Jonah Philion, Sanja Fidler</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>摘要： 该论文提出了一种新的<strong>端到端架构</strong>，旨在从任意数量的摄像头图像中直接提取场景的<strong>鸟瞰图（Bird&rsquo;s-Eye-View, BEV）表示</strong>。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端<strong>运动规划</strong>。</p>
+<h2 id="lift与splat步骤在架构中的核心作用">“Lift”与“Splat”步骤在架构中的核心作用<a hidden class="anchor" aria-hidden="true" href="#lift与splat步骤在架构中的核心作用">#</a></h2>
+<p>在论文这一架构中，“Lift”与“Splat”是实现从多摄像头图像到统一鸟瞰图（BEV）表示转换的核心步骤。其具体作用如下：</p>
+<ul>
+<li><strong>“Lift”（提升）步骤</strong>： 该步骤的核心作用是<strong>将每一张 2D 图像独立地转换为 3D 的“特征视锥体”（frustum of features）</strong>。由于单目相机丢失了深度信息，这一步通过隐式地将图像“反投影”到 3D 空间，为每个摄像头构建出包含特征的 3D 空间表示，从而解决 2D 图像与 3D 空间之间的维度跨越问题。</li>
+<li><strong>“Splat”（喷涂）步骤</strong>： 该步骤的核心作用是<strong>融合与重构</strong>。它将来自所有相机的、分散在 3D 空间中的特征视锥体统一“喷涂”（投影）到一个<strong>光栅化的鸟瞰图（Bird&rsquo;s-Eye-View）网格</strong>中。通过这种方式，模型能够将来自任意数量摄像头的预测结果融合成一个<strong>单一且凝聚的场景表示</strong>，并在此过程中表现出对**标定误差（calibration error）**的鲁棒性。</li>
+</ul>
+<p><strong>核心意义总结：</strong> 这两个步骤共同协作，实现了将多传感器数据融合到单一坐标系的目标，使得后续的运动规划（Shoot 步骤）可以直接在标准化的鸟瞰图坐标下进行。</p>
+<p><strong>比喻理解：</strong> 你可以把这个过程想象成 <strong>“手电筒投影”</strong>：“Lift”就像是把每张相机的平面照片贴在手电筒的光罩上，向 3D 空间投射出带颜色的光束（视锥体）；而“Splat”就像是从天花板向下俯看，将所有手电筒投射出的光影平整地收集在地板（BEV 网格）上，拼凑出一张完整的地面地图。</p>
+<h2 id="lift详细实现过程">Lift详细实现过程<a hidden class="anchor" aria-hidden="true" href="#lift详细实现过程">#</a></h2>
+<p>在LSS架构中，<strong>“Lift”（提升）步骤是整个架构的第一步，其核心目标是解决单目摄像头图像中缺失的深度信息</strong>问题，从而将 2D 图像数据转换到 3D 空间中。</p>
+<p>以下是 <strong>Lift</strong> 步骤的详细实现过程：</p>
+<h3 id="1-处理单目预测的模糊性">1. 处理单目预测的模糊性<a hidden class="anchor" aria-hidden="true" href="#1-处理单目预测的模糊性">#</a></h3>
+<p>由于从单张 2D 图像中无法精确获得每个像素的深度，该方法放弃了寻找单一深度值的尝试，而是采用了<strong>隐式反投影（Implicit Unprojecting）的思想。对于图像中的每一个像素，模型并不只预测一个坐标点，而是预测该像素在不同深度上的概率分布</strong>。</p>
+<h3 id="2-生成特征视锥体frustum-of-features">2. 生成特征视锥体（Frustum of Features）<a hidden class="anchor" aria-hidden="true" href="#2-生成特征视锥体frustum-of-features">#</a></h3>
+<p>“Lift”的具体实现可以拆解为两个并行的预测分支：</p>
+<ul>
+<li><strong>特征提取（Context Extraction）</strong>：对于图像中的每个像素（或特征点），网络会提取出一个特征向量 $\mathbf{c}$。这代表了该位置的语义信息。</li>
+<li><strong>深度分布预测（Depth Distribution）</strong>：对于同一个像素，网络会预测它在 $D$ 个离散深度区间（Depth Bins）上的概率分布 $\alpha$。</li>
+</ul>
+<p><strong>核心操作</strong>：模型将特征向量 $\mathbf{c}$ 与深度概率分布 $\alpha$ 进行<strong>外积（Outer Product）运算。这意味着，对于该像素对应的视线射线上的每一个离散深度点，都会分配一个加权后的特征向量。其结果是为每一个摄像头生成了一个特征视锥体（Frustum of Features）</strong>。</p>
+<h3 id="3-隐式-3d-转换的优势">3. 隐式 3D 转换的优势<a hidden class="anchor" aria-hidden="true" href="#3-隐式-3d-转换的优势">#</a></h3>
+<ul>
+<li><strong>端到端学习</strong>：这种方式不需要显式的深度图监督（虽然后续如 BEVDepth 等工作证明引入显式深度监督能进一步提升效果），而是通过最终的感知任务（如分割或规划）来倒推学习深度分布。</li>
+<li><strong>保留不确定性</strong>：通过在整个深度范围内分布特征，模型能够表达深度预测的不确定性。如果模型不确定某个物体的距离，它会将特征散布在多个深度区间内，而不是强行放在一个错误的地点。</li>
+</ul>
+<h3 id="4-总结">4. 总结<a hidden class="anchor" aria-hidden="true" href="#4-总结">#</a></h3>
+<p><strong>“Lift”操作将每一张图像独立地“拉伸”到一个 3D 空间中</strong>，为后续将不同视角的特征融合到统一坐标系下打下了基础。通过这种方式，原本扁平的 2D 图像变成了充满 3D 空间的、带有语义信息的概率云。</p>
+<p><strong>比喻理解：</strong> 想象你正拿着一张幻灯片（2D 图像），幻灯片后面是一个手电筒。<strong>“Lift”过程</strong>并不是要在墙上投射一个清晰的点，而是你在这台“投影仪”的前方放置了一系列半透明的滤镜（深度区间）。如果手电筒的光穿过幻灯片上的一个红色像素，而你认为这个像素有 60% 的概率在 5 米处，40% 的概率在 10 米处，那么你就在 5 米的滤镜上涂上 60% 深度的红色，在 10 米的滤镜上涂上 40% 深度的红色。最终，你得到了一束<strong>在空间中颜色浓度各异的光束</strong>，这就是“特征视锥体”。</p>
+<h2 id="splat的实现过程">Splat的实现过程<a hidden class="anchor" aria-hidden="true" href="#splat的实现过程">#</a></h2>
+<p>在LSS框架中，**“Splat”（喷涂）**步骤紧接在“Lift”之后，其核心任务是将“Lift”阶段生成的 3D 特征视锥体（Frustum of Features）整合并投影到统一的 2D <strong>鸟瞰图（BEV）网格</strong>中。</p>
+<p>以下是 <strong>Splat</strong> 步骤的详细实现过程：</p>
+<h3 id="1-坐标转换与对齐">1. 坐标转换与对齐<a hidden class="anchor" aria-hidden="true" href="#1-坐标转换与对齐">#</a></h3>
+<p>在“Lift”阶段，每个摄像头都生成了一个独立的 3D 特征视锥体，这些特征仍处于各自的<strong>相机坐标系</strong>下。</p>
+<ul>
+<li><strong>空间定位</strong>：利用相机的内参和外参（标定信息），模型计算出视锥体中每个“点”（即每个深度区间对应的特征点）在<strong>统一的车辆（Ego）坐标系</strong>中的精确 3D 位置。</li>
+<li><strong>网格分配</strong>：模型定义了一个预设范围和分辨率的 2D 鸟瞰图网格（例如一个 $X \times Y$ 的地面区域）。“Splat”过程会将 3D 空间中的所有特征点分配到与其 $x, y$ 坐标对应的网格单元（Cell）中。</li>
+</ul>
+<h3 id="2-特征聚合sum-pooling求和池化">2. 特征聚合：Sum Pooling（求和池化）<a hidden class="anchor" aria-hidden="true" href="#2-特征聚合sum-pooling求和池化">#</a></h3>
+<p>当来自不同摄像头或不同深度的多个特征点落入同一个 BEV 网格单元时，需要进行聚合。</p>
+<ul>
+<li><strong>处理重叠</strong>：由于摄像头视野（FoV）存在重叠，一个 BEV 网格可能会接收到来自多个相机的特征。</li>
+<li><strong>计算方式</strong>：Splat 采用<strong>池化（Pooling）操作，将落入同一网格的所有特征向量相加。这种方式能够将来自任意数量摄像头的预测结果融合成一个单一且凝聚的场景表示</strong>。</li>
+</ul>
+<h3 id="3-高效实现quick-cumsum快速累加和">3. 高效实现：Quick Cumsum（快速累加和）<a hidden class="anchor" aria-hidden="true" href="#3-高效实现quick-cumsum快速累加和">#</a></h3>
+<p>在原始论文的工程实现中，为了解决大规模点云映射到网格时的效率问题（避免慢速的原子加法），作者提出了一种高效的并行计算方法：</p>
+<ul>
+<li><strong>排序</strong>：根据网格索引对所有特征点进行排序。</li>
+<li><strong>累加和</strong>：对排序后的特征使用前缀和（Cumulative Sum）操作，然后通过索引边界相减，快速得出每个网格内的特征总和。这种方法在后来的研究（如 BEVDepth）中被进一步优化为更高效的 <strong>Voxel Pooling</strong> 算子。</li>
+</ul>
+<h3 id="4-核心优势与作用">4. 核心优势与作用<a hidden class="anchor" aria-hidden="true" href="#4-核心优势与作用">#</a></h3>
+<ul>
+<li><strong>鲁棒性</strong>：通过这种“喷涂”方式，模型能够学习如何融合多相机预测，并对**标定误差（Calibration Error）**表现出较强的鲁棒性。</li>
+<li><strong>端到端连接</strong>：它打破了传统方法中各相机独立感知的局限，直接输出一个可供后续运动规划（Shoot）使用的**代价图（Cost Map）**或语义图。</li>
+<li><strong>简化流程</strong>：相比于后来的 BEVFormer 等基于 Transformer 的方法（它们通过 Query 机制提取特征），Splat 是一种**自底向上（Bottom-up）**的显式投影过程。</li>
+</ul>
+<p><strong>比喻理解：</strong> 如果说“Lift”是把幻灯片通过手电筒投射成了一束束彩色的光，那么**“Splat”就是把这些光全部照射在半透明的磨砂地板上**。无论光束从哪个角度（不同相机）射过来，最终地板上都会根据光线的重叠和颜色深度，留下一张色彩浓缩的“影子地图”。你只要低头看这张地板上的地图，就能知道周围物体的精确位置了。</p>
+<h2 id="shoot实现过程">Shoot实现过程<a hidden class="anchor" aria-hidden="true" href="#shoot实现过程">#</a></h2>
+<p>在《Lift, Splat, Shoot》(LSS) 架构中，<strong>“Shoot”（发射）是该端到端架构的最终环节，其核心作用是利用前面步骤生成的鸟瞰图（BEV）特征进行运动规划（Motion Planning）</strong>。</p>
+<p>以下是基于来源信息对 <strong>Shoot</strong> 实现过程的详细解释：</p>
+<h3 id="1-生成代价图-cost-map-generation">1. 生成代价图 (Cost Map Generation)<a hidden class="anchor" aria-hidden="true" href="#1-生成代价图-cost-map-generation">#</a></h3>
+<p>在“Splat”步骤将所有图像特征融合到统一的鸟瞰图网格后，网络会输出一个<strong>密集的鸟瞰图代价图（Bird&rsquo;s-Eye-View Cost Map）</strong>。</p>
+<ul>
+<li>这个代价图本质上是一个空间网格，其中每个网格单元的数值代表了车辆经过该位置的“代价”或“风险”。</li>
+<li>代价图不仅包含静态的地图信息（如道路边界），还隐含了动态物体（如行人、车辆）的语义表示。</li>
+</ul>
+<h3 id="2-定义模板轨迹-template-trajectories">2. 定义模板轨迹 (Template Trajectories)<a hidden class="anchor" aria-hidden="true" href="#2-定义模板轨迹-template-trajectories">#</a></h3>
+<p>为了实现运动规划，模型预先定义了一组候选的路径，被称为<strong>模板轨迹（Template Trajectories）</strong>。</p>
+<ul>
+<li>这些轨迹代表了自动驾驶车辆在未来短时间内可能采取的不同行驶方案（例如：直线行驶、左转、右转、不同程度的减速或加速等）。</li>
+</ul>
+<h3 id="3-发射与评估-shooting-and-evaluation">3. “发射”与评估 (“Shooting” and Evaluation)<a hidden class="anchor" aria-hidden="true" href="#3-发射与评估-shooting-and-evaluation">#</a></h3>
+<p>“Shoot”这一动作形象地描述了评估候选路径的过程：</p>
+<ul>
+<li><strong>投影评估</strong>：模型将这些预定义的模板轨迹“发射”（投影）到网络输出的 <strong>BEV 代价图</strong>中。</li>
+<li><strong>计算成本</strong>：对于每一条模板轨迹，模型会沿着该路径累积（积分）代价图上的数值。如果一条轨迹经过了代价较高的区域（例如障碍物或马路边缘），其总成本就会很高。</li>
+</ul>
+<h3 id="4-做出决策-decision-making">4. 做出决策 (Decision Making)<a hidden class="anchor" aria-hidden="true" href="#4-做出决策-decision-making">#</a></h3>
+<p>通过对所有模板轨迹进行评分，模型最终会选择<strong>累计代价最低</strong>的那条轨迹作为车辆的行驶路径。这种方法使模型能够实现<strong>可解释的端到端运动规划</strong>，因为我们可以直观地看到模型是因为避开代价图中的高风险区域而选择了某条特定路径。</p>
+<h3 id="5-核心优势">5. 核心优势<a hidden class="anchor" aria-hidden="true" href="#5-核心优势">#</a></h3>
+<ul>
+<li><strong>端到端学习</strong>：与传统的先检测物体、再进行几何规划的串行流程不同，“Shoot”直接利用传感器融合后的 BEV 表示进行决策，减少了中间任务（如物体检测）失败带来的影响。</li>
+<li><strong>可解释性</strong>：虽然是一个深度学习模型，但通过代价图和轨迹评估的过程，人类可以理解模型为什么做出特定的转向或制动决策。</li>
+</ul>
+<p><strong>比喻理解：</strong> 想象你正在玩一个<strong>走迷宫游戏</strong>。“Lift”和“Splat”就像是帮你把迷宫的俯视图画了出来，并且在有陷阱的地方涂上了红色（高代价）。而 <strong>“Shoot”</strong> 就像是你手里握着几根透明的塑料尺（模板轨迹），你把这些尺子一根根往地图上比划，看哪一根尺子压到的红色最少，你就沿着哪根尺子的方向走。</p>
+<h2 id="未理解点">未理解点<a hidden class="anchor" aria-hidden="true" href="#未理解点">#</a></h2>
+<p>1、论文中提到EfficientNet性能优于ResNet，而缺点是需要更多的优化步骤才能收敛。 #todo</p>
+<p>2、Shoot 模块 #todo</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/%23%E8%AE%BA%E6%96%87/">#论文</a></li>
+      <li><a href="https://yangly0.github.io/tags/%23%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/">#自动驾驶</a></li>
+      <li><a href="https://yangly0.github.io/tags/%23bev/">#BEV</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://yangly0.github.io/posts/20250211220159/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>密码管理器vaultwarden</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

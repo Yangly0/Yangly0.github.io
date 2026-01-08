@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on 所见所思</title>
-    <link>https://yangly0.github.io/posts/</link>
-    <description>Recent content in Posts on 所见所思</description>
+    <title>#论文 on 所见所思</title>
+    <link>https://yangly0.github.io/tags/%23%E8%AE%BA%E6%96%87/</link>
+    <description>Recent content in #论文 on 所见所思</description>
     <image>
       <title>所见所思</title>
       <url>https://yangly0.github.io/images/avatar.webp</url>
@@ -13,34 +13,13 @@
     <language>zh</language>
     <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
     <lastBuildDate>Sun, 04 Jan 2026 15:08:31 +0000</lastBuildDate>
-    <atom:link href="https://yangly0.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://yangly0.github.io/tags/%23%E8%AE%BA%E6%96%87/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D</title>
       <link>https://yangly0.github.io/posts/20260104150831/</link>
       <pubDate>Sun, 04 Jan 2026 15:08:31 +0000</pubDate>
       <guid>https://yangly0.github.io/posts/20260104150831/</guid>
       <description>&lt;p&gt;摘要： 该论文提出了一种新的&lt;strong&gt;端到端架构&lt;/strong&gt;，旨在从任意数量的摄像头图像中直接提取场景的&lt;strong&gt;鸟瞰图（Bird&amp;rsquo;s-Eye-View, BEV）表示&lt;/strong&gt;。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端&lt;strong&gt;运动规划&lt;/strong&gt;。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>密码管理器vaultwarden</title>
-      <link>https://yangly0.github.io/posts/20250211220159/</link>
-      <pubDate>Tue, 11 Feb 2025 22:01:59 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/20250211220159/</guid>
-      <description>&lt;p&gt;摘要：自建vaultwarden，实现个人密码管理。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>如何搭建一个博客系统？</title>
-      <link>https://yangly0.github.io/posts/20241123215151/</link>
-      <pubDate>Sat, 23 Nov 2024 21:51:51 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/20241123215151/</guid>
-      <description>&lt;p&gt;摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>数据结构与算法 个人篇</title>
-      <link>https://yangly0.github.io/posts/20241026095732/</link>
-      <pubDate>Sat, 26 Oct 2024 09:57:32 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/20241026095732/</guid>
-      <description>&lt;p&gt;摘要：本文是个人日常对数据结构与算法的学习内容。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
