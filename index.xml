@@ -62,7 +62,7 @@
       <link>https://yangly0.github.io/resume/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>https://yangly0.github.io/resume/</guid>
-      <description>&lt;h1 id=&#34;刘杨--男--1993--硕士&#34;&gt;刘杨 | 男 | 1993 | 硕士&lt;/h1&gt;
+      <description>&lt;h1 id=&#34;刘先生--男--1993--硕士--重庆&#34;&gt;刘先生 | 男 | 1993 | 硕士 | 重庆&lt;/h1&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;span class=&#34;icon&#34;&gt;&lt;/span&gt; &lt;code&gt;16623326161&lt;/code&gt;  
 &lt;span class=&#34;icon&#34;&gt;&lt;/span&gt; &lt;code&gt;yangliuly1993@gmail.com&lt;/code&gt;  
@@ -70,9 +70,9 @@
 &lt;/blockquote&gt;
 &lt;img class=&#34;avatar&#34; src=&#34;https://cdn.yangly1993.top/image/avatar_normal.jpg?x-oss-process=image/resize,w_3600/format,webp&#34;&gt;
 &lt;h2 id=&#34;自我评价&#34;&gt;自我评价&lt;/h2&gt;
-&lt;p&gt;1、&lt;strong&gt;出色的专业知识和技术实力&lt;/strong&gt;：对业务需求有更深刻的理解，能够设计出更加合理、高效的技术方案，解决专业疑难杂症(AVM算力、帧率、黑屏)，攻克技术核心壁垒（3D碗拼接效果、透明底盘清晰度），实现业界技术追赶（完成从无到有的AVM自研）和领先（率先应用AVM冷启动技术，AVM Native和APK联合渲染技术，AVM动态拼缝技术，E245 3D车模PBR渲染方案等）。&lt;/p&gt;
-&lt;p&gt;2、&lt;strong&gt;丰富的项目管理经验和团队协助能力&lt;/strong&gt;：组建AVM渲染团队，从0到1完成AVM自研交付，从1到10+的AVM多车型平台化交付。&lt;/p&gt;
-&lt;p&gt;3、&lt;strong&gt;持续不断的学习能力和适应能力&lt;/strong&gt;：紧跟技术发展趋势和探索行业前沿技术，不断拓展个人技术栈（感知模型训练和部署、感知前后处理、渲染等），持续提升个人业务水平（APA、AVM等），从感知模型训练团队到模型部署和前后处理团队、再到AVM团队，都圆满完成工作任务。&lt;/p&gt;
+&lt;p&gt;1、&lt;strong&gt;出色的专业知识和技术实力&lt;/strong&gt;：对业务需求有更深刻的理解，能够设计出更加合理、高效的技术方案，解决专业疑难杂症（CPU性能、延时帧率、进程挂死等），攻克技术核心壁垒（BEV拼接错位问题、Freespace跳动和投影问题、环视图像畸变问题等），实现业界技术追赶和领先。&lt;/p&gt;
+&lt;p&gt;2、&lt;strong&gt;丰富的项目管理经验和团队协助能力&lt;/strong&gt;：从无到有组建团队（模型部署和前后处理团队、全景影像团队等），从0到1实现产品自研量产交付（自动泊车的感知融合功能、自研泊车的全景影像功能等），从1到30+的多车型平台化（TDA4、A1000、OrinX、SE1000、J6M、ThorU等）项目交付。&lt;/p&gt;
+&lt;p&gt;3、&lt;strong&gt;持续不断的学习能力和适应能力&lt;/strong&gt;：紧跟技术发展趋势和探索行业前沿技术，不断拓展个人技术栈（感知模型训练和部署、感知前后处理、感知融合、感知渲染等），持续提升个人业务水平（自动泊车感知融合、自动泊车全景影像等），从感知模型训练团队、模型部署和前后处理团队、全景影像团队、再到感知融合团队，全都圆满完成工作任务。&lt;/p&gt;
 &lt;h2 id=&#34;xe80c-教育经历&#34;&gt; 教育经历&lt;/h2&gt;
 &lt;div alt=&#34;entry-title&#34;&gt;
     &lt;h3&gt;中国石油大学（华东）（211） - 硕士 - 地质资源与地质工程专业（A+学科）&lt;/h3&gt; 
@@ -80,15 +80,17 @@
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;荣誉奖项&lt;/strong&gt;：第五届“东方杯”勘探地球物理大赛二等奖、校研究生一等奖学金、校优秀生源奖学金、校研究生二等奖学、第五届校学术年会优秀论文三等奖、校优秀研究生等。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;科研成果&lt;/strong&gt;：研究生期间，发表文章共计6篇，其中SCI期刊1篇，EI期刊1篇，核心期刊1篇，国际会议1篇（优秀学生论文）以及国内会议2篇等。
+&lt;li&gt;&lt;strong&gt;科研成果&lt;/strong&gt;：研究生期间，发表文章共计6篇，其中SCI期刊1篇，EI期刊1篇，核心期刊1篇，国际会议1篇（优秀学生论文）以及国内会议2篇等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;summary&gt; 点击论文详细内容展开 &lt;/summary&gt;
 &lt;ul&gt;
 &lt;li&gt;[1] An improved Gaussian frequency domain sparse inversion method based on compressed sensing, Applied Geophysics（SCI），2020（一作）&lt;/li&gt;
 &lt;li&gt;[2] 甜点地震属性理论诠释及应用, 石油地球物理勘探（EI），2018（二作，老师一作）&lt;/li&gt;
 &lt;li&gt;[3] How to calculate sweetness accurately—theoretical analysis and case study, Society of Exploration Geophysicists (SEG国际会议)，2018（二作，老师一作，学生优秀论文rank 12/1090）&lt;/li&gt;
 &lt;li&gt;[4] 压缩感知正则化算子稀疏信号与压制噪声分布, 第五届中国地球科学学术联合会议（国内会议），2017（一作）&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
+&lt;/details&gt;
 &lt;div alt=&#34;entry-title&#34;&gt;
     &lt;h3&gt;中国石油大学（华东）（211） - 本科 - 勘查技术与工程专业（Rank-11/63）&lt;/h3&gt; 
     &lt;p&gt;2012.09 - 2016.07&lt;/p&gt;</description>
