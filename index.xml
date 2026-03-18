@@ -9,7 +9,7 @@
       <url>https://yangly0.github.io/images/avatar.webp</url>
       <link>https://yangly0.github.io/images/avatar.webp</link>
     </image>
-    <generator>Hugo</generator>
+    <generator>Hugo -- 0.158.0</generator>
     <language>zh</language>
     <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
     <lastBuildDate>Sun, 04 Jan 2026 15:08:31 +0000</lastBuildDate>
@@ -118,7 +118,7 @@
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;荣誉奖项&lt;/strong&gt;：校研究生一等/二等奖学金、校优秀生源奖学金、第五届校学术年会优秀论文三等奖、校优秀研究生等。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;科研成果&lt;/strong&gt;：研究生期间，发表文章共计6篇，其中SCI期刊1篇，EI期刊1篇，核心期刊1篇，国际会议1篇（优秀学生论文）以及国内会议2篇等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;科研成果&lt;/strong&gt;：发表文章6篇，其SCI期刊1篇，EI期刊1篇，核心期刊1篇，国际会议1篇（优秀学生论文）以及国内会议2篇等。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div alt=&#34;entry-title&#34;&gt;
     &lt;h3&gt;中国石油大学（华东）（211） - 本科&lt;/h3&gt; 
@@ -159,7 +159,7 @@
     &lt;h3&gt;吉利J6M平台APA泊车融合功能项目 ----- 泊车融合团队组长&lt;/h3&gt; 
     &lt;a href=&#34;&#34;&gt;2025.02-2026.03&lt;/a&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;strong&gt;行动&lt;/strong&gt;：（1）牵头完成J6M平台APA融合模块的系统架构和功能算法设计，带领团队推进全姿态泊车、指尖泊车、单边视觉空间库位、机械库位、路沿车位、斜坡库位、窄库位、车头泊入库位等多项新功能从0到1开发交付。（2）带领团队攻关APS与PCP进程系统级瓶颈，精准定位并修复融合结果不输出、内存泄漏、Core崩溃等高危问题，完成进程CPU资源优化20%、算法链路时延压缩10%。主导解决超10余车型差异Case问题，同团队攻关完成泊车中断问题、Freespace投影问题、Freespace/OCC融合问题等10+项效果迭代。（3）牵头制定泊车融合功能开发、评审、交付标准文档，应用于J6M平台10余车型交付，建立模块级及部门代码质量流程，主导模块/部门/中心代码评审累计200余次。&lt;/p&gt;</description>
+&lt;p&gt;&lt;strong&gt;行动&lt;/strong&gt;：（1）牵头完成J6M平台APA融合模块的系统架构和功能算法设计，带领团队完成全姿态泊车、指尖泊车、单边视觉空间库位、机械库位、路沿车位、斜坡库位、窄库位、车头泊入库位等多项新功能从0到1开发交付。（2）带领团队攻关APS与PCP进程系统级瓶颈，精准定位并修复融合结果不输出、内存泄漏、Core崩溃等高危问题，完成进程CPU资源优化20%、算法链路时延压缩10%。主导解决超10余车型差异Case问题，同团队攻关完成泊车中断问题、Freespace投影问题、Freespace/OCC融合问题等10+项效果迭代。（3）牵头制定泊车融合功能开发、评审、交付标准文档，应用于J6M平台10余车型交付，建立模块级及部门代码质量流程，主导模块/部门/中心代码评审累计200余次。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
