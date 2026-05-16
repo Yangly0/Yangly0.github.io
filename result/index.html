@@ -5,10 +5,16 @@
 
 <style>
      
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
     body {
         width: 210mm;
         min-height: 297mm;
         margin: 0 auto;
+        padding: 15mm !important;
         box-sizing: border-box;
     }
 
@@ -21,9 +27,9 @@
 
     @media print {
         body {
-            width: 100%;
+            width: 210mm;
             margin: 0;
-            padding: 0;
+            box-shadow: none;
         }
     }
 </style>
