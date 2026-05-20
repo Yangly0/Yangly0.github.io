@@ -124,6 +124,22 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">装机
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html
+方案二： 零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 https://post.smzdm.com/p/a7gmzq45/ [自己DIY台式机的人都放下了ATX台式的执念]
+软件装机 Windows terminal &#43; starship obsidian vscode lazygit Linux/WSL zsh starship zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf zoxide &#43; eza # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 将 Zsh 设置为默认 Shell chsh -s $(which zsh) # 切换到 zsh（相当于重启终端） exec zsh ls # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39;#zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39;# zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza </p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-02-15 21:27:30 +0000 UTC'>2026年2月15日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 装机" href="https://yangly0.github.io/posts/%E8%A3%85%E6%9C%BA/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D
     </h2>
   </header>
@@ -139,17 +155,23 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">密码管理器vaultwarden
+    <h2 class="entry-hint-parent">个人密码管理器vaultwarden
     </h2>
   </header>
   <div class="entry-content">
-    <p>摘要：自建vaultwarden，实现个人密码管理。
+    <p>本文是自建vaultwarden，实现个人密码管理。
+描述 Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。
+部署 部署请参考：Vaultwarden Wiki和中文版，建议Docker Compose &#43; Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。
+1、安装Vaultwarden之前，先安装依赖环境 Docker 和Docker Compose。
+sudo curl -L &#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&#34; -o /usr/local/bin/docker-compose 2、配置Docker Compose。
+mkdir ~/vaultwarden cd ~/vaultwarden vim compose.yml 需要设置的几个点：
+Vaultwarden下image镜像为1.30.5，最新版本网页端无法登录； Vaultwarden下 environment 的 DOMAIN 域名； caddy下 environment 的DOMAIN 域名（和vaultwarden一致）和EMAIL邮件。 services: vaultwarden: image: vaultwarden/server:1.30.5 container_name: vaultwarden restart: always environment: DOMAIN: &#34;TODO1&#34; # 使用反向代理时必填您的域名 SIGNUPS_ALLOWED: &#34;true&#34; # 是否支持注册 volumes: - ~/vaultwarden:/data # 数据位置 caddy: image: caddy:2 container_name: caddy restart: always ports: - 80:80 # ACME HTTP-01 验证需要 - 443:443 - 443:443/udp # HTTP/3 需要 volumes: - ./Caddyfile:/etc/caddy/Caddyfile:ro - ./caddy-config:/config - ./caddy-data:/data - ./certificate.crt:/etc/caddy/certificate.crt - ./private.key:/etc/caddy/private.key environment: DOMAIN: &#34;TODO2&#34; # 您的域名，以 http 或 https 作为前缀 EMAIL: &#34;TODO3&#34; # 用于 ACME 注册的电子邮件地址 LOG_FILE: &#34;./data/access.loig&#34; 3、创建Caddyfile配置文件，内容不用修改。
 ...</p>
   </div>
   <footer class="entry-footer">
 
 <span title='2025-02-11 22:01:59 +0000 UTC'>2025年2月11日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to 密码管理器vaultwarden" href="https://yangly0.github.io/posts/20250211220159/"></a>
+  <a class="entry-link" aria-label="post link to 个人密码管理器vaultwarden" href="https://yangly0.github.io/posts/20250211220159/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -158,7 +180,11 @@
     </h2>
   </header>
   <div class="entry-content">
-    <p>摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。
+    <p>本文是介绍了如何快速搭建一个 hugo 博客网站，设置 PaperMod 主题，并构建一个自动发布的博客系统。
+0x01 快速开始 1、软件安装：软件包链接Releases · gohugoio/hugo，建议安装带extended的扩展版本。
+# 下载 wget hugo_extended_0.xxx.x_linux-amd64.deb # 安装 sudo dpkg -i hugo_extended_0.xxx.x_linux-amd64.deb # 验证 hugo version 2、博客发布，访问http://localhost:1313/，查看渲染的博客内容。
+# 创建博客站点，yaml配置方式，默认是toml配置方式 hugo new site blog --format yaml # 进入博客 cd blog # 创建文章 hugo new posts/first_post.md # 博客发布 hugo server --disableFastRender --navigateToChanged --environment pruction --bind 0.0.0.0 0x02 适配主题 1、主题安装，主题库链接hugo-PaperMod，其他主题可以参考themes。
+# 进入博客 cd blog # 下载主题（依赖git，需要提前安装git） git init git submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod 2、主题适配，参考hugo-PaperMod文档，手动复制config.yml内容到 hugo.yaml，注意提前备份hugo.yaml。
 ...</p>
   </div>
   <footer class="entry-footer">
@@ -173,7 +199,9 @@
     </h2>
   </header>
   <div class="entry-content">
-    <p>摘要：本文是个人日常对数据结构与算法的学习内容。
+    <p>本文是个人日常对数据结构与算法的学习内容，部分参考AcWing和OI Wiki。
+输入输出 ref：OJ的自我修养：C&#43;&#43;输入输出总结_c&#43;&#43; oj的输入输出-CSDN博客
+#include &lt;bits/stdc&#43;&#43;.h&gt; //全部头文件 using namespace std; // c语言 int n; while(scanf(&#34;%d&#34;, &amp;n) != EOF &amp;&amp; n!= 0){ int a, b; for(int i=0; i &lt; n; &#43;&#43;i){ scanf(&#34;%d%d&#34;, &amp;a, &amp;b); printf(&#34;%d %d\n&#34;, a, b); } } // c&#43;&#43;语言 /*&gt;&gt; 数值带定长 */ int n, a; while(cin &gt;&gt; n){ // 忽略空格，回车，Tab，遇到EOF会跳出循环 for(int i=0; i &lt; n; &#43;&#43;i){ cin &gt;&gt; a; cout &lt;&lt; a &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 数值带不定长 */ int m, b; cin &gt;&gt; m; for (int i = 0; i &lt; m; i&#43;&#43;) { while (cin &gt;&gt; b) { cout &lt;&lt; b &lt;&lt; &#39; &#39;; if (getchar() == &#39;\n&#39;){ // 遇到回车结束 cout &lt;&lt; &#39;\n&#39;; break; } } } /*&gt;&gt; 字符串 */ string str; cin &gt;&gt; str; // cin遇到空格结束读取 /*&gt;&gt; 字符串带空格 */ string str; // getline函数可以获取包含空格的字符，以回车键结束 while(getline(cin, str)){ // 遇到EOF或者CTRL&#43;Z退出 cout &lt; str &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 字符串带逗号 */ string strs, str; cin &gt;&gt; strs; stringstream input(strs); while(getline(input, str, &#39;,&#39;)){ cout &lt;&lt; str &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; // python 版本 while True: try: n = int(input()) for _ in range(n): lis = list(map(int, input().split())) print(sum(lis[1:])) except: break 数据结构 有序数组 区间范围值$[l,r]$：upper_bounder(…,…,r) - lower_bounder(…,…,l)
 ...</p>
   </div>
   <footer class="entry-footer">

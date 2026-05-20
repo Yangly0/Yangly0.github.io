@@ -118,7 +118,9 @@
     </h2>
   </header>
   <div class="entry-content">
-    <p>摘要：本文是个人日常对数据结构与算法的学习内容。
+    <p>本文是个人日常对数据结构与算法的学习内容，部分参考AcWing和OI Wiki。
+输入输出 ref：OJ的自我修养：C&#43;&#43;输入输出总结_c&#43;&#43; oj的输入输出-CSDN博客
+#include &lt;bits/stdc&#43;&#43;.h&gt; //全部头文件 using namespace std; // c语言 int n; while(scanf(&#34;%d&#34;, &amp;n) != EOF &amp;&amp; n!= 0){ int a, b; for(int i=0; i &lt; n; &#43;&#43;i){ scanf(&#34;%d%d&#34;, &amp;a, &amp;b); printf(&#34;%d %d\n&#34;, a, b); } } // c&#43;&#43;语言 /*&gt;&gt; 数值带定长 */ int n, a; while(cin &gt;&gt; n){ // 忽略空格，回车，Tab，遇到EOF会跳出循环 for(int i=0; i &lt; n; &#43;&#43;i){ cin &gt;&gt; a; cout &lt;&lt; a &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 数值带不定长 */ int m, b; cin &gt;&gt; m; for (int i = 0; i &lt; m; i&#43;&#43;) { while (cin &gt;&gt; b) { cout &lt;&lt; b &lt;&lt; &#39; &#39;; if (getchar() == &#39;\n&#39;){ // 遇到回车结束 cout &lt;&lt; &#39;\n&#39;; break; } } } /*&gt;&gt; 字符串 */ string str; cin &gt;&gt; str; // cin遇到空格结束读取 /*&gt;&gt; 字符串带空格 */ string str; // getline函数可以获取包含空格的字符，以回车键结束 while(getline(cin, str)){ // 遇到EOF或者CTRL&#43;Z退出 cout &lt; str &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 字符串带逗号 */ string strs, str; cin &gt;&gt; strs; stringstream input(strs); while(getline(input, str, &#39;,&#39;)){ cout &lt;&lt; str &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; // python 版本 while True: try: n = int(input()) for _ in range(n): lis = list(map(int, input().split())) print(sum(lis[1:])) except: break 数据结构 有序数组 区间范围值$[l,r]$：upper_bounder(…,…,r) - lower_bounder(…,…,l)
 ...</p>
   </div>
   <footer class="entry-footer">

@@ -5,9 +5,55 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>密码管理器vaultwarden | 所见所思</title>
-<meta name="keywords" content="try">
-<meta name="description" content="摘要：自建vaultwarden，实现个人密码管理。">
+<title>个人密码管理器vaultwarden | 所见所思</title>
+<meta name="keywords" content="技术, 工具">
+<meta name="description" content="本文是自建vaultwarden，实现个人密码管理。
+描述
+Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。
+部署
+部署请参考：Vaultwarden Wiki和中文版，建议Docker Compose &#43; Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。
+1、安装Vaultwarden之前，先安装依赖环境 Docker 和Docker Compose。
+sudo curl -L &#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&#34; -o /usr/local/bin/docker-compose
+2、配置Docker Compose。
+mkdir ~/vaultwarden
+cd ~/vaultwarden
+
+vim compose.yml
+需要设置的几个点：
+
+Vaultwarden下image镜像为1.30.5，最新版本网页端无法登录；
+Vaultwarden下 environment 的 DOMAIN 域名；
+caddy下 environment 的DOMAIN 域名（和vaultwarden一致）和EMAIL邮件。
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:1.30.5
+    container_name: vaultwarden
+    restart: always
+    environment:
+      DOMAIN: &#34;TODO1&#34;          # 使用反向代理时必填您的域名
+      SIGNUPS_ALLOWED: &#34;true&#34; # 是否支持注册
+    volumes:
+      - ~/vaultwarden:/data   # 数据位置
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: always
+    ports:
+      - 80:80       #  ACME HTTP-01 验证需要
+      - 443:443
+      - 443:443/udp # HTTP/3 需要
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-config:/config
+      - ./caddy-data:/data
+      - ./certificate.crt:/etc/caddy/certificate.crt
+      - ./private.key:/etc/caddy/private.key
+    environment:
+      DOMAIN: &#34;TODO2&#34;  # 您的域名，以 http 或 https 作为前缀
+      EMAIL: &#34;TODO3&#34;   # 用于 ACME 注册的电子邮件地址
+      LOG_FILE: &#34;./data/access.loig&#34;
+3、创建Caddyfile配置文件，内容不用修改。">
 <meta name="author" content="Yangly">
 <link rel="canonical" href="https://yangly0.github.io/posts/20250211220159/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
@@ -53,20 +99,33 @@
 </script> 
 <meta property="og:url" content="https://yangly0.github.io/posts/20250211220159/">
   <meta property="og:site_name" content="所见所思">
-  <meta property="og:title" content="密码管理器vaultwarden">
-  <meta property="og:description" content="摘要：自建vaultwarden，实现个人密码管理。">
+  <meta property="og:title" content="个人密码管理器vaultwarden">
+  <meta property="og:description" content="本文是自建vaultwarden，实现个人密码管理。
+描述 Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。
+部署 部署请参考：Vaultwarden Wiki和中文版，建议Docker Compose &#43; Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。
+1、安装Vaultwarden之前，先安装依赖环境 Docker 和Docker Compose。
+sudo curl -L &#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&#34; -o /usr/local/bin/docker-compose 2、配置Docker Compose。
+mkdir ~/vaultwarden cd ~/vaultwarden vim compose.yml 需要设置的几个点：
+Vaultwarden下image镜像为1.30.5，最新版本网页端无法登录； Vaultwarden下 environment 的 DOMAIN 域名； caddy下 environment 的DOMAIN 域名（和vaultwarden一致）和EMAIL邮件。 services: vaultwarden: image: vaultwarden/server:1.30.5 container_name: vaultwarden restart: always environment: DOMAIN: &#34;TODO1&#34; # 使用反向代理时必填您的域名 SIGNUPS_ALLOWED: &#34;true&#34; # 是否支持注册 volumes: - ~/vaultwarden:/data # 数据位置 caddy: image: caddy:2 container_name: caddy restart: always ports: - 80:80 # ACME HTTP-01 验证需要 - 443:443 - 443:443/udp # HTTP/3 需要 volumes: - ./Caddyfile:/etc/caddy/Caddyfile:ro - ./caddy-config:/config - ./caddy-data:/data - ./certificate.crt:/etc/caddy/certificate.crt - ./private.key:/etc/caddy/private.key environment: DOMAIN: &#34;TODO2&#34; # 您的域名，以 http 或 https 作为前缀 EMAIL: &#34;TODO3&#34; # 用于 ACME 注册的电子邮件地址 LOG_FILE: &#34;./data/access.loig&#34; 3、创建Caddyfile配置文件，内容不用修改。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2025-02-11T22:01:59+00:00">
     <meta property="article:modified_time" content="2025-02-11T22:01:59+00:00">
-    <meta property="article:tag" content="Try">
+    <meta property="article:tag" content="技术">
+    <meta property="article:tag" content="工具">
       <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
-  <meta name="twitter:title" content="密码管理器vaultwarden">
-  <meta name="twitter:description" content="摘要：自建vaultwarden，实现个人密码管理。">
+  <meta name="twitter:title" content="个人密码管理器vaultwarden">
+  <meta name="twitter:description" content="本文是自建vaultwarden，实现个人密码管理。
+描述 Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。
+部署 部署请参考：Vaultwarden Wiki和中文版，建议Docker Compose &#43; Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。
+1、安装Vaultwarden之前，先安装依赖环境 Docker 和Docker Compose。
+sudo curl -L &#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&#34; -o /usr/local/bin/docker-compose 2、配置Docker Compose。
+mkdir ~/vaultwarden cd ~/vaultwarden vim compose.yml 需要设置的几个点：
+Vaultwarden下image镜像为1.30.5，最新版本网页端无法登录； Vaultwarden下 environment 的 DOMAIN 域名； caddy下 environment 的DOMAIN 域名（和vaultwarden一致）和EMAIL邮件。 services: vaultwarden: image: vaultwarden/server:1.30.5 container_name: vaultwarden restart: always environment: DOMAIN: &#34;TODO1&#34; # 使用反向代理时必填您的域名 SIGNUPS_ALLOWED: &#34;true&#34; # 是否支持注册 volumes: - ~/vaultwarden:/data # 数据位置 caddy: image: caddy:2 container_name: caddy restart: always ports: - 80:80 # ACME HTTP-01 验证需要 - 443:443 - 443:443/udp # HTTP/3 需要 volumes: - ./Caddyfile:/etc/caddy/Caddyfile:ro - ./caddy-config:/config - ./caddy-data:/data - ./certificate.crt:/etc/caddy/certificate.crt - ./private.key:/etc/caddy/private.key environment: DOMAIN: &#34;TODO2&#34; # 您的域名，以 http 或 https 作为前缀 EMAIL: &#34;TODO3&#34; # 用于 ACME 注册的电子邮件地址 LOG_FILE: &#34;./data/access.loig&#34; 3、创建Caddyfile配置文件，内容不用修改。">
 
 
 <script type="application/ld+json">
@@ -83,7 +142,7 @@
     {
       "@type": "ListItem",
       "position":  2 ,
-      "name": "密码管理器vaultwarden",
+      "name": "个人密码管理器vaultwarden",
       "item": "https://yangly0.github.io/posts/20250211220159/"
     }
   ]
@@ -93,14 +152,14 @@
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "密码管理器vaultwarden",
-  "name": "密码管理器vaultwarden",
-  "description": "摘要：自建vaultwarden，实现个人密码管理。\n",
+  "headline": "个人密码管理器vaultwarden",
+  "name": "个人密码管理器vaultwarden",
+  "description": "本文是自建vaultwarden，实现个人密码管理。\n描述 Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。\n部署 部署请参考：Vaultwarden Wiki和中文版，建议Docker Compose + Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。\n1、安装Vaultwarden之前，先安装依赖环境 Docker 和Docker Compose。\nsudo curl -L \u0026#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\u0026#34; -o /usr/local/bin/docker-compose 2、配置Docker Compose。\nmkdir ~/vaultwarden cd ~/vaultwarden vim compose.yml 需要设置的几个点：\nVaultwarden下image镜像为1.30.5，最新版本网页端无法登录； Vaultwarden下 environment 的 DOMAIN 域名； caddy下 environment 的DOMAIN 域名（和vaultwarden一致）和EMAIL邮件。 services: vaultwarden: image: vaultwarden/server:1.30.5 container_name: vaultwarden restart: always environment: DOMAIN: \u0026#34;TODO1\u0026#34; # 使用反向代理时必填您的域名 SIGNUPS_ALLOWED: \u0026#34;true\u0026#34; # 是否支持注册 volumes: - ~/vaultwarden:/data # 数据位置 caddy: image: caddy:2 container_name: caddy restart: always ports: - 80:80 # ACME HTTP-01 验证需要 - 443:443 - 443:443/udp # HTTP/3 需要 volumes: - ./Caddyfile:/etc/caddy/Caddyfile:ro - ./caddy-config:/config - ./caddy-data:/data - ./certificate.crt:/etc/caddy/certificate.crt - ./private.key:/etc/caddy/private.key environment: DOMAIN: \u0026#34;TODO2\u0026#34; # 您的域名，以 http 或 https 作为前缀 EMAIL: \u0026#34;TODO3\u0026#34; # 用于 ACME 注册的电子邮件地址 LOG_FILE: \u0026#34;./data/access.loig\u0026#34; 3、创建Caddyfile配置文件，内容不用修改。\n",
   "keywords": [
-    "try"
+    "技术", "工具"
   ],
-  "articleBody": "摘要：自建vaultwarden，实现个人密码管理。\nVaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容 [免责声明]，非常适合运行官方资源密集型服务可能不理想的自托管部署。\n部署请参考：aultwarden Wiki和中文版，建议Docker Compose + Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。\n1、安装docker compose，需要提前安装docker。\nsudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose 2、配置docker compose\nmkdir ~/vaultwarden cd ~/vaultwarden vim compose.yml 需要设置的几个点：（1）vaultwarden下image镜像为1.30.5，最新版本网页端无法登录；（2）vaultwarden下environment的DOMAIN 域名；（3）caddy下environment的DOMAIN域名（和vaultwarden一致），caddy下environment的EMAIL邮件。\nservices: vaultwarden: image: vaultwarden/server:1.30.5 container_name: vaultwarden restart: always environment: DOMAIN: \"TODO\" # 使用反向代理时必填；您的域名；Vaultwarden 需要知道它是 https 才能正确处理附件 SIGNUPS_ALLOWED: \"true\" # 创建账户后，使用 \"false\" 停用此选项，这样就不会有陌生人注册了 volumes: - ./vw-data:/data # : 前面的路径可以修改 caddy: image: caddy:2 container_name: caddy restart: always ports: - 80:80 # ACME HTTP-01 验证需要 - 443:443 - 443:443/udp # HTTP/3 需要 volumes: - ./Caddyfile:/etc/caddy/Caddyfile:ro - ./caddy-config:/config - ./caddy-data:/data - ./certificate.crt:/etc/caddy/certificate.crt - ./private.key:/etc/caddy/private.key environment: DOMAIN: \"TODO\" # 您的域名，以 http 或 https 作为前缀 EMAIL: \"TODO\" # 用于 ACME 注册的电子邮件地址 LOG_FILE: \"./data/access.loig\" 4、创建Caddyfile配置文件，内容不用修改。\nvim Caddyfile {$DOMAIN} {\rlog {\rlevel INFO\routput file {$LOG_FILE} {\rroll_size 10MB\rroll_keep 10\r}\r}\r# 使用 ACME HTTP-01 验证方式为已配置的域名获取证书\rtls {$EMAIL}\r# 此设置可能会在某些浏览器上出现兼容性问题（例如，在 Firefox 上下载附件）\r# 如果遇到问题，请尝试禁用此功能\rencode zstd gzip\r# 将所有代理到 Rocket\rreverse_proxy vaultwarden:80 {\r# 把真实的远程 IP 发送给 Rocket，让 Vaultwarden 把其放在日志中\r# 这样 fail2ban 就可以阻止正确的 IP 了\rheader_up X-Real-IP {remote_host}\r}\r} 5、更新和运行\n#更新 docker compose pull #运行 docker compose up -d \u0026\u0026 docker compose logs -f #停止 docker compose down 7、打开网页IP:80，即可登录使用。注意，云服务器安全组需要设置端口号80。\n8、问题1，网页This site can’t be reached\ndocker logs caddy-CONTAINER-ID #{\"level\":\"error\",\"ts\":1739312132.2342033,\"logger\":\"tls.obtain\",\"msg\":\"will retry\",\"error\":\"[47.108.144.177] Obtain: subject does not qualify for a public certificate: 47.108.144.177\",\"attempt\":12,\"retrying_in\":21600,\"elapsed\":21600.05246929,\"max_duration\":2592000} 原因是Caddy采用Let’s Encrypt获取公共 TLS 证书，而采用IP 地址不满足 Let’s Encrypt 的颁发条件，国内必须采用备案域名。\n9、问题2，网页端登录，后台报错\n在 docker 的日志中体现为 404: [2024-03-27 02:28:48.758][request][INFO] POST /identity/accounts/prelogin [2024-03-27 02:28:48.758][response][INFO] 404 Not Found 原因：参考link，Vaultwarden版本号原因，改为vaultwarden/server:latest改为vaultwarden/server:1.30.5\n",
-  "wordCount" : "235",
+  "articleBody": "本文是自建vaultwarden，实现个人密码管理。\n描述 Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。\n部署 部署请参考：Vaultwarden Wiki和中文版，建议Docker Compose + Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。\n1、安装Vaultwarden之前，先安装依赖环境 Docker 和Docker Compose。\nsudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose 2、配置Docker Compose。\nmkdir ~/vaultwarden cd ~/vaultwarden vim compose.yml 需要设置的几个点：\nVaultwarden下image镜像为1.30.5，最新版本网页端无法登录； Vaultwarden下 environment 的 DOMAIN 域名； caddy下 environment 的DOMAIN 域名（和vaultwarden一致）和EMAIL邮件。 services: vaultwarden: image: vaultwarden/server:1.30.5 container_name: vaultwarden restart: always environment: DOMAIN: \"TODO1\" # 使用反向代理时必填您的域名 SIGNUPS_ALLOWED: \"true\" # 是否支持注册 volumes: - ~/vaultwarden:/data # 数据位置 caddy: image: caddy:2 container_name: caddy restart: always ports: - 80:80 # ACME HTTP-01 验证需要 - 443:443 - 443:443/udp # HTTP/3 需要 volumes: - ./Caddyfile:/etc/caddy/Caddyfile:ro - ./caddy-config:/config - ./caddy-data:/data - ./certificate.crt:/etc/caddy/certificate.crt - ./private.key:/etc/caddy/private.key environment: DOMAIN: \"TODO2\" # 您的域名，以 http 或 https 作为前缀 EMAIL: \"TODO3\" # 用于 ACME 注册的电子邮件地址 LOG_FILE: \"./data/access.loig\" 3、创建Caddyfile配置文件，内容不用修改。\nvim Caddyfile {$DOMAIN} { log { level INFO output file {$LOG_FILE} { roll_size 10MB roll_keep 10 } } # 使用 ACME HTTP-01 验证方式为已配置的域名获取证书 tls {$EMAIL} # 此设置可能会在某些浏览器上出现兼容性问题（例如，在 Firefox 上下载附件） encode zstd gzip # 将所有代理到 Rocket reverse_proxy vaultwarden:80 { # 把真实的远程 IP 发送给 Rocket，让 Vaultwarden 把其放在日志中 # 这样 fail2ban 就可以阻止正确的 IP 了 header_up X-Real-IP {remote_host} } } 4、更新和运行\n#更新 docker compose pull #运行 docker compose up -d \u0026\u0026 docker compose logs -f #停止 docker compose down 5、打开网页IP:80，即可登录使用。注意，云服务器安全组需要设置端口号80。\n问题 1、问题1是网页This site can’t be reached\n查看 docker 的日志： #{\"level\":\"error\",\"ts\":1739312132.2342033,\"logger\":\"tls.obtain\",\"msg\":\"will retry\",\"error\":\"[47.108.144.177] Obtain: subject does not qualify for a public certificate: 47.108.144.177\",\"attempt\":12,\"retrying_in\":21600,\"elapsed\":21600.05246929,\"max_duration\":2592000} 原因及解决方案：Caddy采用Let’s Encrypt获取公共 TLS 证书，而采用IP 地址不满足 Let’s Encrypt 的颁发条件，国内必须采用备案域名。\n2、问题2是网页端登录，后台报错\n查看 docker 的日志： [2024-03-27 02:28:48.758][request][INFO] POST /identity/accounts/prelogin [2024-03-27 02:28:48.758][response][INFO] 404 Not Found 原因及解决方案：参考link，Vaultwarden版本号原因，改为vaultwarden/server:latest改为vaultwarden/server:1.30.5\n",
+  "wordCount" : "239",
   "inLanguage": "zh",
   "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2025-02-11T22:01:59Z",
   "dateModified": "2025-02-11T22:01:59Z",
@@ -160,7 +219,7 @@
     </svg>
 </nav>
     <h1 class="post-title entry-hint-parent">
-      密码管理器vaultwarden
+      个人密码管理器vaultwarden
     </h1>
     <div class="post-meta">
 
@@ -168,33 +227,40 @@
 
 </div>
   </header> 
-  <div class="post-content md-content"><p>摘要：自建vaultwarden，实现个人密码管理。</p>
-<p>Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与<a href="https://bitwarden.com/download/">官方 Bitwarden 客户端</a>兼容 [<a href="https://github.com/dani-garcia/vaultwarden#disclaimer">免责声明</a>]，非常适合运行官方资源密集型服务可能不理想的自托管部署。</p>
-<p>部署请参考：<a href="https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose">aultwarden Wiki</a>和<a href="https://rs.ppgg.in/container-image-usage/using-docker-compose">中文版</a>，建议Docker Compose + Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。</p>
-<p>1、安装docker compose，需要提前安装docker。</p>
+  <div class="post-content md-content"><p>本文是自建vaultwarden，实现个人密码管理。</p>
+<h2 id="描述">描述<a hidden class="anchor" aria-hidden="true" href="#描述">#</a></h2>
+<p>Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与<a href="https://bitwarden.com/download/">官方 Bitwarden 客户端</a>兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。</p>
+<h2 id="部署">部署<a hidden class="anchor" aria-hidden="true" href="#部署">#</a></h2>
+<p>部署请参考：<a href="https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose">Vaultwarden Wiki</a>和<a href="https://rs.ppgg.in/container-image-usage/using-docker-compose">中文版</a>，建议<code>Docker Compose</code> + Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。</p>
+<p>1、安装Vaultwarden之前，先安装依赖环境 <code>Docker</code> 和<code>Docker Compose</code>。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo curl -L <span class="s2">&#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-</span><span class="k">$(</span>uname -s<span class="k">)</span><span class="s2">-</span><span class="k">$(</span>uname -m<span class="k">)</span><span class="s2">&#34;</span> -o /usr/local/bin/docker-compose
-</span></span></code></pre></div><p>2、配置docker compose</p>
+</span></span></code></pre></div><p>2、配置<code>Docker Compose</code>。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir ~/vaultwarden
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> ~/vaultwarden
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">vim compose.yml
-</span></span></code></pre></div><p>需要设置的几个点：（1）vaultwarden下image镜像为1.30.5，最新版本网页端无法登录；（2）vaultwarden下environment的DOMAIN 域名；（3）caddy下environment的DOMAIN域名（和vaultwarden一致），caddy下environment的EMAIL邮件。</p>
+</span></span></code></pre></div><p>需要设置的几个点：</p>
+<ol>
+<li><code>Vaultwarden</code>下image镜像为1.30.5，最新版本网页端无法登录；</li>
+<li><code>Vaultwarden</code>下 environment 的 <code>DOMAIN</code> 域名；</li>
+<li>caddy下 environment 的<code>DOMAIN</code> 域名（和vaultwarden一致）和<code>EMAIL</code>邮件。</li>
+</ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">services:
 </span></span><span class="line"><span class="cl">  vaultwarden:
 </span></span><span class="line"><span class="cl">    image: vaultwarden/server:1.30.5
 </span></span><span class="line"><span class="cl">    container_name: vaultwarden
 </span></span><span class="line"><span class="cl">    restart: always
 </span></span><span class="line"><span class="cl">    environment:
-</span></span><span class="line"><span class="cl">      DOMAIN: <span class="s2">&#34;TODO&#34;</span> <span class="c1"># 使用反向代理时必填；您的域名；Vaultwarden 需要知道它是 https 才能正确处理附件</span>
-</span></span><span class="line"><span class="cl">      SIGNUPS_ALLOWED: <span class="s2">&#34;true&#34;</span> <span class="c1"># 创建账户后，使用 &#34;false&#34; 停用此选项，这样就不会有陌生人注册了</span>
+</span></span><span class="line"><span class="cl">      DOMAIN: <span class="s2">&#34;TODO1&#34;</span>          <span class="c1"># 使用反向代理时必填您的域名</span>
+</span></span><span class="line"><span class="cl">      SIGNUPS_ALLOWED: <span class="s2">&#34;true&#34;</span> <span class="c1"># 是否支持注册</span>
 </span></span><span class="line"><span class="cl">    volumes:
-</span></span><span class="line"><span class="cl">      - ./vw-data:/data <span class="c1"># : 前面的路径可以修改</span>
+</span></span><span class="line"><span class="cl">      - ~/vaultwarden:/data   <span class="c1"># 数据位置</span>
 </span></span><span class="line"><span class="cl">  caddy:
 </span></span><span class="line"><span class="cl">    image: caddy:2
 </span></span><span class="line"><span class="cl">    container_name: caddy
 </span></span><span class="line"><span class="cl">    restart: always
 </span></span><span class="line"><span class="cl">    ports:
-</span></span><span class="line"><span class="cl">      - 80:80  <span class="c1">#  ACME HTTP-01 验证需要</span>
+</span></span><span class="line"><span class="cl">      - 80:80       <span class="c1">#  ACME HTTP-01 验证需要</span>
 </span></span><span class="line"><span class="cl">      - 443:443
 </span></span><span class="line"><span class="cl">      - 443:443/udp <span class="c1"># HTTP/3 需要</span>
 </span></span><span class="line"><span class="cl">    volumes:
@@ -204,10 +270,10 @@
 </span></span><span class="line"><span class="cl">      - ./certificate.crt:/etc/caddy/certificate.crt
 </span></span><span class="line"><span class="cl">      - ./private.key:/etc/caddy/private.key
 </span></span><span class="line"><span class="cl">    environment:
-</span></span><span class="line"><span class="cl">      DOMAIN: <span class="s2">&#34;TODO&#34;</span>                <span class="c1"># 您的域名，以 http 或 https 作为前缀</span>
-</span></span><span class="line"><span class="cl">      EMAIL: <span class="s2">&#34;TODO&#34;</span>                 <span class="c1"># 用于 ACME 注册的电子邮件地址</span>
+</span></span><span class="line"><span class="cl">      DOMAIN: <span class="s2">&#34;TODO2&#34;</span>  <span class="c1"># 您的域名，以 http 或 https 作为前缀</span>
+</span></span><span class="line"><span class="cl">      EMAIL: <span class="s2">&#34;TODO3&#34;</span>   <span class="c1"># 用于 ACME 注册的电子邮件地址</span>
 </span></span><span class="line"><span class="cl">      LOG_FILE: <span class="s2">&#34;./data/access.loig&#34;</span>
-</span></span></code></pre></div><p>4、创建Caddyfile配置文件，内容不用修改。</p>
+</span></span></code></pre></div><p>3、创建Caddyfile配置文件，内容不用修改。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">vim Caddyfile
 </span></span></code></pre></div><pre tabindex="0"><code>{$DOMAIN} {
   log {
@@ -222,7 +288,6 @@
   tls {$EMAIL}
 
   # 此设置可能会在某些浏览器上出现兼容性问题（例如，在 Firefox 上下载附件）
-  # 如果遇到问题，请尝试禁用此功能
   encode zstd gzip
 
   # 将所有代理到 Rocket
@@ -232,29 +297,32 @@
        header_up X-Real-IP {remote_host}
   }
 }
-</code></pre><p>5、更新和运行</p>
+</code></pre><p>4、更新和运行</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#更新</span>
 </span></span><span class="line"><span class="cl">docker compose pull 
 </span></span><span class="line"><span class="cl"><span class="c1">#运行</span>
 </span></span><span class="line"><span class="cl">docker compose up -d <span class="o">&amp;&amp;</span> docker compose logs -f
 </span></span><span class="line"><span class="cl"><span class="c1">#停止</span>
 </span></span><span class="line"><span class="cl">docker compose down
-</span></span></code></pre></div><p>7、打开网页<code>IP:80</code>，即可登录使用。<strong>注意，云服务器安全组需要设置端口号80。</strong></p>
-<p>8、问题1，网页This site can’t be reached</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker logs caddy-CONTAINER-ID
+</span></span></code></pre></div><p>5、打开网页<code>IP:80</code>，即可登录使用。<strong>注意，云服务器安全组需要设置端口号80。</strong></p>
+<h2 id="问题">问题<a hidden class="anchor" aria-hidden="true" href="#问题">#</a></h2>
+<p>1、问题1是网页<code>This site can’t be reached</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">查看 docker 的日志：
 </span></span><span class="line"><span class="cl"><span class="c1">#{&#34;level&#34;:&#34;error&#34;,&#34;ts&#34;:1739312132.2342033,&#34;logger&#34;:&#34;tls.obtain&#34;,&#34;msg&#34;:&#34;will retry&#34;,&#34;error&#34;:&#34;[47.108.144.177] Obtain: subject does not qualify for a public certificate: 47.108.144.177&#34;,&#34;attempt&#34;:12,&#34;retrying_in&#34;:21600,&#34;elapsed&#34;:21600.05246929,&#34;max_duration&#34;:2592000}</span>
-</span></span></code></pre></div><p>原因是Caddy采用Let&rsquo;s Encrypt获取公共 TLS 证书，而采用IP 地址不满足 Let&rsquo;s Encrypt 的颁发条件，国内必须采用备案域名。</p>
-<p>9、问题2，网页端登录，后台报错</p>
-<pre tabindex="0"><code>在 docker 的日志中体现为 404:  
+</span></span></code></pre></div><p>原因及解决方案：Caddy采用Let&rsquo;s Encrypt获取公共 TLS 证书，而采用IP 地址不满足 Let&rsquo;s Encrypt 的颁发条件，国内必须采用备案域名。</p>
+<p>2、问题2是网页端登录，后台报错</p>
+<pre tabindex="0"><code>查看 docker 的日志：  
 [2024-03-27 02:28:48.758][request][INFO] POST /identity/accounts/prelogin  
 [2024-03-27 02:28:48.758][response][INFO] 404 Not Found
-</code></pre><p>原因：参考<a href="https://fast.v2ex.com/t/1027362">link</a>，Vaultwarden版本号原因，改为<code>vaultwarden/server:latest</code>改为<code>vaultwarden/server:1.30.5</code></p>
+</code></pre><p>原因及解决方案：参考<a href="https://fast.v2ex.com/t/1027362">link</a>，Vaultwarden版本号原因，改为<code>vaultwarden/server:latest</code>改为<code>vaultwarden/server:1.30.5</code></p>
+
 
   </div>
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://yangly0.github.io/tags/try/">Try</a></li>
+      <li><a href="https://yangly0.github.io/tags/%E6%8A%80%E6%9C%AF/">技术</a></li>
+      <li><a href="https://yangly0.github.io/tags/%E5%B7%A5%E5%85%B7/">工具</a></li>
     </ul>
 <nav class="paginav">
   <a class="prev" href="https://yangly0.github.io/posts/20260104150831/">
