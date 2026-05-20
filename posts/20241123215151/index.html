@@ -62,10 +62,11 @@
     <meta property="article:modified_time" content="2024-11-23T21:51:51+00:00">
     <meta property="article:tag" content="Try">
       <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
-<meta name="twitter:title" content="如何搭建一个博客系统？">
-<meta name="twitter:description" content="摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="如何搭建一个博客系统？">
+  <meta name="twitter:description" content="摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。">
 
 
 <script type="application/ld+json">
@@ -124,13 +125,11 @@
 </head>
 <body id="top">
     <header class="header">
-    <nav class="nav">
+    <nav class="header-nav">
         <div class="logo">
             <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
-            <div class="logo-switches">
-            </div>
         </div>
-        <ul id="menu">
+        <ul id="menu" class="menu">
             <li>
                 <a href="https://yangly0.github.io/archives/" title="归档">
                     <span>归档</span>
@@ -148,15 +147,28 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://yangly0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://yangly0.github.io/posts/">Posts</a></div>
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
     <h1 class="post-title entry-hint-parent">
       如何搭建一个博客系统？
     </h1>
-    <div class="post-meta"><span title='2024-11-23 21:51:51 +0000 UTC'>2024年11月23日</span>&nbsp;·&nbsp;<span>Yangly</span>
+    <div class="post-meta">
+
+<span title='2024-11-23 21:51:51 +0000 UTC'>2024年11月23日</span>&nbsp;·&nbsp;<span>Yangly</span>
 
 </div>
   </header> 
-  <div class="post-content"><p>摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。</p>
+  <div class="post-content md-content"><p>摘要：快速搭建一个hugo 博客网站，设置PaperMod 主题，并构建一个自动发布的博客系统。</p>
 <h2 id="0x01-快速开始">0x01 快速开始<a hidden class="anchor" aria-hidden="true" href="#0x01-快速开始">#</a></h2>
 <p>1、软件安装：软件包链接<a href="https://github.com/gohugoio/hugo/releases">Releases · gohugoio/hugo</a>，建议安装带extended的扩展版本。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 下载</span>
@@ -299,12 +311,10 @@
 <nav class="paginav">
   <a class="prev" href="https://yangly0.github.io/posts/20250211220159/">
     <span class="title">« 上一页</span>
-    <br>
     <span>密码管理器vaultwarden</span>
   </a>
   <a class="next" href="https://yangly0.github.io/posts/20241026095732/">
     <span class="title">下一页 »</span>
-    <br>
     <span>数据结构与算法 个人篇</span>
   </a>
 </nav>
@@ -329,9 +339,11 @@
 <footer class="footer">
         <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
 
+    
+    
     <span>
         Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
         <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
     </span>
 </footer>
