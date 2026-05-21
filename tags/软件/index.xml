@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>软件 on 所见所思</title>
+    <link>https://yangly0.github.io/tags/%E8%BD%AF%E4%BB%B6/</link>
+    <description>Recent content in 软件 on 所见所思</description>
+    <image>
+      <title>所见所思</title>
+      <url>https://yangly0.github.io/images/avatar.webp</url>
+      <link>https://yangly0.github.io/images/avatar.webp</link>
+    </image>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
+    <lastBuildDate>Sat, 13 Jul 2024 15:39:31 +0000</lastBuildDate>
+    <atom:link href="https://yangly0.github.io/tags/%E8%BD%AF%E4%BB%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>个人常用工具和软件的汇总</title>
+      <link>https://yangly0.github.io/posts/20240713153931/</link>
+      <pubDate>Sat, 13 Jul 2024 15:39:31 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20240713153931/</guid>
+      <description>&lt;h2 id=&#34;工具箱&#34;&gt;工具箱&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;2024-07-13：创建工具箱&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;硬件&#34;&gt;硬件&lt;/h2&gt;
+&lt;h3 id=&#34;电脑&#34;&gt;电脑&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;del&gt;&lt;strong&gt;SANC N50 Pro3 显示器，24寸&lt;/strong&gt;，2024-02-19，二手&lt;/del&gt;，2025-01-10已售&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logitech K380 键盘，深灰色&lt;/strong&gt;，2022-07-06&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ThinkPad T14 Gen1，i7-10510U，16G 独显，512G SSD&lt;/strong&gt;，2022-06-18&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logitech Pebble 鼠标，白色&lt;/strong&gt;，2019-11-1&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;&lt;strong&gt;Logitech K380 键盘，白色&lt;/strong&gt;，2019-11-1&lt;/del&gt;，已坏&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;SAMSUNG DDR4 内存条，2666HZ，16G，2020-09-10&lt;/del&gt;，已弃用&lt;/li&gt;
+&lt;li&gt;~~&lt;strong&gt;HP暗夜精灵5，i7-9750，8G，6G独显，512GSSD，RTX2060，144HZ&lt;/strong&gt;，2019-11-01，~~已弃用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;手机及平板&#34;&gt;手机及平板&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;HuaWei MatePad Pro11 2024款，12GB，512GB，雅川青&lt;/strong&gt;，2024-01-29&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;XiaoMi11 5G，Snapdragon 888，12GB，256GB&lt;/strong&gt;，2021-01-12&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;&lt;strong&gt;XiaoMi5 尊享版，3D陶瓷 白色，Snapdragon 820，4GB，128G&lt;/strong&gt;，2016-09-13&lt;/del&gt;，已坏&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;音箱及耳机&#34;&gt;音箱及耳机&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;EDIFIER R101V 音响&lt;/strong&gt;，2024-02-19，二手&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Baseus M2s，白色&lt;/strong&gt;，2024-02-12&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;软件&#34;&gt;软件&lt;/h2&gt;
+&lt;h3 id=&#34;电脑-sorfware&#34;&gt;电脑 Sorfware&lt;/h3&gt;
+&lt;p&gt;付费：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Quicker, &lt;strong&gt;¥57.6&lt;/strong&gt;/年，2024&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;阿里云 ECS云服务器，&lt;strong&gt;¥99&lt;/strong&gt;/年，memos/友链朋友圈/twikoo评论插件，2024&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;阿里云 OSS资源包，&lt;strong&gt;¥9&lt;/strong&gt;/年，图床，2024&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;cloudflear R2, 免费，绑定国内信用卡&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;阿里云 主域名，&lt;strong&gt;¥188&lt;/strong&gt;/10年，2024&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;阿里云 xyz域名，，图床及测试域名，2024&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;QQ音乐 + 音乐包，&lt;strong&gt;¥88&lt;/strong&gt;/年，2024&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://pan.baidu.com/&#34;&gt;百度网盘&lt;/a&gt; + 同步盘，&lt;strong&gt;¥188&lt;/strong&gt;/年，同步备份软件，2024&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://user.9ss.dev/login&#34;&gt;SoftCloud&lt;/a&gt; + Clash，&lt;strong&gt;¥140&lt;/strong&gt;/年，VPN软件，2024&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
