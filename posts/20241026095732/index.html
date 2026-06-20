@@ -1488,30 +1488,30 @@ $$</p>
 <p><strong>反悔贪心：</strong> 堆存储可返回的对象，当条件限制，在弹出最后的。</p>
 <h3 id="位运算">位运算<a hidden class="anchor" aria-hidden="true" href="#位运算">#</a></h3>
 <table>
-  <thead>
-      <tr>
-          <th>序号</th>
-          <th>题目</th>
-          <th>题解</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-      </tr>
-      <tr>
-          <td>0001</td>
-          <td>给定一个数组，包含从 1 到 N 所有的整数，但其中缺了两个数字。你能在 O(N) 时间内只用 O(1) 的空间找到它们吗？</td>
-          <td>1.位运算，数组异或，所有数异或，二者异或，找到一位异或值不为0的标志位，标志位mask与数组异或，再与所有数异或，得到第一个数，再与二者异或值异或，得到第二个数；<br />2.diff = (sumTwo)/2;一个数大于二者和的一半，一个数小于二者的一半；小于diff求和，再计算总数一半和，相减即可，得到其中一个值；<br />3. a+b,和a^2 + b^2，通过求和公式和求平方((1 + n) * n / 2)和公式（n * (n + 1) * (2 * n + 1) / 6），解方程即可；</td>
-      </tr>
-      <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th>序号</th>
+					<th>题目</th>
+					<th>题解</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>0001</td>
+					<td>给定一个数组，包含从 1 到 N 所有的整数，但其中缺了两个数字。你能在 O(N) 时间内只用 O(1) 的空间找到它们吗？</td>
+					<td>1.位运算，数组异或，所有数异或，二者异或，找到一位异或值不为0的标志位，标志位mask与数组异或，再与所有数异或，得到第一个数，再与二者异或值异或，得到第二个数；<br />2.diff = (sumTwo)/2;一个数大于二者和的一半，一个数小于二者的一半；小于diff求和，再计算总数一半和，相减即可，得到其中一个值；<br />3. a+b,和a^2 + b^2，通过求和公式和求平方((1 + n) * n / 2)和公式（n * (n + 1) * (2 * n + 1) / 6），解方程即可；</td>
+			</tr>
+			<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+	</tbody>
 </table>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">__builtin_popcount</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
 </span></span></code></pre></div><h3 id="广度优先搜索">广度优先搜索<a hidden class="anchor" aria-hidden="true" href="#广度优先搜索">#</a></h3>
