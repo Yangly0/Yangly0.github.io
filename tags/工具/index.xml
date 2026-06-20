@@ -16,9 +16,9 @@
     <atom:link href="https://yangly0.github.io/tags/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>装机</title>
-      <link>https://yangly0.github.io/posts/%E8%A3%85%E6%9C%BA/</link>
+      <link>https://yangly0.github.io/posts/20260215212730/</link>
       <pubDate>Sun, 15 Feb 2026 21:27:30 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/%E8%A3%85%E6%9C%BA/</guid>
+      <guid>https://yangly0.github.io/posts/20260215212730/</guid>
       <description>&lt;h2 id=&#34;硬件装机&#34;&gt;硬件装机&lt;/h2&gt;
 &lt;p&gt;方案一：DIY
 &lt;a href=&#34;https://www.imsun.org/archives/1764.html&#34;&gt;https://www.imsun.org/archives/1764.html&lt;/a&gt;&lt;/p&gt;
@@ -32,7 +32,13 @@
 &lt;li&gt;vscode&lt;/li&gt;
 &lt;li&gt;lazygit&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;linuxwsl&#34;&gt;Linux/WSL&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;winget install -e --id OpenJS.NodeJS
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# restart&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;node --version 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;npm --version  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 更新npm版本&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# npm install -g npm@latest &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;linuxwsl&#34;&gt;Linux/WSL&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;zsh&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/starship/starship&#34;&gt;starship&lt;/a&gt;&lt;/li&gt;
@@ -117,7 +123,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo chmod &lt;span class=&#34;m&#34;&gt;644&lt;/span&gt; /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt update
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt install -y eza
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;vscode: Github theme+ClaudeCode + GitLens&lt;/p&gt;</description>
     </item>
     <item>
       <title>个人密码管理器vaultwarden</title>

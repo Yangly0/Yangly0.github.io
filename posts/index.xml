@@ -16,9 +16,9 @@
     <atom:link href="https://yangly0.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>装机</title>
-      <link>https://yangly0.github.io/posts/%E8%A3%85%E6%9C%BA/</link>
+      <link>https://yangly0.github.io/posts/20260215212730/</link>
       <pubDate>Sun, 15 Feb 2026 21:27:30 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/%E8%A3%85%E6%9C%BA/</guid>
+      <guid>https://yangly0.github.io/posts/20260215212730/</guid>
       <description>&lt;h2 id=&#34;硬件装机&#34;&gt;硬件装机&lt;/h2&gt;
 &lt;p&gt;方案一：DIY
 &lt;a href=&#34;https://www.imsun.org/archives/1764.html&#34;&gt;https://www.imsun.org/archives/1764.html&lt;/a&gt;&lt;/p&gt;
@@ -32,7 +32,13 @@
 &lt;li&gt;vscode&lt;/li&gt;
 &lt;li&gt;lazygit&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;linuxwsl&#34;&gt;Linux/WSL&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;winget install -e --id OpenJS.NodeJS
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# restart&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;node --version 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;npm --version  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 更新npm版本&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# npm install -g npm@latest &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;linuxwsl&#34;&gt;Linux/WSL&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;zsh&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/starship/starship&#34;&gt;starship&lt;/a&gt;&lt;/li&gt;
@@ -117,14 +123,21 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo chmod &lt;span class=&#34;m&#34;&gt;644&lt;/span&gt; /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt update
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt install -y eza
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;vscode: Github theme+ClaudeCode + GitLens&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D</title>
+      <title>LSS: Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D</title>
       <link>https://yangly0.github.io/posts/20260104150831/</link>
       <pubDate>Sun, 04 Jan 2026 15:08:31 +0000</pubDate>
       <guid>https://yangly0.github.io/posts/20260104150831/</guid>
-      <description>&lt;p&gt;摘要： 该论文提出了一种新的&lt;strong&gt;端到端架构&lt;/strong&gt;，旨在从任意数量的摄像头图像中直接提取场景的&lt;strong&gt;鸟瞰图（Bird&amp;rsquo;s-Eye-View, BEV）表示&lt;/strong&gt;。其核心思想是先将每张图像独立地“提升”（Lift）到特征视锥体中，然后将所有视锥体“喷涂”（Splat）到光栅化的鸟瞰图网格中。该模型在物体分割和地图分割等任务上表现优异，并能通过在输出的成本图中“发射”（Shoot）轨迹模板来实现可解释的端到端&lt;strong&gt;运动规划&lt;/strong&gt;。&lt;/p&gt;</description>
+      <description>&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://pic1.zhimg.com/v2-7a2c6563d74f9a3a4a78bd3e2f2ea900_r.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;LSS，它的核心思想是将图像上的每个点看作是一条射线 。这条射线在3D空间中具体位置可以根据相机内外参获得，在这条射线上会去采样很多点，对于每个点去估计一个深度的置信度（即这个深度位置有物体的概率）。射线整体上的深度置信度，通过softmax归一化为1。我们将图像上这个点的特征乘上射线上每个点的置信度，就可以获得射线上每个点的特征。&lt;/p&gt;
+&lt;p&gt;LSS 显示预测离散的深度信息，以深度信息和2D特征计算BEV特征，最后对BEV特征预测轨迹。&lt;/p&gt;
+&lt;p&gt;1、EfficientNet魔改：（1）先是Stem层的Rule被Swish替换，第一个好处是梯度流动更平滑，第二个好处是
+输入归一化的RGB图像，再经过3x3卷积层，本身输入像数值范围在0到1或者-1到1之间，输出特征会包含大量的负值，swish会保留负值微小贡献，从而使信息保留更完整；第三是NAS搜索发现的最优选择，论文在MobileNetV2上提升0.5点；第四是计算上从Rule的1次比较Ops到Swish的3次Ops（1次exp+1次除法+1次乘法），Stem只执行一次，开销可忽略。（2）再是drop_connect_rate，以i/L概率调整跨层连接输出，这里有两个点，第一个点是以递增概率实现，因为浅层是边缘、纹理、颜色等基础特征，对所有任务都重要，丢弃会破坏底层表示，高层是语义、物体概率等高级特征，更抽象，冗余度高，强制学习鲁棒性；第二个点是网络不能过度依赖某一层，必须学习冗余路径；整体表现上训练稍慢 (~5% 更多 epochs 收敛)，但测试集精度提升 1-2%，深度估计更鲁棒 (对天气、光照变化)；（3） 轻量化的 FPN，对5x特征上采样，最后同4x concat在一起，再接两个3x3 CBL。
+2、Lift过程：以1x1卷积预测D个深度bin + C个特征通道，再从通道维度上分离二者，对深度bin进行softmax归一化得到深度概率分布，用深度概率乘以特征，最后输出深度概率和带深度信息的特征
+3、&lt;/p&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/1952029042606843216&#34;&gt;LSS(2020年ECCV) 类的思路进行图像深度估计&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>个人密码管理器vaultwarden</title>
