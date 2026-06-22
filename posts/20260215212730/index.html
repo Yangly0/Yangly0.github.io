@@ -29,7 +29,7 @@ npm --version
 Linux/WSL
 
 zsh
-starship
+starship &#43; pure主题
 zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf
 zoxide &#43; eza
 
@@ -41,6 +41,7 @@ zsh --version
 echo &#39;# zsh
 exec zsh
 &#39; &gt;&gt; ~/.bashshrc
+source ~/.bashrc
 
 # 2、Zsh主题 starship
 curl -sS https://starship.rs/install.sh | sh 
@@ -59,7 +60,6 @@ fpath&#43;=($HOME/.zsh/pure)
 autoload -U promptinit; promptinit
 prompt pure
 &#39; &gt;&gt; ~/.zshrc
-
 
 # 3、Zsh 插件
 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins}
@@ -111,7 +111,7 @@ echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de st
 sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
 sudo apt update
 sudo apt install -y eza
-vscode: Github theme&#43;ClaudeCode &#43; GitLens">
+Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 <meta name="author" content="Yangly">
 <link rel="canonical" href="https://yangly0.github.io/posts/20260215212730/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
@@ -160,7 +160,7 @@ vscode: Github theme&#43;ClaudeCode &#43; GitLens">
   <meta property="og:title" content="装机">
   <meta property="og:description" content="硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html
 方案二： 零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 https://post.smzdm.com/p/a7gmzq45/ [自己DIY台式机的人都放下了ATX台式的执念]
-软件装机 Windows terminal &#43; starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf zoxide &#43; eza # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39;# zsh exec zsh &#39; &gt;&gt; ~/.bashshrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39;# pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39;# zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza vscode: Github theme&#43;ClaudeCode &#43; GitLens">
+软件装机 Windows terminal &#43; starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship &#43; pure主题 zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf zoxide &#43; eza # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39;# zsh exec zsh &#39; &gt;&gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39;# pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39;# zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme&#43;ClaudeCode &#43; GitLens">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -174,7 +174,7 @@ vscode: Github theme&#43;ClaudeCode &#43; GitLens">
   <meta name="twitter:title" content="装机">
   <meta name="twitter:description" content="硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html
 方案二： 零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 https://post.smzdm.com/p/a7gmzq45/ [自己DIY台式机的人都放下了ATX台式的执念]
-软件装机 Windows terminal &#43; starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf zoxide &#43; eza # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39;# zsh exec zsh &#39; &gt;&gt; ~/.bashshrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39;# pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39;# zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza vscode: Github theme&#43;ClaudeCode &#43; GitLens">
+软件装机 Windows terminal &#43; starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship &#43; pure主题 zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf zoxide &#43; eza # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39;# zsh exec zsh &#39; &gt;&gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39;# pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39;# zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme&#43;ClaudeCode &#43; GitLens">
 
 
 <script type="application/ld+json">
@@ -203,12 +203,12 @@ vscode: Github theme&#43;ClaudeCode &#43; GitLens">
   "@type": "BlogPosting",
   "headline": "装机",
   "name": "装机",
-  "description": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二： 零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 https://post.smzdm.com/p/a7gmzq45/ [自己DIY台式机的人都放下了ATX台式的执念]\n软件装机 Windows terminal + starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search+ fzf zoxide + eza # 1、安装 Zsh sudo apt update \u0026amp;\u0026amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo \u0026#39;# zsh exec zsh \u0026#39; \u0026gt;\u0026gt; ~/.bashshrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo \u0026#39;eval \u0026#34;$(starship init zsh)\u0026#34;\u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026amp;\u0026amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \u0026#34;$HOME/.zsh\u0026#34; git clone https://github.com/sindresorhus/pure.git \u0026#34;$HOME/.zsh/pure\u0026#34; echo \u0026#39;# pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo \u0026#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo \u0026#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo \u0026#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \u0026#34;$terminfo[kcuu1]\u0026#34; history-substring-search-up bindkey \u0026#34;$terminfo[kcud1]\u0026#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\u0026#34;fg=green,bold\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \u0026#34;source \u0026lt;(fzf --zsh)\u0026#34; \u0026gt;\u0026gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e \u0026#39;# zoxide export PATH=\u0026#34;$HOME/.local/bin:$PATH\u0026#34; eval \u0026#34;$(zoxide init zsh)\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \u0026#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\u0026#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza vscode: Github theme+ClaudeCode + GitLens\n",
+  "description": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二： 零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 https://post.smzdm.com/p/a7gmzq45/ [自己DIY台式机的人都放下了ATX台式的执念]\n软件装机 Windows terminal + starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship + pure主题 zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search+ fzf zoxide + eza # 1、安装 Zsh sudo apt update \u0026amp;\u0026amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo \u0026#39;# zsh exec zsh \u0026#39; \u0026gt;\u0026gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo \u0026#39;eval \u0026#34;$(starship init zsh)\u0026#34;\u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026amp;\u0026amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \u0026#34;$HOME/.zsh\u0026#34; git clone https://github.com/sindresorhus/pure.git \u0026#34;$HOME/.zsh/pure\u0026#34; echo \u0026#39;# pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo \u0026#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo \u0026#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo \u0026#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \u0026#34;$terminfo[kcuu1]\u0026#34; history-substring-search-up bindkey \u0026#34;$terminfo[kcud1]\u0026#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\u0026#34;fg=green,bold\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \u0026#34;source \u0026lt;(fzf --zsh)\u0026#34; \u0026gt;\u0026gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e \u0026#39;# zoxide export PATH=\u0026#34;$HOME/.local/bin:$PATH\u0026#34; eval \u0026#34;$(zoxide init zsh)\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \u0026#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\u0026#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme+ClaudeCode + GitLens\n",
   "keywords": [
     "工具"
   ],
-  "articleBody": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二： 零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 https://post.smzdm.com/p/a7gmzq45/ [自己DIY台式机的人都放下了ATX台式的执念]\n软件装机 Windows terminal + starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search+ fzf zoxide + eza # 1、安装 Zsh sudo apt update \u0026\u0026 sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo '# zsh exec zsh ' \u003e\u003e ~/.bashshrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo 'eval \"$(starship init zsh)\"' \u003e\u003e ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026\u0026 touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \"$HOME/.zsh\" git clone https://github.com/sindresorhus/pure.git \"$HOME/.zsh/pure\" echo '# pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure ' \u003e\u003e ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo '# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ' \u003e\u003e ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo '# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh ' \u003e\u003e ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo '# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \"$terminfo[kcuu1]\" history-substring-search-up bindkey \"$terminfo[kcud1]\" history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\"fg=green,bold\" ' \u003e\u003e ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \"source \u003c(fzf --zsh)\" \u003e\u003e ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e '# zoxide export PATH=\"$HOME/.local/bin:$PATH\" eval \"$(zoxide init zsh)\" ' \u003e\u003e ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \"deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\" | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza vscode: Github theme+ClaudeCode + GitLens\n\"editor.insertSpaces\": true, \"editor.guides.bracketPairs\": true, \"editor.formatOnPaste\": true, \"editor.formatOnSave\": true, \"editor.formatOnType\": true, \"editor.fontSize\": 20, \"editor.fontFamily\": \"'Sarasa Mono SC'\", \"editor.fontWeight\": \"400\", \"editor.lineNumbers\": \"on\", \"editor.lineHeight\": 24, \"editor.letterSpacing\": 0.5, \"editor.quickSuggestions\": { \"other\": true, \"comments\": true, \"strings\": true }, \"editor.rulers\": [ 120 ], \"editor.suggestSelection\": \"recentlyUsedByPrefix\", \"editor.tabSize\": 4, \"editor.wordWrap\": \"off\", \"editor.minimap.size\": \"fit\", \"editor.minimap.enabled\": false, \"files.eol\": \"\\n\", \"files.autoSave\": \"onWindowChange\", \"files.autoSaveDelay\": 2000, \"files.exclude\": {}, \"explorer.compactFolders\": false, \"explorer.confirmDelete\": false, \"explorer.confirmDragAndDrop\": false, \"terminal.integrated.defaultProfile.linux\": \"zsh\", \"terminal.integrated.cursorBlinking\": true, \"terminal.integrated.confirmOnExit\": \"always\", \"terminal.integrated.copyOnSelection\": false, \"terminal.integrated.commandsToSkipShell\": [ \"workbench.action.terminal.copySelection\", \"workbench.action.terminal.paste\" ], \"terminal.integrated.lineHeight\": 1.2, \"terminal.integrated.letterSpacing\": 0.1, \"terminal.integrated.fontSize\": 15, \"terminal.integrated.fontFamily\": \"Lucida Console\", \"terminal.integrated.cursorStyle\": \"line\", \"terminal.integrated.tabs.location\": \"left\", \"terminal.integrated.tabs.enabled\": false, \"terminal.integrated.suggest.cdPath\": \"relative\", \"security.workspace.trust.untrustedFiles\": \"open\", \"chat.disableAIFeatures\": true, // 禁用所有 AI 功能（含 Copilot） \"extensions.ignoreRecommendations\": true, \"extensions.autoUpdate\": false, \"extensions.disabledExtensions\": [ \"github.copilot\", \"github.copilot-chat\" ], \"workbench.startupEditor\": \"newUntitledFile\", \"workbench.colorTheme\": \"GitHub Dark\", \"workbench.editorAssociations\": { \"*.obj\": \"default\" }, // \"http.proxy\": \"http://127.0.0.1:7890\", // \"https.proxy\": \"https://127.0.0.1:7890\", // \"http.proxyStrictSSL\": false, // 跳过 SSL 验证（自签名证书/内网代理常用） // \"http.proxyBypassList\": [ // 不走代理的地址（支持通配符，逗号分隔） // \"localhost\", // \"127.0.0.1\" // ], \"remote.ssh.enableExtensionSync\": false, // 可选：彻底禁用自动同步所有扩展到远程 \"remote.SSH.remotePlatform\": { \"47.108.144.177\": \"linux\", \"aliyun\": \"linux\" }, \"remote.extensionKind\": { // 强制 Copilot 只在本地运行，不上远程 \"github.copilot\": [ \"ui\" ], \"github.copilot-chat\": [ \"ui\" ] }, \"git.confirmSync\": false, \"git.ignoreMissingGitWarning\": true, \"git.openRepositoryInParentFolders\": \"always\", \"cmake.configureOnOpen\": false, \"cmake.configureOnEdit\": false, \"cmake.buildBeforeRun\": false, \"claudeCode.environmentVariables\": [ { \"name\": \"ANTHROPIC_AUTH_TOKEN\", \"value\": \"xxx\" }, { \"name\": \"ANTHROPIC_BASE_URL\", \"value\": \"https://coding.dashscope.aliyuncs.com/apps/anthropic\" }, { \"name\": \"ANTHROPIC_MODEL\", \"value\": \"qwen3.6-plus\" }, { \"name\": \"ANTHROPIC_DEFAULT_HAIKU_MODEL\", \"value\": \"MiniMax-M2.5\" }, { \"name\": \"ANTHROPIC_DEFAULT_SONNET_MODEL\", \"value\": \"kimi-k2.5\" }, { \"name\": \"ANTHROPIC_DEFAULT_OPUS_MODEL\", \"value\": \"glm-5\" } ], \"claudeCode.selectedModel\": \"qwen3.6-plus\", \"redhat.telemetry.enabled\": false ",
-  "wordCount" : "525",
+  "articleBody": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二： 零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 https://post.smzdm.com/p/a7gmzq45/ [自己DIY台式机的人都放下了ATX台式的执念]\n软件装机 Windows terminal + starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship + pure主题 zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search+ fzf zoxide + eza # 1、安装 Zsh sudo apt update \u0026\u0026 sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo '# zsh exec zsh ' \u003e\u003e ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo 'eval \"$(starship init zsh)\"' \u003e\u003e ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026\u0026 touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \"$HOME/.zsh\" git clone https://github.com/sindresorhus/pure.git \"$HOME/.zsh/pure\" echo '# pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure ' \u003e\u003e ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo '# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ' \u003e\u003e ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo '# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh ' \u003e\u003e ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo '# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \"$terminfo[kcuu1]\" history-substring-search-up bindkey \"$terminfo[kcud1]\" history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\"fg=green,bold\" ' \u003e\u003e ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \"source \u003c(fzf --zsh)\" \u003e\u003e ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e '# zoxide export PATH=\"$HOME/.local/bin:$PATH\" eval \"$(zoxide init zsh)\" ' \u003e\u003e ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \"deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\" | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme+ClaudeCode + GitLens\n",
+  "wordCount" : "306",
   "inLanguage": "zh",
   "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-02-15T21:27:30Z",
   "dateModified": "2026-02-15T21:27:30Z",
@@ -298,7 +298,7 @@ vscode: Github theme&#43;ClaudeCode &#43; GitLens">
 </span></span></code></pre></div><h3 id="linuxwsl">Linux/WSL<a hidden class="anchor" aria-hidden="true" href="#linuxwsl">#</a></h3>
 <ul>
 <li>zsh</li>
-<li><a href="https://github.com/starship/starship">starship</a></li>
+<li><a href="https://github.com/starship/starship">starship</a> + pure主题</li>
 <li><a href="https://github.com/zsh-users/zsh-syntax-highlighting/tree/master">zsh-syntax-highlighting</a>+ <a href="https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md">zsh-autosuggestions</a> + <a href="https://github.com/zsh-users/zsh-history-substring-search">zsh-history-substring-search</a>+ <a href="https://github.com/junegunn/fzf">fzf</a></li>
 <li><a href="https://github.com/ajeetdsouza/zoxide">zoxide</a> + <a href="https://github.com/eza-community/eza">eza</a></li>
 </ul>
@@ -310,6 +310,7 @@ vscode: Github theme&#43;ClaudeCode &#43; GitLens">
 </span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;# zsh
 </span></span></span><span class="line"><span class="cl"><span class="s1">exec zsh
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt;&gt; ~/.bashshrc
+</span></span><span class="line"><span class="cl"><span class="nb">source</span> ~/.bashrc
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 2、Zsh主题 starship</span>
 </span></span><span class="line"><span class="cl">curl -sS https://starship.rs/install.sh <span class="p">|</span> sh 
@@ -328,7 +329,6 @@ vscode: Github theme&#43;ClaudeCode &#43; GitLens">
 </span></span></span><span class="line"><span class="cl"><span class="s1">autoload -U promptinit; promptinit
 </span></span></span><span class="line"><span class="cl"><span class="s1">prompt pure
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt;&gt; ~/.zshrc
-</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 3、Zsh 插件</span>
 </span></span><span class="line"><span class="cl">mkdir -p <span class="si">${</span><span class="nv">ZSH_CUSTOM</span><span class="k">:-</span><span class="p">~/.zsh/plugins</span><span class="si">}</span>
@@ -380,122 +380,8 @@ vscode: Github theme&#43;ClaudeCode &#43; GitLens">
 </span></span><span class="line"><span class="cl">sudo chmod <span class="m">644</span> /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
 </span></span><span class="line"><span class="cl">sudo apt update
 </span></span><span class="line"><span class="cl">sudo apt install -y eza
-</span></span></code></pre></div><p>vscode: Github theme+ClaudeCode + GitLens</p>
-<pre tabindex="0"><code>   &#34;editor.insertSpaces&#34;: true,
-   &#34;editor.guides.bracketPairs&#34;: true,
-   &#34;editor.formatOnPaste&#34;: true,
-   &#34;editor.formatOnSave&#34;: true,
-   &#34;editor.formatOnType&#34;: true,
-   &#34;editor.fontSize&#34;: 20,
-   &#34;editor.fontFamily&#34;: &#34;&#39;Sarasa Mono SC&#39;&#34;,
-   &#34;editor.fontWeight&#34;: &#34;400&#34;,
-   &#34;editor.lineNumbers&#34;: &#34;on&#34;,
-   &#34;editor.lineHeight&#34;: 24,
-   &#34;editor.letterSpacing&#34;: 0.5,
-   &#34;editor.quickSuggestions&#34;: {
-      &#34;other&#34;: true,
-      &#34;comments&#34;: true,
-      &#34;strings&#34;: true
-   },
-   &#34;editor.rulers&#34;: [
-      120
-   ],
-   &#34;editor.suggestSelection&#34;: &#34;recentlyUsedByPrefix&#34;,
-   &#34;editor.tabSize&#34;: 4,
-   &#34;editor.wordWrap&#34;: &#34;off&#34;,
-   &#34;editor.minimap.size&#34;: &#34;fit&#34;,
-   &#34;editor.minimap.enabled&#34;: false,
-   &#34;files.eol&#34;: &#34;\n&#34;,
-   &#34;files.autoSave&#34;: &#34;onWindowChange&#34;,
-   &#34;files.autoSaveDelay&#34;: 2000,
-   &#34;files.exclude&#34;: {},
-   &#34;explorer.compactFolders&#34;: false,
-   &#34;explorer.confirmDelete&#34;: false,
-   &#34;explorer.confirmDragAndDrop&#34;: false,
-   &#34;terminal.integrated.defaultProfile.linux&#34;: &#34;zsh&#34;,
-   &#34;terminal.integrated.cursorBlinking&#34;: true,
-   &#34;terminal.integrated.confirmOnExit&#34;: &#34;always&#34;,
-   &#34;terminal.integrated.copyOnSelection&#34;: false,
-   &#34;terminal.integrated.commandsToSkipShell&#34;: [
-      &#34;workbench.action.terminal.copySelection&#34;,
-      &#34;workbench.action.terminal.paste&#34;
-   ],
-   &#34;terminal.integrated.lineHeight&#34;: 1.2,
-   &#34;terminal.integrated.letterSpacing&#34;: 0.1,
-   &#34;terminal.integrated.fontSize&#34;: 15,
-   &#34;terminal.integrated.fontFamily&#34;: &#34;Lucida Console&#34;,
-   &#34;terminal.integrated.cursorStyle&#34;: &#34;line&#34;,
-   &#34;terminal.integrated.tabs.location&#34;: &#34;left&#34;,
-   &#34;terminal.integrated.tabs.enabled&#34;: false,
-   &#34;terminal.integrated.suggest.cdPath&#34;: &#34;relative&#34;,
-   &#34;security.workspace.trust.untrustedFiles&#34;: &#34;open&#34;,
-   &#34;chat.disableAIFeatures&#34;: true, // 禁用所有 AI 功能（含 Copilot）
-   &#34;extensions.ignoreRecommendations&#34;: true,
-   &#34;extensions.autoUpdate&#34;: false,
-   &#34;extensions.disabledExtensions&#34;: [
-      &#34;github.copilot&#34;,
-      &#34;github.copilot-chat&#34;
-   ],
-   &#34;workbench.startupEditor&#34;: &#34;newUntitledFile&#34;,
-   &#34;workbench.colorTheme&#34;: &#34;GitHub Dark&#34;,
-   &#34;workbench.editorAssociations&#34;: {
-      &#34;*.obj&#34;: &#34;default&#34;
-   },
-   // &#34;http.proxy&#34;: &#34;http://127.0.0.1:7890&#34;,
-   // &#34;https.proxy&#34;: &#34;https://127.0.0.1:7890&#34;,
-   // &#34;http.proxyStrictSSL&#34;: false, // 跳过 SSL 验证（自签名证书/内网代理常用）
-   // &#34;http.proxyBypassList&#34;: [ // 不走代理的地址（支持通配符，逗号分隔）
-   //   &#34;localhost&#34;,
-   //   &#34;127.0.0.1&#34;
-   // ],
-   &#34;remote.ssh.enableExtensionSync&#34;: false, // 可选：彻底禁用自动同步所有扩展到远程
-   &#34;remote.SSH.remotePlatform&#34;: {
-      &#34;47.108.144.177&#34;: &#34;linux&#34;,
-      &#34;aliyun&#34;: &#34;linux&#34;
-   },
-   &#34;remote.extensionKind&#34;: { // 强制 Copilot 只在本地运行，不上远程
-      &#34;github.copilot&#34;: [
-         &#34;ui&#34;
-      ],
-      &#34;github.copilot-chat&#34;: [
-         &#34;ui&#34;
-      ]
-   },
-   &#34;git.confirmSync&#34;: false,
-   &#34;git.ignoreMissingGitWarning&#34;: true,
-   &#34;git.openRepositoryInParentFolders&#34;: &#34;always&#34;,
-   &#34;cmake.configureOnOpen&#34;: false,
-   &#34;cmake.configureOnEdit&#34;: false,
-   &#34;cmake.buildBeforeRun&#34;: false,
-   &#34;claudeCode.environmentVariables&#34;: [
-      {
-         &#34;name&#34;: &#34;ANTHROPIC_AUTH_TOKEN&#34;,
-         &#34;value&#34;: &#34;xxx&#34;
-      },
-      {
-         &#34;name&#34;: &#34;ANTHROPIC_BASE_URL&#34;,
-         &#34;value&#34;: &#34;https://coding.dashscope.aliyuncs.com/apps/anthropic&#34;
-      },
-      {
-         &#34;name&#34;: &#34;ANTHROPIC_MODEL&#34;,
-         &#34;value&#34;: &#34;qwen3.6-plus&#34;
-      },
-      {
-         &#34;name&#34;: &#34;ANTHROPIC_DEFAULT_HAIKU_MODEL&#34;,
-         &#34;value&#34;: &#34;MiniMax-M2.5&#34;
-      },
-      {
-         &#34;name&#34;: &#34;ANTHROPIC_DEFAULT_SONNET_MODEL&#34;,
-         &#34;value&#34;: &#34;kimi-k2.5&#34;
-      },
-      {
-         &#34;name&#34;: &#34;ANTHROPIC_DEFAULT_OPUS_MODEL&#34;,
-         &#34;value&#34;: &#34;glm-5&#34;
-      }
-   ],
-   &#34;claudeCode.selectedModel&#34;: &#34;qwen3.6-plus&#34;,
-   &#34;redhat.telemetry.enabled&#34;: false
-</code></pre>
+</span></span></code></pre></div><p>Vscode: Github  dark theme+ClaudeCode + GitLens</p>
+
 
   </div>
 
