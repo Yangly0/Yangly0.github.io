@@ -5,40 +5,111 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>个人装机 | 所见所思</title>
+<title>装机 | 所见所思</title>
 <meta name="keywords" content="工具">
 <meta name="description" content="硬件装机
-方案一：DIY
-https://www.imsun.org/archives/1764.html
-方案二：
-零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念
+方案一：DIY https://www.imsun.org/archives/1764.html
+方案二：零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念
 软件装机
-Windows
+个人使用软件：
 
-terminal &#43; starship
-obsidian
-vscode
-lazygit
+(win) vscode &#43; git &#43; obsidian &#43; typora &#43; clashverge &#43; Chrome
+(linux) vscode &#43; git &#43; zsh
+(linux) zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search
 
+
+(win/linux)   starship &#43;  fzf &#43;  zoxide/z &#43; eza
+
+Win
+参考：https://zhuanlan.zhihu.com/p/678607774
+安装前，终端上运行winget settings命令，先设置如下安装路径，
+{
+	&#34;installBehavior&#34;: {
+        &#34;scope&#34;: &#34;user&#34;,
+        &#34;installLocation&#34;: &#34;D:\\DevTools&#34;
+    }
+}
+依次运行以下命令，安装对应的软件和配置：
+# 升级终端
+winget install --id Microsoft.Powershell --source winget
+# node&amp;npm
 winget install -e --id OpenJS.NodeJS
 # restart
 node --version 
-npm --version  
-# 更新npm版本
-# npm install -g npm@latest 
-Linux/WSL
+npm --version
+# npm install -g npm@latest # 更新npm版本
 
-zsh
-starship &#43; pure主题
-zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf
-zoxide &#43; eza
+# Git
+winget install Git.Git
+# Vscode
+winget install Microsoft.VisualStudioCode
+# 7-ZIP
+winget install 7zip.7zip
+# Typora
+winget install appmakes.Typora
+# Obsidian
+winget install Obsidian.Obsidian
+# ClashVerge
+winget install ClashVergeRev.ClashVergeRev
+# IDM
+winget install Tonec.InternetDownloadManager
+# Chrome 手动安装
+# winget install chrome ?
 
+# 自定义Prompt Starship
+winget install Starship.Starship
+Add-Content -Path $PROFILE -Value @&#39;
+# starship
+Invoke-Expression (&amp;starship init powershell)
+&#39;@
+New-Item -ItemType Directory &#34;$env:USERPROFILE\.config&#34; -Force | Out-Null
+starship preset pure-preset -o &#34;$env:USERPROFILE\.config\starship.toml&#34;
+
+# 智能移动 zoxide
+winget install ajeetdsouza.zoxide
+Add-Content -Path $PROFILE -Value @&#39;
+# zoxide
+Invoke-Expression (&amp; { (zoxide init powershell | Out-String) })
+function zi { cd (zoxide query -i | Out-String).Trim() }
+&#39;@
+
+# 模糊搜索
+winget install junegunn.fzf
+Install-Module PSFzf # 管理员权限
+Add-Content -Path $PROFILE -Value @&#39;
+# fzf &amp; PSFzf
+Import-Module PSFzf
+Set-PsFzfOption -PSReadlineChordProvider &#39;Ctrl&#43;t&#39; -PSReadlineChordReverseHistory &#39;Ctrl&#43;r&#39;
+Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
+&#39;@
+
+# 语法高亮bat 
+winget install sharkdp.bat
+
+# 高亮eza
+winget install eza-community.eza
+Add-Content -Path $PROFILE -Value @&#39;
+# eza
+function Get-DirectoryContent {
+    eza --classify --color-scale --icons=always --group-directories-first --time-style iso @args
+}
+function Get-GitIgnoredDirectoryContent {
+    Get-DirectoryContent --git-ignore --git --git-repos @args
+}
+Set-Alias -Name lsg -Value Get-GitIgnoredDirectoryContent
+function Get-DetialedGitIgnoredDirectoryContent {
+    Get-GitIgnoredDirectoryContent --long @args
+}
+Set-Alias -Name llg -Value Get-DetialedGitIgnoredDirectoryContent
+&#39;@
+Linux
 # 1、安装 Zsh
 sudo apt update &amp;&amp; sudo apt install zsh -y
 # 验证 Zsh
 zsh --version  
 # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) 
-echo &#39;# zsh
+echo &#39;
+# zsh
 exec zsh
 &#39; &gt;&gt; ~/.bashshrc
 source ~/.bashrc
@@ -55,7 +126,8 @@ source ~/.zshrc
 # --- pure
 mkdir -p &#34;$HOME/.zsh&#34;
 git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34;
-echo &#39;# pure
+echo &#39;
+# pure
 fpath&#43;=($HOME/.zsh/pure)
 autoload -U promptinit; promptinit
 prompt pure
@@ -66,19 +138,22 @@ mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins}
 
 # 命令高亮 zsh-syntax-highlighting
 git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting
-echo &#39;# zsh-syntax-highlighting
+echo &#39;
+# zsh-syntax-highlighting
 source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 &#39; &gt;&gt; ~/.zshrc
 
 # 自动补全 zsh-autosuggestions
 git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions
-echo &#39;# zsh-autosuggestions
+echo &#39;
+# zsh-autosuggestions
 source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh
 &#39; &gt;&gt; ~/.zshrc
 
 # 历史命令 zsh-history-substring-search
 git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search
-echo &#39;# zsh-history-substring-search
+echo &#39;
+# zsh-history-substring-search
 source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up
 bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down
@@ -92,11 +167,18 @@ ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install
 # sudo apt install fzf
 # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc
 
-# zoxide
+# 智能移动 zoxide
 curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-echo -e &#39;# zoxide
+echo -e &#39;
+# zoxide
 export PATH=&#34;$HOME/.local/bin:$PATH&#34;
 eval &#34;$(zoxide init zsh)&#34;
+&#39; &gt;&gt; ~/.zshrc
+
+# (待定)智能移动 z
+git clone --depth 1 https://github.com/rupa/z.git ${ZSH_CUSTOM:-~/.zsh/plugins}/z
+echo &#39;# z
+source ~/.zsh/plugins/z/z.sh
 &#39; &gt;&gt; ~/.zshrc
 
 # 重启
@@ -157,10 +239,14 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 </script> 
 <meta property="og:url" content="https://yangly0.github.io/posts/20260215212730/">
   <meta property="og:site_name" content="所见所思">
-  <meta property="og:title" content="个人装机">
+  <meta property="og:title" content="装机">
   <meta property="og:description" content="硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html
-方案二： 零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念
-软件装机 Windows terminal &#43; starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship &#43; pure主题 zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf zoxide &#43; eza # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39;# zsh exec zsh &#39; &gt;&gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39;# pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39;# zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme&#43;ClaudeCode &#43; GitLens">
+方案二：零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念
+软件装机 个人使用软件：
+(win) vscode &#43; git &#43; obsidian &#43; typora &#43; clashverge &#43; Chrome (linux) vscode &#43; git &#43; zsh (linux) zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search (win/linux) starship &#43; fzf &#43; zoxide/z &#43; eza Win 参考：https://zhuanlan.zhihu.com/p/678607774
+安装前，终端上运行winget settings命令，先设置如下安装路径，
+{ &#34;installBehavior&#34;: { &#34;scope&#34;: &#34;user&#34;, &#34;installLocation&#34;: &#34;D:\\DevTools&#34; } } 依次运行以下命令，安装对应的软件和配置：
+# 升级终端 winget install --id Microsoft.Powershell --source winget # node&amp;npm winget install -e --id OpenJS.NodeJS # restart node --version npm --version # npm install -g npm@latest # 更新npm版本 # Git winget install Git.Git # Vscode winget install Microsoft.VisualStudioCode # 7-ZIP winget install 7zip.7zip # Typora winget install appmakes.Typora # Obsidian winget install Obsidian.Obsidian # ClashVerge winget install ClashVergeRev.ClashVergeRev # IDM winget install Tonec.InternetDownloadManager # Chrome 手动安装 # winget install chrome ? # 自定义Prompt Starship winget install Starship.Starship Add-Content -Path $PROFILE -Value @&#39; # starship Invoke-Expression (&amp;starship init powershell) &#39;@ New-Item -ItemType Directory &#34;$env:USERPROFILE\.config&#34; -Force | Out-Null starship preset pure-preset -o &#34;$env:USERPROFILE\.config\starship.toml&#34; # 智能移动 zoxide winget install ajeetdsouza.zoxide Add-Content -Path $PROFILE -Value @&#39; # zoxide Invoke-Expression (&amp; { (zoxide init powershell | Out-String) }) function zi { cd (zoxide query -i | Out-String).Trim() } &#39;@ # 模糊搜索 winget install junegunn.fzf Install-Module PSFzf # 管理员权限 Add-Content -Path $PROFILE -Value @&#39; # fzf &amp; PSFzf Import-Module PSFzf Set-PsFzfOption -PSReadlineChordProvider &#39;Ctrl&#43;t&#39; -PSReadlineChordReverseHistory &#39;Ctrl&#43;r&#39; Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion } &#39;@ # 语法高亮bat winget install sharkdp.bat # 高亮eza winget install eza-community.eza Add-Content -Path $PROFILE -Value @&#39; # eza function Get-DirectoryContent { eza --classify --color-scale --icons=always --group-directories-first --time-style iso @args } function Get-GitIgnoredDirectoryContent { Get-DirectoryContent --git-ignore --git --git-repos @args } Set-Alias -Name lsg -Value Get-GitIgnoredDirectoryContent function Get-DetialedGitIgnoredDirectoryContent { Get-GitIgnoredDirectoryContent --long @args } Set-Alias -Name llg -Value Get-DetialedGitIgnoredDirectoryContent &#39;@ Linux # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39; # zsh exec zsh &#39; &gt;&gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39; # pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39; # zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39; # zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39; # zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # 智能移动 zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39; # zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # (待定)智能移动 z git clone --depth 1 https://github.com/rupa/z.git ${ZSH_CUSTOM:-~/.zsh/plugins}/z echo &#39;# z source ~/.zsh/plugins/z/z.sh &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme&#43;ClaudeCode &#43; GitLens">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -171,10 +257,14 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
-  <meta name="twitter:title" content="个人装机">
+  <meta name="twitter:title" content="装机">
   <meta name="twitter:description" content="硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html
-方案二： 零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念
-软件装机 Windows terminal &#43; starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship &#43; pure主题 zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search&#43; fzf zoxide &#43; eza # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39;# zsh exec zsh &#39; &gt;&gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39;# pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39;# zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme&#43;ClaudeCode &#43; GitLens">
+方案二：零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念
+软件装机 个人使用软件：
+(win) vscode &#43; git &#43; obsidian &#43; typora &#43; clashverge &#43; Chrome (linux) vscode &#43; git &#43; zsh (linux) zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search (win/linux) starship &#43; fzf &#43; zoxide/z &#43; eza Win 参考：https://zhuanlan.zhihu.com/p/678607774
+安装前，终端上运行winget settings命令，先设置如下安装路径，
+{ &#34;installBehavior&#34;: { &#34;scope&#34;: &#34;user&#34;, &#34;installLocation&#34;: &#34;D:\\DevTools&#34; } } 依次运行以下命令，安装对应的软件和配置：
+# 升级终端 winget install --id Microsoft.Powershell --source winget # node&amp;npm winget install -e --id OpenJS.NodeJS # restart node --version npm --version # npm install -g npm@latest # 更新npm版本 # Git winget install Git.Git # Vscode winget install Microsoft.VisualStudioCode # 7-ZIP winget install 7zip.7zip # Typora winget install appmakes.Typora # Obsidian winget install Obsidian.Obsidian # ClashVerge winget install ClashVergeRev.ClashVergeRev # IDM winget install Tonec.InternetDownloadManager # Chrome 手动安装 # winget install chrome ? # 自定义Prompt Starship winget install Starship.Starship Add-Content -Path $PROFILE -Value @&#39; # starship Invoke-Expression (&amp;starship init powershell) &#39;@ New-Item -ItemType Directory &#34;$env:USERPROFILE\.config&#34; -Force | Out-Null starship preset pure-preset -o &#34;$env:USERPROFILE\.config\starship.toml&#34; # 智能移动 zoxide winget install ajeetdsouza.zoxide Add-Content -Path $PROFILE -Value @&#39; # zoxide Invoke-Expression (&amp; { (zoxide init powershell | Out-String) }) function zi { cd (zoxide query -i | Out-String).Trim() } &#39;@ # 模糊搜索 winget install junegunn.fzf Install-Module PSFzf # 管理员权限 Add-Content -Path $PROFILE -Value @&#39; # fzf &amp; PSFzf Import-Module PSFzf Set-PsFzfOption -PSReadlineChordProvider &#39;Ctrl&#43;t&#39; -PSReadlineChordReverseHistory &#39;Ctrl&#43;r&#39; Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion } &#39;@ # 语法高亮bat winget install sharkdp.bat # 高亮eza winget install eza-community.eza Add-Content -Path $PROFILE -Value @&#39; # eza function Get-DirectoryContent { eza --classify --color-scale --icons=always --group-directories-first --time-style iso @args } function Get-GitIgnoredDirectoryContent { Get-DirectoryContent --git-ignore --git --git-repos @args } Set-Alias -Name lsg -Value Get-GitIgnoredDirectoryContent function Get-DetialedGitIgnoredDirectoryContent { Get-GitIgnoredDirectoryContent --long @args } Set-Alias -Name llg -Value Get-DetialedGitIgnoredDirectoryContent &#39;@ Linux # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39; # zsh exec zsh &#39; &gt;&gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39; # pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39; # zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39; # zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39; # zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # 智能移动 zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39; # zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # (待定)智能移动 z git clone --depth 1 https://github.com/rupa/z.git ${ZSH_CUSTOM:-~/.zsh/plugins}/z echo &#39;# z source ~/.zsh/plugins/z/z.sh &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme&#43;ClaudeCode &#43; GitLens">
 
 
 <script type="application/ld+json">
@@ -191,7 +281,7 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
     {
       "@type": "ListItem",
       "position":  2 ,
-      "name": "个人装机",
+      "name": "装机",
       "item": "https://yangly0.github.io/posts/20260215212730/"
     }
   ]
@@ -201,14 +291,14 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "个人装机",
-  "name": "个人装机",
-  "description": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二： 零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念\n软件装机 Windows terminal + starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship + pure主题 zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search+ fzf zoxide + eza # 1、安装 Zsh sudo apt update \u0026amp;\u0026amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo \u0026#39;# zsh exec zsh \u0026#39; \u0026gt;\u0026gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo \u0026#39;eval \u0026#34;$(starship init zsh)\u0026#34;\u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026amp;\u0026amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \u0026#34;$HOME/.zsh\u0026#34; git clone https://github.com/sindresorhus/pure.git \u0026#34;$HOME/.zsh/pure\u0026#34; echo \u0026#39;# pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo \u0026#39;# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo \u0026#39;# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo \u0026#39;# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \u0026#34;$terminfo[kcuu1]\u0026#34; history-substring-search-up bindkey \u0026#34;$terminfo[kcud1]\u0026#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\u0026#34;fg=green,bold\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \u0026#34;source \u0026lt;(fzf --zsh)\u0026#34; \u0026gt;\u0026gt; ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e \u0026#39;# zoxide export PATH=\u0026#34;$HOME/.local/bin:$PATH\u0026#34; eval \u0026#34;$(zoxide init zsh)\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \u0026#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\u0026#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme+ClaudeCode + GitLens\n",
+  "headline": "装机",
+  "name": "装机",
+  "description": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二：零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念\n软件装机 个人使用软件：\n(win) vscode + git + obsidian + typora + clashverge + Chrome (linux) vscode + git + zsh (linux) zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search (win/linux) starship + fzf + zoxide/z + eza Win 参考：https://zhuanlan.zhihu.com/p/678607774\n安装前，终端上运行winget settings命令，先设置如下安装路径，\n{ \u0026#34;installBehavior\u0026#34;: { \u0026#34;scope\u0026#34;: \u0026#34;user\u0026#34;, \u0026#34;installLocation\u0026#34;: \u0026#34;D:\\\\DevTools\u0026#34; } } 依次运行以下命令，安装对应的软件和配置：\n# 升级终端 winget install --id Microsoft.Powershell --source winget # node\u0026amp;npm winget install -e --id OpenJS.NodeJS # restart node --version npm --version # npm install -g npm@latest # 更新npm版本 # Git winget install Git.Git # Vscode winget install Microsoft.VisualStudioCode # 7-ZIP winget install 7zip.7zip # Typora winget install appmakes.Typora # Obsidian winget install Obsidian.Obsidian # ClashVerge winget install ClashVergeRev.ClashVergeRev # IDM winget install Tonec.InternetDownloadManager # Chrome 手动安装 # winget install chrome ? # 自定义Prompt Starship winget install Starship.Starship Add-Content -Path $PROFILE -Value @\u0026#39; # starship Invoke-Expression (\u0026amp;starship init powershell) \u0026#39;@ New-Item -ItemType Directory \u0026#34;$env:USERPROFILE\\.config\u0026#34; -Force | Out-Null starship preset pure-preset -o \u0026#34;$env:USERPROFILE\\.config\\starship.toml\u0026#34; # 智能移动 zoxide winget install ajeetdsouza.zoxide Add-Content -Path $PROFILE -Value @\u0026#39; # zoxide Invoke-Expression (\u0026amp; { (zoxide init powershell | Out-String) }) function zi { cd (zoxide query -i | Out-String).Trim() } \u0026#39;@ # 模糊搜索 winget install junegunn.fzf Install-Module PSFzf # 管理员权限 Add-Content -Path $PROFILE -Value @\u0026#39; # fzf \u0026amp; PSFzf Import-Module PSFzf Set-PsFzfOption -PSReadlineChordProvider \u0026#39;Ctrl+t\u0026#39; -PSReadlineChordReverseHistory \u0026#39;Ctrl+r\u0026#39; Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion } \u0026#39;@ # 语法高亮bat winget install sharkdp.bat # 高亮eza winget install eza-community.eza Add-Content -Path $PROFILE -Value @\u0026#39; # eza function Get-DirectoryContent { eza --classify --color-scale --icons=always --group-directories-first --time-style iso @args } function Get-GitIgnoredDirectoryContent { Get-DirectoryContent --git-ignore --git --git-repos @args } Set-Alias -Name lsg -Value Get-GitIgnoredDirectoryContent function Get-DetialedGitIgnoredDirectoryContent { Get-GitIgnoredDirectoryContent --long @args } Set-Alias -Name llg -Value Get-DetialedGitIgnoredDirectoryContent \u0026#39;@ Linux # 1、安装 Zsh sudo apt update \u0026amp;\u0026amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo \u0026#39; # zsh exec zsh \u0026#39; \u0026gt;\u0026gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo \u0026#39;eval \u0026#34;$(starship init zsh)\u0026#34;\u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026amp;\u0026amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \u0026#34;$HOME/.zsh\u0026#34; git clone https://github.com/sindresorhus/pure.git \u0026#34;$HOME/.zsh/pure\u0026#34; echo \u0026#39; # pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo \u0026#39; # zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo \u0026#39; # zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo \u0026#39; # zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \u0026#34;$terminfo[kcuu1]\u0026#34; history-substring-search-up bindkey \u0026#34;$terminfo[kcud1]\u0026#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\u0026#34;fg=green,bold\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \u0026#34;source \u0026lt;(fzf --zsh)\u0026#34; \u0026gt;\u0026gt; ~/.zshrc # 智能移动 zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e \u0026#39; # zoxide export PATH=\u0026#34;$HOME/.local/bin:$PATH\u0026#34; eval \u0026#34;$(zoxide init zsh)\u0026#34; \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # (待定)智能移动 z git clone --depth 1 https://github.com/rupa/z.git ${ZSH_CUSTOM:-~/.zsh/plugins}/z echo \u0026#39;# z source ~/.zsh/plugins/z/z.sh \u0026#39; \u0026gt;\u0026gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \u0026#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\u0026#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme+ClaudeCode + GitLens\n",
   "keywords": [
     "工具"
   ],
-  "articleBody": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二： 零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念\n软件装机 Windows terminal + starship obsidian vscode lazygit winget install -e --id OpenJS.NodeJS # restart node --version npm --version # 更新npm版本 # npm install -g npm@latest Linux/WSL zsh starship + pure主题 zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search+ fzf zoxide + eza # 1、安装 Zsh sudo apt update \u0026\u0026 sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo '# zsh exec zsh ' \u003e\u003e ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo 'eval \"$(starship init zsh)\"' \u003e\u003e ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026\u0026 touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \"$HOME/.zsh\" git clone https://github.com/sindresorhus/pure.git \"$HOME/.zsh/pure\" echo '# pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure ' \u003e\u003e ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo '# zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ' \u003e\u003e ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo '# zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh ' \u003e\u003e ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo '# zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \"$terminfo[kcuu1]\" history-substring-search-up bindkey \"$terminfo[kcud1]\" history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\"fg=green,bold\" ' \u003e\u003e ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \"source \u003c(fzf --zsh)\" \u003e\u003e ~/.zshrc # zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e '# zoxide export PATH=\"$HOME/.local/bin:$PATH\" eval \"$(zoxide init zsh)\" ' \u003e\u003e ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \"deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\" | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme+ClaudeCode + GitLens\n",
-  "wordCount" : "305",
+  "articleBody": "硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html\n方案二：零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念\n软件装机 个人使用软件：\n(win) vscode + git + obsidian + typora + clashverge + Chrome (linux) vscode + git + zsh (linux) zsh-syntax-highlighting+ zsh-autosuggestions + zsh-history-substring-search (win/linux) starship + fzf + zoxide/z + eza Win 参考：https://zhuanlan.zhihu.com/p/678607774\n安装前，终端上运行winget settings命令，先设置如下安装路径，\n{ \"installBehavior\": { \"scope\": \"user\", \"installLocation\": \"D:\\\\DevTools\" } } 依次运行以下命令，安装对应的软件和配置：\n# 升级终端 winget install --id Microsoft.Powershell --source winget # node\u0026npm winget install -e --id OpenJS.NodeJS # restart node --version npm --version # npm install -g npm@latest # 更新npm版本 # Git winget install Git.Git # Vscode winget install Microsoft.VisualStudioCode # 7-ZIP winget install 7zip.7zip # Typora winget install appmakes.Typora # Obsidian winget install Obsidian.Obsidian # ClashVerge winget install ClashVergeRev.ClashVergeRev # IDM winget install Tonec.InternetDownloadManager # Chrome 手动安装 # winget install chrome ? # 自定义Prompt Starship winget install Starship.Starship Add-Content -Path $PROFILE -Value @' # starship Invoke-Expression (\u0026starship init powershell) '@ New-Item -ItemType Directory \"$env:USERPROFILE\\.config\" -Force | Out-Null starship preset pure-preset -o \"$env:USERPROFILE\\.config\\starship.toml\" # 智能移动 zoxide winget install ajeetdsouza.zoxide Add-Content -Path $PROFILE -Value @' # zoxide Invoke-Expression (\u0026 { (zoxide init powershell | Out-String) }) function zi { cd (zoxide query -i | Out-String).Trim() } '@ # 模糊搜索 winget install junegunn.fzf Install-Module PSFzf # 管理员权限 Add-Content -Path $PROFILE -Value @' # fzf \u0026 PSFzf Import-Module PSFzf Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r' Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion } '@ # 语法高亮bat winget install sharkdp.bat # 高亮eza winget install eza-community.eza Add-Content -Path $PROFILE -Value @' # eza function Get-DirectoryContent { eza --classify --color-scale --icons=always --group-directories-first --time-style iso @args } function Get-GitIgnoredDirectoryContent { Get-DirectoryContent --git-ignore --git --git-repos @args } Set-Alias -Name lsg -Value Get-GitIgnoredDirectoryContent function Get-DetialedGitIgnoredDirectoryContent { Get-GitIgnoredDirectoryContent --long @args } Set-Alias -Name llg -Value Get-DetialedGitIgnoredDirectoryContent '@ Linux # 1、安装 Zsh sudo apt update \u0026\u0026 sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo ' # zsh exec zsh ' \u003e\u003e ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo 'eval \"$(starship init zsh)\"' \u003e\u003e ~/.zshrc # 配置主题 pure mkdir -p ~/.config \u0026\u0026 touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p \"$HOME/.zsh\" git clone https://github.com/sindresorhus/pure.git \"$HOME/.zsh/pure\" echo ' # pure fpath+=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure ' \u003e\u003e ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo ' # zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ' \u003e\u003e ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo ' # zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh ' \u003e\u003e ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo ' # zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey \"$terminfo[kcuu1]\" history-substring-search-up bindkey \"$terminfo[kcud1]\" history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=\"fg=green,bold\" ' \u003e\u003e ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo \"source \u003c(fzf --zsh)\" \u003e\u003e ~/.zshrc # 智能移动 zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e ' # zoxide export PATH=\"$HOME/.local/bin:$PATH\" eval \"$(zoxide init zsh)\" ' \u003e\u003e ~/.zshrc # (待定)智能移动 z git clone --depth 1 https://github.com/rupa/z.git ${ZSH_CUSTOM:-~/.zsh/plugins}/z echo '# z source ~/.zsh/plugins/z/z.sh ' \u003e\u003e ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo \"deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\" | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme+ClaudeCode + GitLens\n",
+  "wordCount" : "560",
   "inLanguage": "zh",
   "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-02-15T21:27:30Z",
   "dateModified": "2026-02-15T21:27:30Z",
@@ -268,7 +358,7 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
     </svg>
 </nav>
     <h1 class="post-title entry-hint-parent">
-      个人装机
+      装机
     </h1>
     <div class="post-meta">
 
@@ -277,37 +367,108 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 </div>
   </header> 
   <div class="post-content md-content"><h2 id="硬件装机">硬件装机<a hidden class="anchor" aria-hidden="true" href="#硬件装机">#</a></h2>
-<p>方案一：DIY
-<a href="https://www.imsun.org/archives/1764.html">https://www.imsun.org/archives/1764.html</a></p>
-<p>方案二：
-零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 <a href="https://post.smzdm.com/p/a7gmzq45/">自己DIY台式机的人都放下了ATX台式的执念</a></p>
+<p>方案一：DIY <a href="https://www.imsun.org/archives/1764.html">https://www.imsun.org/archives/1764.html</a></p>
+<p>方案二：零刻GTi15 Ultra 迷你主机+零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 <a href="https://post.smzdm.com/p/a7gmzq45/">自己DIY台式机的人都放下了ATX台式的执念</a></p>
 <h2 id="软件装机">软件装机<a hidden class="anchor" aria-hidden="true" href="#软件装机">#</a></h2>
-<h3 id="windows">Windows<a hidden class="anchor" aria-hidden="true" href="#windows">#</a></h3>
+<p>个人使用软件：</p>
 <ul>
-<li>terminal + starship</li>
-<li>obsidian</li>
-<li>vscode</li>
-<li>lazygit</li>
+<li>(win) vscode + git + obsidian + typora + clashverge + Chrome</li>
+<li>(linux) vscode + git + zsh</li>
+<li>(linux) <a href="https://github.com/zsh-users/zsh-syntax-highlighting/tree/master">zsh-syntax-highlighting</a>+ <a href="https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md">zsh-autosuggestions</a> + <a href="https://github.com/zsh-users/zsh-history-substring-search">zsh-history-substring-search</a></li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">winget install -e --id OpenJS.NodeJS
-</span></span><span class="line"><span class="cl"><span class="c1"># restart</span>
-</span></span><span class="line"><span class="cl">node --version 
-</span></span><span class="line"><span class="cl">npm --version  
-</span></span><span class="line"><span class="cl"><span class="c1"># 更新npm版本</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># npm install -g npm@latest </span>
-</span></span></code></pre></div><h3 id="linuxwsl">Linux/WSL<a hidden class="anchor" aria-hidden="true" href="#linuxwsl">#</a></h3>
 <ul>
-<li>zsh</li>
-<li><a href="https://github.com/starship/starship">starship</a> + pure主题</li>
-<li><a href="https://github.com/zsh-users/zsh-syntax-highlighting/tree/master">zsh-syntax-highlighting</a>+ <a href="https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md">zsh-autosuggestions</a> + <a href="https://github.com/zsh-users/zsh-history-substring-search">zsh-history-substring-search</a>+ <a href="https://github.com/junegunn/fzf">fzf</a></li>
-<li><a href="https://github.com/ajeetdsouza/zoxide">zoxide</a> + <a href="https://github.com/eza-community/eza">eza</a></li>
+<li>(win/linux)   <a href="https://github.com/starship/starship">starship</a> +  <a href="https://github.com/junegunn/fzf">fzf</a> +  <a href="https://github.com/ajeetdsouza/zoxide">zoxide</a>/<a href="https://github.com/rupa/z">z</a> + <a href="https://github.com/eza-community/eza">eza</a></li>
 </ul>
+<h3 id="win">Win<a hidden class="anchor" aria-hidden="true" href="#win">#</a></h3>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/678607774">https://zhuanlan.zhihu.com/p/678607774</a></p>
+<p>安装前，终端上运行<code>winget settings</code>命令，先设置如下安装路径，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&#34;installBehavior&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;scope&#34;</span><span class="p">:</span> <span class="s2">&#34;user&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;installLocation&#34;</span><span class="p">:</span> <span class="s2">&#34;D:\\DevTools&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>依次运行以下命令，安装对应的软件和配置：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c"># 升级终端</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="p">-</span><span class="n">-id</span> <span class="n">Microsoft</span><span class="p">.</span><span class="py">Powershell</span> <span class="p">-</span><span class="n">-source</span> <span class="n">winget</span>
+</span></span><span class="line"><span class="cl"><span class="c"># node&amp;npm</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">-e</span> <span class="p">-</span><span class="n">-id</span> <span class="n">OpenJS</span><span class="p">.</span><span class="py">NodeJS</span>
+</span></span><span class="line"><span class="cl"><span class="c"># restart</span>
+</span></span><span class="line"><span class="cl"><span class="n">node</span> <span class="p">-</span><span class="n">-version</span> 
+</span></span><span class="line"><span class="cl"><span class="n">npm</span> <span class="p">-</span><span class="n">-version</span>
+</span></span><span class="line"><span class="cl"><span class="c"># npm install -g npm@latest # 更新npm版本</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Git</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">Git</span><span class="p">.</span><span class="py">Git</span>
+</span></span><span class="line"><span class="cl"><span class="c"># Vscode</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">Microsoft</span><span class="p">.</span><span class="py">VisualStudioCode</span>
+</span></span><span class="line"><span class="cl"><span class="c"># 7-ZIP</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">7zip</span><span class="p">.</span><span class="py">7zip</span>
+</span></span><span class="line"><span class="cl"><span class="c"># Typora</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">appmakes</span><span class="p">.</span><span class="py">Typora</span>
+</span></span><span class="line"><span class="cl"><span class="c"># Obsidian</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">Obsidian</span><span class="p">.</span><span class="py">Obsidian</span>
+</span></span><span class="line"><span class="cl"><span class="c"># ClashVerge</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">ClashVergeRev</span><span class="p">.</span><span class="py">ClashVergeRev</span>
+</span></span><span class="line"><span class="cl"><span class="c"># IDM</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">Tonec</span><span class="p">.</span><span class="py">InternetDownloadManager</span>
+</span></span><span class="line"><span class="cl"><span class="c"># Chrome 手动安装</span>
+</span></span><span class="line"><span class="cl"><span class="c"># winget install chrome ?</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 自定义Prompt Starship</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">Starship</span><span class="p">.</span><span class="py">Starship</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Add-Content</span> <span class="n">-Path</span> <span class="nv">$PROFILE</span> <span class="n">-Value</span> <span class="sh">@&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sh"># starship
+</span></span></span><span class="line"><span class="cl"><span class="sh">Invoke-Expression (&amp;starship init powershell)
+</span></span></span><span class="line"><span class="cl"><span class="sh">&#39;@</span>
+</span></span><span class="line"><span class="cl"><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\.config&#34;</span> <span class="n">-Force</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+</span></span><span class="line"><span class="cl"><span class="n">starship</span> <span class="n">preset</span> <span class="nb">pure-preset</span> <span class="n">-o</span> <span class="s2">&#34;</span><span class="nv">$env:USERPROFILE</span><span class="s2">\.config\starship.toml&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 智能移动 zoxide</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">ajeetdsouza</span><span class="p">.</span><span class="py">zoxide</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Add-Content</span> <span class="n">-Path</span> <span class="nv">$PROFILE</span> <span class="n">-Value</span> <span class="sh">@&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sh"># zoxide
+</span></span></span><span class="line"><span class="cl"><span class="sh">Invoke-Expression (&amp; { (zoxide init powershell | Out-String) })
+</span></span></span><span class="line"><span class="cl"><span class="sh">function zi { cd (zoxide query -i | Out-String).Trim() }
+</span></span></span><span class="line"><span class="cl"><span class="sh">&#39;@</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 模糊搜索</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">junegunn</span><span class="p">.</span><span class="py">fzf</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Install-Module</span> <span class="n">PSFzf</span> <span class="c"># 管理员权限</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Add-Content</span> <span class="n">-Path</span> <span class="nv">$PROFILE</span> <span class="n">-Value</span> <span class="sh">@&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sh"># fzf &amp; PSFzf
+</span></span></span><span class="line"><span class="cl"><span class="sh">Import-Module PSFzf
+</span></span></span><span class="line"><span class="cl"><span class="sh">Set-PsFzfOption -PSReadlineChordProvider &#39;Ctrl+t&#39; -PSReadlineChordReverseHistory &#39;Ctrl+r&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sh">Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
+</span></span></span><span class="line"><span class="cl"><span class="sh">&#39;@</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 语法高亮bat </span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="n">sharkdp</span><span class="p">.</span><span class="py">bat</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 高亮eza</span>
+</span></span><span class="line"><span class="cl"><span class="n">winget</span> <span class="n">install</span> <span class="nb">eza-community</span><span class="p">.</span><span class="py">eza</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Add-Content</span> <span class="n">-Path</span> <span class="nv">$PROFILE</span> <span class="n">-Value</span> <span class="sh">@&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sh"># eza
+</span></span></span><span class="line"><span class="cl"><span class="sh">function Get-DirectoryContent {
+</span></span></span><span class="line"><span class="cl"><span class="sh">    eza --classify --color-scale --icons=always --group-directories-first --time-style iso @args
+</span></span></span><span class="line"><span class="cl"><span class="sh">}
+</span></span></span><span class="line"><span class="cl"><span class="sh">function Get-GitIgnoredDirectoryContent {
+</span></span></span><span class="line"><span class="cl"><span class="sh">    Get-DirectoryContent --git-ignore --git --git-repos @args
+</span></span></span><span class="line"><span class="cl"><span class="sh">}
+</span></span></span><span class="line"><span class="cl"><span class="sh">Set-Alias -Name lsg -Value Get-GitIgnoredDirectoryContent
+</span></span></span><span class="line"><span class="cl"><span class="sh">function Get-DetialedGitIgnoredDirectoryContent {
+</span></span></span><span class="line"><span class="cl"><span class="sh">    Get-GitIgnoredDirectoryContent --long @args
+</span></span></span><span class="line"><span class="cl"><span class="sh">}
+</span></span></span><span class="line"><span class="cl"><span class="sh">Set-Alias -Name llg -Value Get-DetialedGitIgnoredDirectoryContent
+</span></span></span><span class="line"><span class="cl"><span class="sh">&#39;@</span>
+</span></span></code></pre></div><h3 id="linux">Linux<a hidden class="anchor" aria-hidden="true" href="#linux">#</a></h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 1、安装 Zsh</span>
 </span></span><span class="line"><span class="cl">sudo apt update <span class="o">&amp;&amp;</span> sudo apt install zsh -y
 </span></span><span class="line"><span class="cl"><span class="c1"># 验证 Zsh</span>
 </span></span><span class="line"><span class="cl">zsh --version  
 </span></span><span class="line"><span class="cl"><span class="c1"># 切换到 zsh（相当于重启终端） chsh -s $(which zsh) </span>
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;# zsh
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"># zsh
 </span></span></span><span class="line"><span class="cl"><span class="s1">exec zsh
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt;&gt; ~/.bashshrc
 </span></span><span class="line"><span class="cl"><span class="nb">source</span> ~/.bashrc
@@ -324,7 +485,8 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 </span></span><span class="line"><span class="cl"><span class="c1"># --- pure</span>
 </span></span><span class="line"><span class="cl">mkdir -p <span class="s2">&#34;</span><span class="nv">$HOME</span><span class="s2">/.zsh&#34;</span>
 </span></span><span class="line"><span class="cl">git clone https://github.com/sindresorhus/pure.git <span class="s2">&#34;</span><span class="nv">$HOME</span><span class="s2">/.zsh/pure&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;# pure
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"># pure
 </span></span></span><span class="line"><span class="cl"><span class="s1">fpath+=($HOME/.zsh/pure)
 </span></span></span><span class="line"><span class="cl"><span class="s1">autoload -U promptinit; promptinit
 </span></span></span><span class="line"><span class="cl"><span class="s1">prompt pure
@@ -335,19 +497,22 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 命令高亮 zsh-syntax-highlighting</span>
 </span></span><span class="line"><span class="cl">git clone --depth <span class="m">1</span> https://github.com/zsh-users/zsh-syntax-highlighting <span class="si">${</span><span class="nv">ZSH_CUSTOM</span><span class="k">:-</span><span class="p">~/.zsh/plugins</span><span class="si">}</span>/zsh-syntax-highlighting
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;# zsh-syntax-highlighting
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"># zsh-syntax-highlighting
 </span></span></span><span class="line"><span class="cl"><span class="s1">source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt;&gt; ~/.zshrc
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 自动补全 zsh-autosuggestions</span>
 </span></span><span class="line"><span class="cl">git clone --depth <span class="m">1</span> https://github.com/zsh-users/zsh-autosuggestions <span class="si">${</span><span class="nv">ZSH_CUSTOM</span><span class="k">:-</span><span class="p">~/.zsh/plugins</span><span class="si">}</span>/zsh-autosuggestions
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;# zsh-autosuggestions
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"># zsh-autosuggestions
 </span></span></span><span class="line"><span class="cl"><span class="s1">source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt;&gt; ~/.zshrc
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 历史命令 zsh-history-substring-search</span>
 </span></span><span class="line"><span class="cl">git clone --depth <span class="m">1</span> https://github.com/zsh-users/zsh-history-substring-search <span class="si">${</span><span class="nv">ZSH_CUSTOM</span><span class="k">:-</span><span class="p">~/.zsh/plugins</span><span class="si">}</span>/zsh-history-substring-search
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;# zsh-history-substring-search
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"># zsh-history-substring-search
 </span></span></span><span class="line"><span class="cl"><span class="s1">source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 </span></span></span><span class="line"><span class="cl"><span class="s1">bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up
 </span></span></span><span class="line"><span class="cl"><span class="s1">bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down
@@ -361,11 +526,18 @@ Vscode: Github  dark theme&#43;ClaudeCode &#43; GitLens">
 </span></span><span class="line"><span class="cl"><span class="c1"># sudo apt install fzf</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># zoxide</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 智能移动 zoxide</span>
 </span></span><span class="line"><span class="cl">curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh <span class="p">|</span> sh
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s1">&#39;# zoxide
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"># zoxide
 </span></span></span><span class="line"><span class="cl"><span class="s1">export PATH=&#34;$HOME/.local/bin:$PATH&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s1">eval &#34;$(zoxide init zsh)&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt;&gt; ~/.zshrc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># (待定)智能移动 z</span>
+</span></span><span class="line"><span class="cl">git clone --depth <span class="m">1</span> https://github.com/rupa/z.git <span class="si">${</span><span class="nv">ZSH_CUSTOM</span><span class="k">:-</span><span class="p">~/.zsh/plugins</span><span class="si">}</span>/z
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;# z
+</span></span></span><span class="line"><span class="cl"><span class="s1">source ~/.zsh/plugins/z/z.sh
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt;&gt; ~/.zshrc
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 重启</span>
