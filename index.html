@@ -137,6 +137,44 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">AdamW: Decoupled Weight Decay Regularization
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+来源：https://arxiv.org/abs/1711.05101
+AdamW，2017年的一篇论文（2019 ICLR），针对Adam &#43; L2正则项的权重衰减与自适应学习率之间的冲突问题，将权重衰减从梯度更新中解耦，再到权重更新中应用。
+具体的实现，参考link，在AdamW中，权重衰减 $\lambda$ 是乘以学习率 $\eta_t$ 后从参数中减去的，而不是加到梯度上。这种方法被认为可以更好地控制模型的复杂度，防止过拟合，并且在许多情况下可以提高模型的性能。
+</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-08-15 22:51:54 +0000 UTC'>2026年8月15日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to AdamW: Decoupled Weight Decay Regularization" href="https://yangly0.github.io/posts/20260815225154/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Adam: A Method for Stochastic Optimization
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+来源：https://arxiv.org/abs/1412.6980
+Adam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。
+Adam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。
+Adam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\epsilon$位置有区别，见link。
+详细代码：参考link,
+def adam(params, states, hyperparams): beta1, beta2, eps = 0.9, 0.99, 1e-6 for p, (m, g) in zip(params, states): with torch.no_grad(): m[:] = beta1 * m &#43; (1 - beta1) * p.grad g[:] = beta2 * g &#43; (1 - beta2) * torch.mul(p.grad, p.grad) m_bias_corr = m / (1 - beta1 ** hyperparams[&#39;t&#39;]) g_bias_corr = g / (1 - beta2 ** hyperparams[&#39;t&#39;]) p[:] -= hyperparams[&#39;lr&#39;] * m_bias_corr / (torch.sqrt(g_bias_corr) &#43; eps) p.grad.data.zero_() hyperparams[&#39;t&#39;] &#43;= 1 </p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-08-15 09:18:08 +0000 UTC'>2026年8月15日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to Adam: A Method for Stochastic Optimization" href="https://yangly0.github.io/posts/20260815091808/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">装机
     </h2>
   </header>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Adam: A Method for Stochastic Optimization | 所见所思</title>
+<meta name="keywords" content="论文, 深度学习">
+<meta name="description" content="
+来源：https://arxiv.org/abs/1412.6980
+Adam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。
+Adam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。
+Adam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\epsilon$位置有区别，见link。
+
+详细代码：参考link,
+def adam(params, states, hyperparams):
+    beta1, beta2, eps = 0.9, 0.99, 1e-6
+    for p, (m, g) in zip(params, states):
+        with torch.no_grad():
+            m[:] = beta1 * m &#43; (1 - beta1) * p.grad
+            g[:] = beta2 * g &#43; (1 - beta2) * torch.mul(p.grad, p.grad)
+            m_bias_corr = m / (1 - beta1 ** hyperparams[&#39;t&#39;])
+            g_bias_corr = g / (1 - beta2 ** hyperparams[&#39;t&#39;])
+            p[:] -= hyperparams[&#39;lr&#39;] * m_bias_corr / (torch.sqrt(g_bias_corr) &#43; eps)
+        p.grad.data.zero_()
+    hyperparams[&#39;t&#39;] &#43;= 1
+">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20260815091808/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20260815091808/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20260815091808/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="Adam: A Method for Stochastic Optimization">
+  <meta property="og:description" content="来源：https://arxiv.org/abs/1412.6980
+Adam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。
+Adam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。
+Adam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\epsilon$位置有区别，见link。
+详细代码：参考link,
+def adam(params, states, hyperparams): beta1, beta2, eps = 0.9, 0.99, 1e-6 for p, (m, g) in zip(params, states): with torch.no_grad(): m[:] = beta1 * m &#43; (1 - beta1) * p.grad g[:] = beta2 * g &#43; (1 - beta2) * torch.mul(p.grad, p.grad) m_bias_corr = m / (1 - beta1 ** hyperparams[&#39;t&#39;]) g_bias_corr = g / (1 - beta2 ** hyperparams[&#39;t&#39;]) p[:] -= hyperparams[&#39;lr&#39;] * m_bias_corr / (torch.sqrt(g_bias_corr) &#43; eps) p.grad.data.zero_() hyperparams[&#39;t&#39;] &#43;= 1">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-08-15T09:18:08+00:00">
+    <meta property="article:modified_time" content="2026-08-15T09:18:08+00:00">
+    <meta property="article:tag" content="论文">
+    <meta property="article:tag" content="深度学习">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="Adam: A Method for Stochastic Optimization">
+  <meta name="twitter:description" content="来源：https://arxiv.org/abs/1412.6980
+Adam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。
+Adam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。
+Adam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\epsilon$位置有区别，见link。
+详细代码：参考link,
+def adam(params, states, hyperparams): beta1, beta2, eps = 0.9, 0.99, 1e-6 for p, (m, g) in zip(params, states): with torch.no_grad(): m[:] = beta1 * m &#43; (1 - beta1) * p.grad g[:] = beta2 * g &#43; (1 - beta2) * torch.mul(p.grad, p.grad) m_bias_corr = m / (1 - beta1 ** hyperparams[&#39;t&#39;]) g_bias_corr = g / (1 - beta2 ** hyperparams[&#39;t&#39;]) p[:] -= hyperparams[&#39;lr&#39;] * m_bias_corr / (torch.sqrt(g_bias_corr) &#43; eps) p.grad.data.zero_() hyperparams[&#39;t&#39;] &#43;= 1">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Adam: A Method for Stochastic Optimization",
+      "item": "https://yangly0.github.io/posts/20260815091808/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Adam: A Method for Stochastic Optimization",
+  "name": "Adam: A Method for Stochastic Optimization",
+  "description": "\n来源：https://arxiv.org/abs/1412.6980\nAdam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。\nAdam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。\nAdam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\\epsilon$位置有区别，见link。\n详细代码：参考link,\ndef adam(params, states, hyperparams): beta1, beta2, eps = 0.9, 0.99, 1e-6 for p, (m, g) in zip(params, states): with torch.no_grad(): m[:] = beta1 * m + (1 - beta1) * p.grad g[:] = beta2 * g + (1 - beta2) * torch.mul(p.grad, p.grad) m_bias_corr = m / (1 - beta1 ** hyperparams[\u0026#39;t\u0026#39;]) g_bias_corr = g / (1 - beta2 ** hyperparams[\u0026#39;t\u0026#39;]) p[:] -= hyperparams[\u0026#39;lr\u0026#39;] * m_bias_corr / (torch.sqrt(g_bias_corr) + eps) p.grad.data.zero_() hyperparams[\u0026#39;t\u0026#39;] += 1 ",
+  "keywords": [
+    "论文", "深度学习"
+  ],
+  "articleBody": "\n来源：https://arxiv.org/abs/1412.6980\nAdam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。\nAdam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。\nAdam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\\epsilon$位置有区别，见link。\n详细代码：参考link,\ndef adam(params, states, hyperparams): beta1, beta2, eps = 0.9, 0.99, 1e-6 for p, (m, g) in zip(params, states): with torch.no_grad(): m[:] = beta1 * m + (1 - beta1) * p.grad g[:] = beta2 * g + (1 - beta2) * torch.mul(p.grad, p.grad) m_bias_corr = m / (1 - beta1 ** hyperparams['t']) g_bias_corr = g / (1 - beta2 ** hyperparams['t']) p[:] -= hyperparams['lr'] * m_bias_corr / (torch.sqrt(g_bias_corr) + eps) p.grad.data.zero_() hyperparams['t'] += 1 ",
+  "wordCount" : "100",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-08-15T09:18:08Z",
+  "dateModified": "2026-08-15T09:18:08Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20260815091808/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      Adam: A Method for Stochastic Optimization
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-08-15 09:18:08 +0000 UTC'>2026年8月15日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><p><img alt="image" loading="lazy" src="https://r2.yangly1993.top/1786800810864.png"></p>
+<p>来源：https://arxiv.org/abs/1412.6980</p>
+<p>Adam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。</p>
+<p>Adam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。</p>
+<p>Adam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\epsilon$位置有区别，见<a href="https://zh.d2l.ai/chapter_optimization/adam.html">link</a>。</p>
+<p><img alt="image" loading="lazy" src="https://r2.yangly1993.top/1786789483727.png"></p>
+<p>详细代码：参考<a href="https://blog.csdn.net/weixin_43598687/article/details/129567864">link</a>,</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">hyperparams</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="mf">1e-6</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">            <span class="n">m</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">beta1</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span>
+</span></span><span class="line"><span class="cl">            <span class="n">g</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">beta2</span> <span class="o">*</span> <span class="n">g</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">m_bias_corr</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span> <span class="o">**</span> <span class="n">hyperparams</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">            <span class="n">g_bias_corr</span> <span class="o">=</span> <span class="n">g</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2</span> <span class="o">**</span> <span class="n">hyperparams</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">            <span class="n">p</span><span class="p">[:]</span> <span class="o">-=</span> <span class="n">hyperparams</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">m_bias_corr</span> <span class="o">/</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">g_bias_corr</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hyperparams</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/%E8%AE%BA%E6%96%87/">论文</a></li>
+      <li><a href="https://yangly0.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yangly0.github.io/posts/20260815225154/">
+    <span class="title">« 上一页</span>
+    <span>AdamW: Decoupled Weight Decay Regularization</span>
+  </a>
+  <a class="next" href="https://yangly0.github.io/posts/20260215212730/">
+    <span class="title">下一页 »</span>
+    <span>装机</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

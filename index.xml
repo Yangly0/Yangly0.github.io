@@ -12,8 +12,44 @@
     <generator>Hugo</generator>
     <language>zh</language>
     <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
-    <lastBuildDate>Sun, 15 Feb 2026 21:27:30 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 15 Aug 2026 22:51:54 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AdamW: Decoupled Weight Decay Regularization</title>
+      <link>https://yangly0.github.io/posts/20260815225154/</link>
+      <pubDate>Sat, 15 Aug 2026 22:51:54 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20260815225154/</guid>
+      <description>&lt;p&gt;&lt;img alt=&#34;image&#34; loading=&#34;lazy&#34; src=&#34;https://r2.yangly1993.top/1786805649165.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;来源：https://arxiv.org/abs/1711.05101&lt;/p&gt;
+&lt;p&gt;AdamW，2017年的一篇论文（2019 ICLR），针对Adam + L2正则项的权重衰减与自适应学习率之间的冲突问题，将权重衰减从梯度更新中解耦，再到权重更新中应用。&lt;/p&gt;
+&lt;p&gt;具体的实现，参考&lt;a href=&#34;https://github.com/luhengshiwo/LLMForEverybody/blob/main/01-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E9%A2%84%E8%AE%AD%E7%BB%83/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E4%BC%98%E5%8C%96%E5%99%A8%EF%BC%88%E5%8D%81%E4%B8%80%EF%BC%89AdamW.md&#34;&gt;link&lt;/a&gt;，在AdamW中，权重衰减 $\lambda$ 是乘以学习率 $\eta_t$ 后从参数中减去的，而不是加到梯度上。这种方法被认为可以更好地控制模型的复杂度，防止过拟合，并且在许多情况下可以提高模型的性能。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;image&#34; loading=&#34;lazy&#34; src=&#34;https://r2.yangly1993.top/1786805758420.png&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Adam: A Method for Stochastic Optimization</title>
+      <link>https://yangly0.github.io/posts/20260815091808/</link>
+      <pubDate>Sat, 15 Aug 2026 09:18:08 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20260815091808/</guid>
+      <description>&lt;p&gt;&lt;img alt=&#34;image&#34; loading=&#34;lazy&#34; src=&#34;https://r2.yangly1993.top/1786800810864.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;来源：https://arxiv.org/abs/1412.6980&lt;/p&gt;
+&lt;p&gt;Adam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。&lt;/p&gt;
+&lt;p&gt;Adam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。&lt;/p&gt;
+&lt;p&gt;Adam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\epsilon$位置有区别，见&lt;a href=&#34;https://zh.d2l.ai/chapter_optimization/adam.html&#34;&gt;link&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;image&#34; loading=&#34;lazy&#34; src=&#34;https://r2.yangly1993.top/1786789483727.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;详细代码：参考&lt;a href=&#34;https://blog.csdn.net/weixin_43598687/article/details/129567864&#34;&gt;link&lt;/a&gt;,&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;adam&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;states&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hyperparams&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;beta1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;beta2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;eps&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.99&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1e-6&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;m&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;g&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;zip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;states&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;torch&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;no_grad&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;m&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;beta1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;m&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;beta1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;grad&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;g&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;beta2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;g&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;beta2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;torch&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mul&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;grad&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;grad&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;m_bias_corr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;m&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;beta1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;**&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hyperparams&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;g_bias_corr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;g&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;beta2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;**&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hyperparams&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hyperparams&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;lr&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;m_bias_corr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;torch&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sqrt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;g_bias_corr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;eps&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;grad&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zero_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;hyperparams&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
     <item>
       <title>装机</title>
       <link>https://yangly0.github.io/posts/20260215212730/</link>
@@ -459,48 +495,6 @@
 &lt;h2 id=&#34;项目情况&#34;&gt;🚀项目情况&lt;/h2&gt;
 &lt;h5 id=&#34;202502-202603--吉利j6m平台apa泊车融合功能项目--泊车融合团队组长&#34;&gt;2025.02-2026.03 | 吉利J6M平台APA泊车融合功能项目 | 泊车融合团队组长&lt;/h5&gt;
 &lt;p&gt;行动：（1）牵头完成J6M平台APA融合模块的系统架构和功能算法（库位检测PLD、可行驶区域Freespace、占据栅格Occ、目标检测OD）设计，带领团队完成视觉线（垂直/水平/斜列）/超声空间库位、FS可行驶区域、OCC悬空障碍物、OD目标检测等功能迭代优化以及全姿态泊车、指尖泊车、机械库位、窄库位、Freespace地图、Freespace可泊空间等新功能开发。（2）带领团队攻关进程系统级瓶颈，解决内存泄漏、Core崩溃等高危问题，完成进程CPU资源优化20%、算法链路时延优化10%。主导解决超10余车型差异Case问题，同团队攻关完成鱼眼畸变、泊车中断、Freespace投影、目标检测(大车/立柱/墙OD)精度、OCC悬空障碍物等10+项问题效果迭代。（3）牵头制定泊车融合功能开发、评审、交付标准文档，应用多平台车型交付，建立模块及部门代码质量流程，主导模块/部门/中心代码评审累计200余次。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>结果</title>
-      <link>https://yangly0.github.io/result/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://yangly0.github.io/result/</guid>
-      <description>&lt;h1 id=&#34;刘先生--男--1993--硕士--重庆&#34;&gt;刘先生 | 男 | 1993 | 硕士 | 重庆&lt;/h1&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class=&#34;icon&#34;&gt;&lt;/span&gt; &lt;code&gt;16623326161&lt;/code&gt;  
-&lt;span class=&#34;icon&#34;&gt;&lt;/span&gt; &lt;code&gt;yangliuly1993@gmail.com&lt;/code&gt;  
-&lt;span class=&#34;icon&#34;&gt;&lt;/span&gt; &lt;a href=&#34;http://github.com/yangly0&#34;&gt;yangly0&lt;/a&gt;  &lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;img class=&#34;avatar&#34; src=&#34;https://cdn.yangly1993.top/image/avatar_normal.jpg?x-oss-process=image/resize,w_3600/format,webp&#34;&gt;
-&lt;h2 id=&#34;学术论文&#34;&gt;学术论文&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;An improved Gaussian frequency domain sparse inversion method based on compressed sensing, Applied Geophysics（SCI），2020（一作）&lt;/li&gt;
-&lt;li&gt;甜点地震属性理论诠释及应用, 石油地球物理勘探（EI），2018（二作，老师一作）&lt;/li&gt;
-&lt;li&gt;How to calculate sweetness accurately—theoretical analysis and case study, Society of Exploration Geophysicists (SEG国际会议)，2018（二作，老师一作，学生优秀论文rank 12/1090）&lt;/li&gt;
-&lt;li&gt;压缩感知正则化算子稀疏信号与压制噪声分布, 第五届中国地球科学学术联合会议（国内会议），2017（一作）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;专利发明&#34;&gt;专利发明&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;一种基于谱减的深度学习语音端点检测方法和系统（CN111916060A，授权）&lt;/li&gt;
-&lt;li&gt;基于卷积神经网络的设备异常声音识别方法及系统（CN111076809A，授权）&lt;/li&gt;
-&lt;li&gt;基于深度学习的针尖正位度检测方法及系统（CN113393447A，授权）&lt;/li&gt;
-&lt;li&gt;基于语义对齐的缺陷检测方法及系统（CN114255213A，授权）&lt;/li&gt;
-&lt;li&gt;车辆的全景图像拼接方法、装置、电子设备和存储介质（CN120746820A，实审）&lt;/li&gt;
-&lt;li&gt;透明底盘实现方法、设备及计算机可读存储介质（CN120298275A，实审）&lt;/li&gt;
-&lt;li&gt;车辆模型的渲染方法（CN120070717A，实审）&lt;/li&gt;
-&lt;li&gt;图像处理方法、装置、环视系统和车辆（CN119741197A，实审）&lt;/li&gt;
-&lt;li&gt;一种全景影像生成方法、装置、电子设备及存储介质（CN119815181A，实审）&lt;/li&gt;
-&lt;li&gt;全景影像的渲染方法、装置、车辆、介质及产品（CN119313797A，实审）&lt;/li&gt;
-&lt;li&gt;车载全景影像帧率检测方法和装置、车辆、存储介质（CN119110055A，实审）&lt;/li&gt;
-&lt;li&gt;基于车辆的任务处理方法、装置、电子设备、介质及车辆（CN119105867A，实审）&lt;/li&gt;
-&lt;li&gt;色差检测方法、装置、设备以及可读存储介质（CN118521540A，实审）&lt;/li&gt;
-&lt;li&gt;车辆行驶轨迹线的渲染方法、系统、及车机终端和介质（CN118135046A，实审）&lt;/li&gt;
-&lt;li&gt;增益值计算模型训练方法、色差校正方法和系统、设备（CN118351394A，实审）&lt;/li&gt;
-&lt;li&gt;全景环视3D模型生成方法、装置、电子设备及存储介质（CN118608700A，实审）&lt;/li&gt;
-&lt;li&gt;一种端到端的全景影像拼接方法、电子设备及存储介质（CN118587086A，实审）&lt;/li&gt;
-&lt;li&gt;车位检测方法及装置（CN116580385A，实审）&lt;/li&gt;
-&lt;li&gt;一种自动泊车方法、装置及电子设备（CN116503835A，实审）&lt;/li&gt;
-&lt;/ol&gt;</description>
     </item>
   </channel>
 </rss>
