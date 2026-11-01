@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tags on 所见所思</title>
+    <link>https://yangly0.github.io/tags/tags/</link>
+    <description>Recent content in Tags on 所见所思</description>
+    <image>
+      <title>所见所思</title>
+      <url>https://yangly0.github.io/images/avatar.webp</url>
+      <link>https://yangly0.github.io/images/avatar.webp</link>
+    </image>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
+    <lastBuildDate>Mon, 31 Aug 2026 13:20:44 +0000</lastBuildDate>
+    <atom:link href="https://yangly0.github.io/tags/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>论文阅读</title>
+      <link>https://yangly0.github.io/posts/20260831132044/</link>
+      <pubDate>Mon, 31 Aug 2026 13:20:44 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20260831132044/</guid>
+      <description>&lt;h2 id=&#34;博客与博主&#34;&gt;博客与博主&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;黄浴，https://www.zhihu.com/people/yuhuang2019&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/column/c_1596466202909507584&#34;&gt;https://www.zhihu.com/column/c_1596466202909507584&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/column/c_1806461708782407680&#34;&gt;https://www.zhihu.com/column/c_1806461708782407680&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;world-model-世界模型&#34;&gt;World Model 世界模型&lt;/h2&gt;
+&lt;h2 id=&#34;vlm--vla-视觉语言模型视觉语言动作&#34;&gt;VLM / VLA 视觉语言模型/视觉语言动作&lt;/h2&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://gri.feishu.cn/wiki/IEsHwmanTi61WokDCmCcPgnUnJh&#34;&gt;从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的&lt;/p&gt;
+&lt;p&gt;“推理引擎&amp;quot;与车辆驾驶的&amp;quot;动作输出模块“整合在同一个架构中。&lt;/p&gt;
+&lt;p&gt;典型的VLA模型由三大组件构成:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;&lt;/li&gt;
+&lt;li&gt;VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等&lt;/li&gt;
+&lt;li&gt;动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号&amp;ndash;方向盘转角、油门开度、刹车力度等。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成&lt;/p&gt;
+&lt;p&gt;看见一理解一行动”的闭环。&lt;/p&gt;
+&lt;p&gt;然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;认知层面，VLA依赖的语言模型基于互联网图文预训练，其&amp;quot;常识”与现实物理世界的动力学规律存在本质脱节&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。&lt;/p&gt;
+&lt;p&gt;此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。&lt;/p&gt;
+&lt;p&gt;综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”&lt;/p&gt;
+&lt;p&gt;的实时驾驶任务。&lt;/p&gt;
+&lt;h3 id=&#34;omnidrive-nvidia-cvpr2025&#34;&gt;OmniDrive-NVIDIA-CVPR 2025&lt;/h3&gt;
+&lt;h3 id=&#34;parkingworld-end-to-end-autonomous-parking-reinforcement-learning-from-corrective-experience-in-3dgs-simulation&#34;&gt;ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation&lt;/h3&gt;
+&lt;p&gt;链接：https://arxiv.org/abs/2506.05667&lt;/p&gt;
+&lt;p&gt;总结：&lt;/p&gt;
+&lt;h2 id=&#34;e2e-端到端&#34;&gt;E2E 端到端&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://arxiv.org/pdf/2605.25029&#34;&gt;https://arxiv.org/pdf/2605.25029&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(VAVAD,DriveVLM)&lt;/p&gt;
+&lt;p&gt;DINO, RTRT-DETR&lt;/p&gt;
+&lt;h3 id=&#34;multipark202508&#34;&gt;MultiPark(2025/08)&lt;/h3&gt;
+&lt;p&gt;MultiPark: Multimodal Parking Transformer with Next-Segment Prediction&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2508.11537&#34;&gt;https://arxiv.org/abs/2508.11537&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://r2.yangly1993.top/1788143823899.png&#34;&gt;https://r2.yangly1993.top/1788143823899.png&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NTNmNDhjZTliZTk1MTdmYjY4ZmUyZmViY2ZmZTNhNTVfNHU5SXN0eUJERWJlMFRsZnlJSjNzZU9BcXpYUmtqVnVfVG9rZW46SnV3bmJQN3F3b253YkJ4UXJ2UmNZYlV2bmdjXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&amp;add_watermark=true&amp;scene_type=CCM&#34;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;vad-v2&#34;&gt;VAD v2&lt;/h3&gt;
+&lt;h3 id=&#34;vad&#34;&gt;VAD&lt;/h3&gt;
+&lt;h2 id=&#34;bev-空间&#34;&gt;BEV 空间&lt;/h2&gt;
+&lt;p&gt;综述：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</title>
+      <link>https://yangly0.github.io/posts/20260808222835/</link>
+      <pubDate>Sat, 08 Aug 2026 22:28:35 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20260808222835/</guid>
+      <description>&lt;h2 id=&#34;一句话概括&#34;&gt;一句话概括&lt;/h2&gt;
+&lt;p&gt;训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。&lt;/p&gt;
+&lt;p&gt;解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。&lt;/p&gt;
+&lt;p&gt;有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。&lt;/p&gt;
+&lt;p&gt;如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。&lt;/p&gt;
+&lt;p&gt;为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。&lt;/p&gt;
+&lt;h3 id=&#34;一核心作用&#34;&gt;一、核心作用&lt;/h3&gt;
+&lt;p&gt;对&lt;strong&gt;一个Batch内特征&lt;/strong&gt;做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。
+公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》&lt;/p&gt;
+&lt;h3 id=&#34;二前置4个核心参数&#34;&gt;二、前置4个核心参数&lt;/h3&gt;
+&lt;p&gt;设某层输出特征：$x \in \mathbb{R}^{N \times C \times H \times W}$&lt;/p&gt;
+&lt;p&gt;BN 为每个通道维护&lt;strong&gt;4个参数&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$\gamma$（scale，可学习）：缩放系数，shape=[C]&lt;/li&gt;
+&lt;li&gt;$\beta$（shift，可学习）：偏移系数，shape=[C]&lt;/li&gt;
+&lt;li&gt;$\mu_{running}$：全局滑动均值（推理用，不参与梯度）&lt;/li&gt;
+&lt;li&gt;$\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;动量 momentum 一般默认 $(m=0.1)$&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;三训练阶段完整前向计算逐通道执行&#34;&gt;三、训练阶段完整前向计算（逐通道执行）&lt;/h2&gt;
+&lt;h3 id=&#34;步骤1对单个通道计算本batch所有元素均值&#34;&gt;步骤1：对单个通道，计算本Batch所有元素均值&lt;/h3&gt;
+&lt;p&gt;把N、H、W全部压扁，只保留通道维度：
+$$
+\mu_B = \frac{1}{N\cdot H\cdot W}\sum_{n,h,w} x_{n,c,h,w}
+$$&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

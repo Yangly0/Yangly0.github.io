@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift | 所见所思</title>
+<meta name="keywords" content="tags">
+<meta name="description" content="一句话概括
+训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。
+解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。
+有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。
+如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。
+为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。
+一、核心作用
+对一个Batch内特征做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。
+公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》
+二、前置4个核心参数
+设某层输出特征：$x \in \mathbb{R}^{N \times C \times H \times W}$
+BN 为每个通道维护4个参数：
+
+$\gamma$（scale，可学习）：缩放系数，shape=[C]
+$\beta$（shift，可学习）：偏移系数，shape=[C]
+$\mu_{running}$：全局滑动均值（推理用，不参与梯度）
+$\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度）
+
+动量 momentum 一般默认 $(m=0.1)$
+
+三、训练阶段完整前向计算（逐通道执行）
+步骤1：对单个通道，计算本Batch所有元素均值
+把N、H、W全部压扁，只保留通道维度：
+$$
+\mu_B = \frac{1}{N\cdot H\cdot W}\sum_{n,h,w} x_{n,c,h,w}
+$$">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20260808222835/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20260808222835/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20260808222835/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift">
+  <meta property="og:description" content="一句话概括 训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。
+解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。
+有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。
+如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。
+为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。
+一、核心作用 对一个Batch内特征做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。 公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》
+二、前置4个核心参数 设某层输出特征：$x \in \mathbb{R}^{N \times C \times H \times W}$
+BN 为每个通道维护4个参数：
+$\gamma$（scale，可学习）：缩放系数，shape=[C] $\beta$（shift，可学习）：偏移系数，shape=[C] $\mu_{running}$：全局滑动均值（推理用，不参与梯度） $\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度） 动量 momentum 一般默认 $(m=0.1)$
+三、训练阶段完整前向计算（逐通道执行） 步骤1：对单个通道，计算本Batch所有元素均值 把N、H、W全部压扁，只保留通道维度： $$ \mu_B = \frac{1}{N\cdot H\cdot W}\sum_{n,h,w} x_{n,c,h,w} $$">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-08-08T22:28:35+00:00">
+    <meta property="article:modified_time" content="2026-08-08T22:28:35+00:00">
+    <meta property="article:tag" content="Tags">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift">
+  <meta name="twitter:description" content="一句话概括 训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。
+解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。
+有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。
+如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。
+为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。
+一、核心作用 对一个Batch内特征做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。 公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》
+二、前置4个核心参数 设某层输出特征：$x \in \mathbb{R}^{N \times C \times H \times W}$
+BN 为每个通道维护4个参数：
+$\gamma$（scale，可学习）：缩放系数，shape=[C] $\beta$（shift，可学习）：偏移系数，shape=[C] $\mu_{running}$：全局滑动均值（推理用，不参与梯度） $\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度） 动量 momentum 一般默认 $(m=0.1)$
+三、训练阶段完整前向计算（逐通道执行） 步骤1：对单个通道，计算本Batch所有元素均值 把N、H、W全部压扁，只保留通道维度： $$ \mu_B = \frac{1}{N\cdot H\cdot W}\sum_{n,h,w} x_{n,c,h,w} $$">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+      "item": "https://yangly0.github.io/posts/20260808222835/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+  "name": "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+  "description": "一句话概括 训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。\n解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。\n有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。\n如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。\n为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。\n一、核心作用 对一个Batch内特征做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。 公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》\n二、前置4个核心参数 设某层输出特征：$x \\in \\mathbb{R}^{N \\times C \\times H \\times W}$\nBN 为每个通道维护4个参数：\n$\\gamma$（scale，可学习）：缩放系数，shape=[C] $\\beta$（shift，可学习）：偏移系数，shape=[C] $\\mu_{running}$：全局滑动均值（推理用，不参与梯度） $\\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度） 动量 momentum 一般默认 $(m=0.1)$\n三、训练阶段完整前向计算（逐通道执行） 步骤1：对单个通道，计算本Batch所有元素均值 把N、H、W全部压扁，只保留通道维度： $$ \\mu_B = \\frac{1}{N\\cdot H\\cdot W}\\sum_{n,h,w} x_{n,c,h,w} $$\n",
+  "keywords": [
+    "tags"
+  ],
+  "articleBody": "一句话概括 训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。\n解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。\n有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。\n如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。\n为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。\n一、核心作用 对一个Batch内特征做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。 公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》\n二、前置4个核心参数 设某层输出特征：$x \\in \\mathbb{R}^{N \\times C \\times H \\times W}$\nBN 为每个通道维护4个参数：\n$\\gamma$（scale，可学习）：缩放系数，shape=[C] $\\beta$（shift，可学习）：偏移系数，shape=[C] $\\mu_{running}$：全局滑动均值（推理用，不参与梯度） $\\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度） 动量 momentum 一般默认 $(m=0.1)$\n三、训练阶段完整前向计算（逐通道执行） 步骤1：对单个通道，计算本Batch所有元素均值 把N、H、W全部压扁，只保留通道维度： $$ \\mu_B = \\frac{1}{N\\cdot H\\cdot W}\\sum_{n,h,w} x_{n,c,h,w} $$\n步骤2：计算本Batch方差 $$ \\sigma_B^2 = \\frac{1}{N\\cdot H\\cdot W}\\sum_{n,h,w} (x_{n,c,h,w}-\\mu_B)^2 $$\n步骤3：标准化（减去均值，除以标准差，加极小值(\\varepsilon)防止除0） $$ \\hat x = \\frac{x - \\mu_B}{\\sqrt{\\sigma_B^2+\\varepsilon}} $$ $\\varepsilon$ 一般取 $10^{-5}$\n步骤4：仿射变换（可学习缩放+偏移，BN核心自由度） $$ y = \\gamma \\cdot \\hat x + \\beta $$ 这就是BN最终输出，送入下一层网络。\n步骤5：更新滑动均值\u0026方差（用于推理） 每迭代一步，用当前batch统计量平滑更新全局统计量： $$ \\begin{align*} \\mu_{running} \u0026= (1-m)\\cdot \\mu_{running} + m\\cdot \\mu_B \\ \\sigma^2_{running} \u0026= (1-m)\\cdot \\sigma^2_{running} + m\\cdot \\sigma_B^2 \\end{align*} $$ 动量越小，全局统计越平滑。\n四、推理（eval）阶段实现 推理时没有完整Batch，不能用当前batch均值方差，直接使用训练时累积好的 $\\mu_{running},\\sigma^2_{running}$： $$ y = \\gamma \\cdot \\frac{x-\\mu_{running}}{\\sqrt{\\sigma^2_{running}+\\varepsilon}} + \\beta $$ 此时 $\\gamma,\\beta$ 固定，不再更新，整个BN等价为一个线性变换，可以和卷积核融合（Conv+BN融合，推理加速常用手段）。\n五、反向传播简要逻辑（梯度流向） 需要求：$\\frac{\\partial \\mathcal{L}}{\\partial \\gamma},\\frac{\\partial \\mathcal{L}}{\\partial \\beta},\\frac{\\partial \\mathcal{L}}{\\partial x}$\n$\\frac{\\partial \\mathcal{L}}{\\partial \\beta} = \\sum_{N,(H,W)} \\frac{\\partial \\mathcal{L}}{\\partial y}$ $\\frac{\\partial \\mathcal{L}}{\\partial \\gamma} = \\sum_{N,(H,W)} \\frac{\\partial \\mathcal{L}}{\\partial y}\\cdot \\hat x$ 再链式求导回传到输入$x$，梯度会受到batch内所有样本相互约束，因此自带轻微正则效果。 六、极简PyTorch纯手搭简易BN实现（可运行） import torch import torch.nn as nn class MyBatchNorm2d(nn.Module): def __init__(self, num_channels, eps=1e-5, momentu\\(m=0.1\\)): super().__init__() self.eps = eps self.momentum = momentum # 可学习参数 self.gamma = nn.Parameter(torch.ones(num_channels)) self.beta = nn.Parameter(torch.zeros(num_channels)) # 滑动均值方差，不训练 self.register_buffer(\"running_mean\", torch.zeros(num_channels)) self.register_buffer(\"running_var\", torch.ones(num_channels)) def forward(self, x): N, C, H, W = x.shape if self.training: # 训练：计算batch均值方差 mu = x.mean(dim=[0,2,3]) var = x.var(dim=[0,2,3], unbiased=False) # 更新滑动统计量 self.running_mean = (1-self.momentum)*self.running_mean + self.momentum*mu self.running_var = (1-self.momentum)*self.running_var + self.momentum*var else: mu = self.running_mean var = self.running_var # 标准化+仿射 x_hat = (x - mu.view(1,C,1,1)) / torch.sqrt(var.view(1,C,1,1)+self.eps) out = self.gamma.view(1,C,1,1)*x_hat + self.beta.view(1,C,1,1) return out 七、关键易错点总结 BN是按通道归一化，不是全局归一化； var计算务必关闭无偏估计（unbiased=False），否则和官方BN不一致； 训练/推理两套完全不同的统计量，混用会模型效果暴跌； 小Batch下BN效果很差，因此才有GN、LN、IN等变体； 卷积后BN可以融合进卷积权重，部署提速，是自动驾驶模型量化、推理优化标配操作。 需要我顺带讲清楚：BN、LN、IN、GN四者区别+适用场景对比吗？\n",
+  "wordCount" : "264",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-08-08T22:28:35Z",
+  "dateModified": "2026-08-08T22:28:35Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20260808222835/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-08-08T22:28:35+00:00'>2026年8月8日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="一句话概括">一句话概括<a hidden class="anchor" aria-hidden="true" href="#一句话概括">#</a></h2>
+<p>训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。</p>
+<p>解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。</p>
+<p>有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。</p>
+<p>如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。</p>
+<p>为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。</p>
+<h3 id="一核心作用">一、核心作用<a hidden class="anchor" aria-hidden="true" href="#一核心作用">#</a></h3>
+<p>对<strong>一个Batch内特征</strong>做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。
+公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》</p>
+<h3 id="二前置4个核心参数">二、前置4个核心参数<a hidden class="anchor" aria-hidden="true" href="#二前置4个核心参数">#</a></h3>
+<p>设某层输出特征：$x \in \mathbb{R}^{N \times C \times H \times W}$</p>
+<p>BN 为每个通道维护<strong>4个参数</strong>：</p>
+<ol>
+<li>$\gamma$（scale，可学习）：缩放系数，shape=[C]</li>
+<li>$\beta$（shift，可学习）：偏移系数，shape=[C]</li>
+<li>$\mu_{running}$：全局滑动均值（推理用，不参与梯度）</li>
+<li>$\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度）</li>
+</ol>
+<p>动量 momentum 一般默认 $(m=0.1)$</p>
+<hr>
+<h2 id="三训练阶段完整前向计算逐通道执行">三、训练阶段完整前向计算（逐通道执行）<a hidden class="anchor" aria-hidden="true" href="#三训练阶段完整前向计算逐通道执行">#</a></h2>
+<h3 id="步骤1对单个通道计算本batch所有元素均值">步骤1：对单个通道，计算本Batch所有元素均值<a hidden class="anchor" aria-hidden="true" href="#步骤1对单个通道计算本batch所有元素均值">#</a></h3>
+<p>把N、H、W全部压扁，只保留通道维度：
+$$
+\mu_B = \frac{1}{N\cdot H\cdot W}\sum_{n,h,w} x_{n,c,h,w}
+$$</p>
+<h3 id="步骤2计算本batch方差">步骤2：计算本Batch方差<a hidden class="anchor" aria-hidden="true" href="#步骤2计算本batch方差">#</a></h3>
+<p>$$
+\sigma_B^2 = \frac{1}{N\cdot H\cdot W}\sum_{n,h,w} (x_{n,c,h,w}-\mu_B)^2
+$$</p>
+<h3 id="步骤3标准化减去均值除以标准差加极小值varepsilon防止除0">步骤3：标准化（减去均值，除以标准差，加极小值(\varepsilon)防止除0）<a hidden class="anchor" aria-hidden="true" href="#步骤3标准化减去均值除以标准差加极小值varepsilon防止除0">#</a></h3>
+<p>$$
+\hat x = \frac{x - \mu_B}{\sqrt{\sigma_B^2+\varepsilon}}
+$$
+$\varepsilon$ 一般取 $10^{-5}$</p>
+<h3 id="步骤4仿射变换可学习缩放偏移bn核心自由度">步骤4：仿射变换（可学习缩放+偏移，BN核心自由度）<a hidden class="anchor" aria-hidden="true" href="#步骤4仿射变换可学习缩放偏移bn核心自由度">#</a></h3>
+<p>$$
+y = \gamma \cdot \hat x + \beta
+$$
+这就是BN最终输出，送入下一层网络。</p>
+<h3 id="步骤5更新滑动均值方差用于推理">步骤5：更新滑动均值&amp;方差（用于推理）<a hidden class="anchor" aria-hidden="true" href="#步骤5更新滑动均值方差用于推理">#</a></h3>
+<p>每迭代一步，用当前batch统计量平滑更新全局统计量：
+$$
+\begin{align*}
+\mu_{running} &amp;= (1-m)\cdot \mu_{running} + m\cdot \mu_B \
+\sigma^2_{running} &amp;= (1-m)\cdot \sigma^2_{running} + m\cdot \sigma_B^2
+\end{align*}
+$$
+动量越小，全局统计越平滑。</p>
+<hr>
+<h2 id="四推理eval阶段实现">四、推理（eval）阶段实现<a hidden class="anchor" aria-hidden="true" href="#四推理eval阶段实现">#</a></h2>
+<p>推理时没有完整Batch，<strong>不能用当前batch均值方差</strong>，直接使用训练时累积好的 $\mu_{running},\sigma^2_{running}$：
+$$
+y = \gamma \cdot \frac{x-\mu_{running}}{\sqrt{\sigma^2_{running}+\varepsilon}} + \beta
+$$
+此时 $\gamma,\beta$ 固定，不再更新，整个BN等价为一个线性变换，可以和卷积核融合（Conv+BN融合，推理加速常用手段）。</p>
+<hr>
+<h2 id="五反向传播简要逻辑梯度流向">五、反向传播简要逻辑（梯度流向）<a hidden class="anchor" aria-hidden="true" href="#五反向传播简要逻辑梯度流向">#</a></h2>
+<p>需要求：$\frac{\partial \mathcal{L}}{\partial \gamma},\frac{\partial \mathcal{L}}{\partial \beta},\frac{\partial \mathcal{L}}{\partial x}$</p>
+<ol>
+<li>$\frac{\partial \mathcal{L}}{\partial \beta} = \sum_{N,(H,W)} \frac{\partial \mathcal{L}}{\partial y}$</li>
+<li>$\frac{\partial \mathcal{L}}{\partial \gamma} = \sum_{N,(H,W)} \frac{\partial \mathcal{L}}{\partial y}\cdot \hat x$</li>
+<li>再链式求导回传到输入$x$，梯度会受到batch内所有样本相互约束，因此自带轻微正则效果。</li>
+</ol>
+<hr>
+<h2 id="六极简pytorch纯手搭简易bn实现可运行">六、极简PyTorch纯手搭简易BN实现（可运行）<a hidden class="anchor" aria-hidden="true" href="#六极简pytorch纯手搭简易bn实现可运行">#</a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyBatchNorm2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_channels</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">momentu</span>\<span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mf">0.1</span>\<span class="p">)):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span> <span class="o">=</span> <span class="n">momentum</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 可学习参数</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_channels</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_channels</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 滑动均值方差，不训练</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&#34;running_mean&#34;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_channels</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&#34;running_var&#34;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_channels</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">N</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 训练：计算batch均值方差</span>
+</span></span><span class="line"><span class="cl">            <span class="n">mu</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">            <span class="n">var</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 更新滑动统计量</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="o">*</span><span class="n">mu</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">running_var</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">running_var</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span><span class="o">*</span><span class="n">var</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span>
+</span></span><span class="line"><span class="cl">            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_var</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 标准化+仿射</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x_hat</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">x_hat</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">out</span>
+</span></span></code></pre></div><hr>
+<h2 id="七关键易错点总结">七、关键易错点总结<a hidden class="anchor" aria-hidden="true" href="#七关键易错点总结">#</a></h2>
+<ol>
+<li>BN是<strong>按通道归一化</strong>，不是全局归一化；</li>
+<li>var计算务必关闭无偏估计（unbiased=False），否则和官方BN不一致；</li>
+<li>训练/推理两套完全不同的统计量，混用会模型效果暴跌；</li>
+<li>小Batch下BN效果很差，因此才有GN、LN、IN等变体；</li>
+<li>卷积后BN可以融合进卷积权重，部署提速，是自动驾驶模型量化、推理优化标配操作。</li>
+</ol>
+<p>需要我顺带讲清楚：BN、LN、IN、GN四者区别+适用场景对比吗？</p>
+<p><img loading="lazy" src="https://r2.yangly1993.top/1788143823899.png"></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/tags/">Tags</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yangly0.github.io/posts/20260815091808/">
+    <span class="title">« 上一页</span>
+    <span>Adam: A Method for Stochastic Optimization</span>
+  </a>
+  <a class="next" href="https://yangly0.github.io/posts/20260215212730/">
+    <span class="title">下一页 »</span>
+    <span>装机</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            
+            
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

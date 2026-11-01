@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>论文阅读 | 所见所思</title>
+<meta name="keywords" content="tags">
+<meta name="description" content="博客与博主
+
+黄浴，https://www.zhihu.com/people/yuhuang2019
+https://www.zhihu.com/column/c_1596466202909507584
+https://www.zhihu.com/column/c_1806461708782407680
+
+World Model 世界模型
+VLM / VLA 视觉语言模型/视觉语言动作
+参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的
+“推理引擎&quot;与车辆驾驶的&quot;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;
+VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等
+动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号&ndash;方向盘转角、油门开度、刹车力度等。
+
+三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+
+
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。
+
+
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&quot;常识”与现实物理世界的动力学规律存在本质脱节
+
+
+——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025
+ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation
+链接：https://arxiv.org/abs/2506.05667
+总结：
+E2E 端到端
+https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08)
+MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+
+
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头
+
+VAD v2
+VAD
+BEV 空间
+综述：">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20260831132044/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20260831132044/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20260831132044/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="论文阅读">
+  <meta property="og:description" content="博客与博主 黄浴，https://www.zhihu.com/people/yuhuang2019 https://www.zhihu.com/column/c_1596466202909507584 https://www.zhihu.com/column/c_1806461708782407680 World Model 世界模型 VLM / VLA 视觉语言模型/视觉语言动作 参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的
+“推理引擎&#34;与车辆驾驶的&#34;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量; VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等 动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。 三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&#34;常识”与现实物理世界的动力学规律存在本质脱节
+——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667
+总结：
+E2E 端到端 https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头 VAD v2 VAD BEV 空间 综述：">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-08-31T13:20:44+00:00">
+    <meta property="article:modified_time" content="2026-08-31T13:20:44+00:00">
+    <meta property="article:tag" content="Tags">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="论文阅读">
+  <meta name="twitter:description" content="博客与博主 黄浴，https://www.zhihu.com/people/yuhuang2019 https://www.zhihu.com/column/c_1596466202909507584 https://www.zhihu.com/column/c_1806461708782407680 World Model 世界模型 VLM / VLA 视觉语言模型/视觉语言动作 参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的
+“推理引擎&#34;与车辆驾驶的&#34;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量; VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等 动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。 三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&#34;常识”与现实物理世界的动力学规律存在本质脱节
+——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667
+总结：
+E2E 端到端 https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头 VAD v2 VAD BEV 空间 综述：">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "论文阅读",
+      "item": "https://yangly0.github.io/posts/20260831132044/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "论文阅读",
+  "name": "论文阅读",
+  "description": "博客与博主 黄浴，https://www.zhihu.com/people/yuhuang2019 https://www.zhihu.com/column/c_1596466202909507584 https://www.zhihu.com/column/c_1806461708782407680 World Model 世界模型 VLM / VLA 视觉语言模型/视觉语言动作 参考：从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶\n在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的\n“推理引擎\u0026quot;与车辆驾驶的\u0026quot;动作输出模块“整合在同一个架构中。\n典型的VLA模型由三大组件构成:\n视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量; VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等 动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号\u0026ndash;方向盘转角、油门开度、刹车力度等。 三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成\n看见一理解一行动”的闭环。\n然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，\n工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。\n认知层面，VLA依赖的语言模型基于互联网图文预训练，其\u0026quot;常识”与现实物理世界的动力学规律存在本质脱节\n——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。\n此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。\n综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”\n的实时驾驶任务。\nOmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667\n总结：\nE2E 端到端 https://arxiv.org/pdf/2605.25029\n(VAVAD,DriveVLM)\nDINO, RTRT-DETR\nMultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction\nhttps://arxiv.org/abs/2508.11537\nhttps://r2.yangly1993.top/1788143823899.png\n通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头 VAD v2 VAD BEV 空间 综述：\n",
+  "keywords": [
+    "tags"
+  ],
+  "articleBody": "博客与博主 黄浴，https://www.zhihu.com/people/yuhuang2019 https://www.zhihu.com/column/c_1596466202909507584 https://www.zhihu.com/column/c_1806461708782407680 World Model 世界模型 VLM / VLA 视觉语言模型/视觉语言动作 参考：从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶\n在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的\n“推理引擎\"与车辆驾驶的\"动作输出模块“整合在同一个架构中。\n典型的VLA模型由三大组件构成:\n视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量; VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等 动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。 三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成\n看见一理解一行动”的闭环。\n然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，\n工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。\n认知层面，VLA依赖的语言模型基于互联网图文预训练，其\"常识”与现实物理世界的动力学规律存在本质脱节\n——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。\n此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。\n综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”\n的实时驾驶任务。\nOmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667\n总结：\nE2E 端到端 https://arxiv.org/pdf/2605.25029\n(VAVAD,DriveVLM)\nDINO, RTRT-DETR\nMultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction\nhttps://arxiv.org/abs/2508.11537\nhttps://r2.yangly1993.top/1788143823899.png\n通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头 VAD v2 VAD BEV 空间 综述：\nhttps://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving\n3D Object Detection for Autonomous Driving: A Review and New Outlooks\nNVAutoNet: Fast and Accurate 360∘ 3D Visual Perception For Self Driving，2023\nSimpleBEV(2024/11) 论文：SimpleBEV: Improved LiDAR-Camera Fusion Architecture for 3D Object Detection\n链接：https://arxiv.org/pdf/2411.05292\n参考link，（1）相机支路上，对离散深度估计优化，提出了两阶段深度估计，第一阶段先将深度概率估计结果和特征 合并Cat操作，通过卷积层获得离散深度概率，第二阶段再结合激光点云投影获得点云真值深度加权，无点云处直接用估计深度；（2）激光支路上，采用常见的SECOND点云特征提取网络结构，将多个稀疏3D卷积层依次应用到特征图上，生成多尺度3D特征。此外引入引入了多尺度特征融合策略，以及将不同阶段的多尺度3D特征转化为多个二维BEV特征。然后，利用多次上采样和卷积运算融合多个BEV特征，得到最终的LiDAR-BEV特征。最后，将Camera分支和LiDAR分支得到的BEV特征进行通道维度的合并，并送入到BEV Encoder模块完成进一步的特征提取，最后接3D检测头输出最终的3D检测结果。\nSparseLIF https://www.zhihu.com/column/c_1658611768455737344\nSparseLIF: High-Performance Sparse LiDAR-Camera Fusion for 3D Object Detection\nBEVDet-Occupancy https://github.com/Charmve/OccNet-Course\nQ-PETR Q-PETR: Quantization-aware Position Embedding Transformation for Multi-View 3D Object Detection\nPETRV2 PETR BevDepth: BevFusion BevFusion：Multi-Task Multi-Sensor Fusion with Unified Bird’s-Eye View Representation，2022 | MIT提出\nhttps://developer.aliyun.com/article/1388649 论文地址：BEVFusion: Multi-Task Multi-Sensor Fusion with Unified Bird’s-Eye View Representation\n开源地址：\nCamera-to-BVE View Transform：为了解决深度的不确定性问题，采用了类似LSS和BEVDet的方法，通过预测每个像素点的离散深度分布来明确其深度。\nBEVDet BEVDet: High-Performance Multi-Camera 3D Object Detection in Bird-Eye-View\n论文链接：https://arxiv.org/abs/2112.11790\n代码链接：\n参考链接：\n该论文提出了一种BEVDet的模块化多相机 3D 目标检测范式，通过图像视图编码器、视图转换器、BEV 编码器和任务专用头实现 BEV 空间检测，结合 BEV 空间专属数据增强策略与 Scale-NMS 优化策略，在 nuScenes 数据集上实现了精度与效率的优异平衡，其高性能版本 BEVDet-Base 和高速版本 BEVDet-Tiny 均展现出领先性能。\nView Transformer视图转换器：借鉴LSS，提出的视图转换器构建 BEVDet 原型系统：该视图转换器以图像视图特征为输入，通过分类方式密集预测深度信息；随后利用分类得分与衍生的图像视图特征渲染预定义点云。\nBEVFormer BEVFormer: Learning Bird’s-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers\n论文链接：https://arxiv.org/abs/2203.17270\n代码链接：\n参考链接：https://zhuanlan.zhihu.com/p/543335939\nECCV 2022\n该论文提出 BEVFormer 框架，借助时空 Transformer，通过网格状 BEV 查询、空间交叉注意力（聚合多相机空间特征）和时间自注意力（融合历史 BEV 时间特征），从多相机图像中学习统一的鸟瞰图（BEV）表示，在nuScenes 等数据集的 3D 检测、地图分割任务上实现 SOTA 性能，且提升了速度估计准确性和低可见度物体检测召回率。\n以多相机的图像作为输入，通过Backbone提取多相机特征，然后以transfomer作为基础架构，引进BEV查询 + 时序自注意力机制 + 空间交叉注意力机制，进一步实现通用BEV特征提取，最后连接检测头和分割头实现不同感知任务。\n时序特征提取：核心解决是仅静态图像难以推断运动目标的速度和难以检测到高度遮挡的目标问题。第一步是生成BEV查询向量，其是一组网格状可学习参数的查询向量Q，表示HxWxC的空间网格区域，自车位置落在网格中心，并增加位置编码；再对前一时刻的历史BEV特征处理以自车运动对齐当前帧的查询向量Q，得到特征B’{t-1}；最后，以时间自注意力机制以Q、P、V处理得到当前时刻的推导bev特征，以解决时间差内的目标位移，其中Qp是BEV查询向量在P = (x,y)点，V是Q和B’{t-1}的拼接，。 Sparse4D v2: Recurrent Temporal Fusion with Sparse Model\n论文链接：https://arxiv.org/pdf/2305.14018\nMOTR 旷视-ECCV2022\nhttps://zhuanlan.zhihu.com/p/1941989039378006811\nSparse4D v1(2022/11) Sparse4D v1：Sparse4D: Multi-view 3D Object Detection with Sparse Spatial-Temporal Fusion\n迈向长时序稀疏化30感知的新实践\n论文链接：https://arxiv.org/pdf/2211.10581 代码链接：https://github.com/linxuewu/Sparse4D\n参考链接：\nhttps://blog.csdn.net/weixin_43163941/article/details/148685632\nhttps://baike.baidu.com/item/Sparse4D/63991179\nhttps://zhuanlan.zhihu.com/p/1944869098413594105\n**概述：**该论文提出一种名为 Sparse4D 的稀疏多视图 3D 目标检测方法，通过稀疏 4D 采样、层次化特征融合及实例级深度重加权模块，融合多时间戳、多视图、多尺度特征并迭代优化anchor，在 nuScenes 数据集上性能优于现有多数Sparse-based和 BEV-based 方法，且更适用于边缘设备部署，还可扩展至 3D 目标跟踪任务。\n疑问：\n1、稀疏 4D 采样实现？\n2、层次化特征融合实现？\n3、实例级深度重加权模块实现？\nDeformable 4D Aggregation可变形 4D 聚合模块：实例特征质量决定稀疏感知系统表现，该模块以稀疏特征采样与层次化特征融合，来构建空间与时间维度上的高质量实例特征。\n1、图a部分，4D 关键点生成：\n第一步是对于每个实例候选anchor框，从单一点扩展到多关键点以采样更精细特征，这些关键点分为两部分，\n一部分是固定关键点 $$k_{F}$$，表征几何先验信息，放置在anchor框的中心和6个面的中心。\n另一部分是可学习关键点$$k_{L}$$，表征自适应特性，通过网络学习实例的最具表征能力的特征，实现上以实例特征经过子网络预测3D坐标，再计算对应偏移量，用yaw角的旋转矩阵变化，最后以anchor的尺寸和中心位置实现缩放和平移，从而得到可学习关键点的3D坐标。\n第二步是关键点的时序扩展，以提高深度估计精度，实现上采用常速运动模型，按ahncor的速度向量计算当前帧$$t_{0}$$的3D关键点在历史帧$$t$$的位置（这里t0和t应该是时间序列的索引，dt表示时间间隔），\n再结合自车的运动信息（旋转矩阵和平移矩阵），将这些点统一映射到历史帧坐标系中，\n最终每个 anchor 都能得到一组随时间延展的关键点集合，从而可以通过当前帧提取到不同时序上同一个实例的特征，实现时序上对齐并聚合不同帧的特征。\n2、图b部分，稀疏采样\n摘要 基于鸟瞰图（BEV-base）的方法近期在多视角三维检测任务中取得了显著进展。与基于 BEV 的方法相比，基于稀疏（Sparse-base）的方法虽在性能上稍显落后，但仍具备诸多不可忽视的优势。为进一步推动稀疏三维检测的发展，本研究提出了一种名为 Sparse4D 的新型方法，该方法通过对时空特征进行稀疏采样与融合，实现anchor boxes的迭代优化。具体而言，该方法包含两大核心模块：\n（1）稀疏 4D 采样（Sparse 4D Sampling）：针对每个三维锚框，分配多个 4D 关键点，并将这些关键点投影到多视角、多尺度、多时间戳的图像特征上，以采样对应的特征；\n（2）层级特征融合（Hierarchy Feature Fusion）：对来自不同视角 / 尺度、不同时间戳及不同关键点的采样特征进行层级融合，生成高质量的实例特征。通过这种方式，Sparse4D 无需依赖密集视角转换或全局注意力机制，即可高效且有效地完成三维检测任务，同时更易于在边缘设备上部署。\n此外，本研究还引入了一个实例级深度重加权模块（instance-level depth reweight module），以缓解三维到二维投影过程中的病态问题（ill-posed issue）。实验结果表明，在 nuScenes 数据集的检测任务中，该方法的性能优于所有基于稀疏表示的方法，且超过了大多数基于 BEV 的方法。\n介绍 多视角视觉三维感知（Multi-view visual 3D perception）在自动驾驶系统中扮演着关键角色，尤其对于低成本部署而言意义重大。与激光雷达（Lidar）模态相比，摄像头能够为远距离检测和纯视觉元素识别提供有价值的视觉线索。然而，由于缺乏明确的深度信息（depth cues），从二维图像中实现三维感知属于病态问题（ill-posed issue），这使得 “如何合理融合多摄像头图像以应对三维检测等三维感知任务” 成为长期存在的挑战。目前，该领域的主流方法主要分为两类：基于鸟瞰图（BEV）的方法和基于稀疏表示的方法。\nLidar modality（激光雷达模态）：“模态” 此处指传感器的类型 / 数据形式，激光雷达（Lidar）通过发射激光束测量距离，能直接输出高精度三维点云，是自动驾驶中获取深度信息的常用传感器，但成本较高。\nVision-only element identification（纯视觉元素识别）：指仅依靠摄像头图像（不依赖激光雷达、毫米波雷达等其他传感器）完成目标（如车辆、行人、交通标志）的识别，是降低自动驾驶系统成本的重要技术方向。\nDepth cues（深度线索）：指图像中能暗示物体远近关系的信息，如物体大小变化、遮挡关系、纹理梯度等；摄像头图像需通过算法间接推断深度线索，而激光雷达可直接获取深度，这是二者的核心差异。\nIll-posed issue（病态问题）：同前文，此处特指 “二维图像→三维感知” 的固有矛盾 —— 同一幅二维图像可能对应多种三维场景（例如，远处大物体与近处小物体在图像中可能呈现相同大小），导致解不唯一、结果易受干扰。\n基于鸟瞰图（BEV）的方法 [12, 17–19, 29, 49] 通过将多视角图像特征转换到统一的 BEV 空间中来实现三维检测，并取得了优异的性能提升。然而，尽管 BEV 模式具备诸多优势，其仍存在以下一些不可避免的缺点：\n（1）从图像到 BEV 的视角转换需要进行密集特征采样或特征重排，该过程复杂度高且计算成本高昂，不利于在低成本边缘设备上部署；\n（2）最大感知范围受限于 BEV 特征图的尺寸，导致难以在感知范围、效率与精度之间实现平衡；\n（3）BEV 特征会对高度维度进行压缩，同时伴随纹理线索的丢失，因此 BEV 特征无法胜任交通标志检测等部分感知任务。\nDense feature sampling（密集特征采样）：指在特征转换过程中，对图像特征图上的每个像素或绝大多数像素点进行采样以提取信息，与 “稀疏采样”（仅采样关键点位）相对；该操作虽能保留更多细节，但会显著增加计算量。\nBEV feature map（BEV 特征图）：将多视角图像特征转换到鸟瞰视角后形成的特征矩阵，其尺寸（如宽、高）直接决定了 BEV 空间的覆盖范围 —— 尺寸越大，感知范围理论上越广，但计算和存储成本也会随之剧增。\nHeight dimension compression（高度维度压缩）：BEV 视角是从空中俯视场景，会将三维空间中的 “高度” 信息（如车辆的高度、交通标志的离地高度）压缩到二维平面特征中，导致高度相关的纹理细节（如标志上的文字、图案）丢失，因此难以用于需要精细高度 / 纹理信息的任务（如交通标志识别）。\n与基于 BEV 的方法不同，基于稀疏表示的算法 [5,35,41] 无需密集视角转换模块，而是直接采样稀疏特征用于三维锚框（3D anchors）的优化，因此能够缓解上述问题。在这类方法中，最具代表性的稀疏三维检测方法是 DETR3D [41]。然而，该方法的模型性能存在局限 —— 因为对于每个锚框查询（anchor query），DETR3D 仅采样单个三维参考点（3D reference point）的特征。近年来，SRCN3D [35] 采用感兴趣区域对齐（RoI-Align [9]）技术来采样多视角特征，但该方法效率不够高，且无法精确对齐来自不同视角的特征点。与此同时，现有稀疏三维检测方法均未充分利用丰富的时间上下文信息（temporal context），因此与当前性能最优（state-of-the-art）的基于 BEV 的方法相比，仍存在显著的性能差距。\n3D anchors refinement（三维锚框优化）：“优化” 指在初始锚框（预设的三维边界框）基础上，结合采样到的特征信息调整锚框的位置、尺寸、姿态等参数，使其更精准地匹配真实目标，是提升三维检测精度的核心步骤。\nAnchor query（锚框查询）：在检测模型（尤其基于 Transformer 的模型，如 DETR 系列）中，指对每个初始锚框进行 “查询” 以获取对应特征的过程，本质是建立锚框与图像特征间关联的操作。\nRoI-Align（感兴趣区域对齐）：一种从图像特征图中提取特定区域（感兴趣区域，RoI）特征的技术，能解决传统采样方法中因区域位置非整数导致的特征错位问题，常用于目标检测、实例分割任务，此处用于多视角特征的精准提取。\nTemporal context（时间上下文信息）：指连续帧图像中包含的时间维度信息（如目标的运动趋势、帧间位置变化），利用该信息可提升动态场景（如自动驾驶中车辆、行人移动场景）下检测的稳定性与准确性。\nState-of-the-art（SOTA，当前性能最优）：技术领域常用术语，指在特定任务（如三维检测）中，目前公开报道的性能最好、最先进的方法或模型。\n本研究致力于突破基于稀疏表示的三维检测方法的性能局限。为解决现有方法存在的问题，我们提出了一个名为 Sparse4D 的新型框架 —— 该框架利用分布在三维锚框（3D anchor box）区域内的多个关键点进行特征采样。与单点采样方式 [41] 和感兴趣区域对齐（RoI-Align）采样方式 [35] 相比，我们的采样方式具有两大核心优势：（1）能够高效提取每个锚框内部丰富且完整的上下文信息；（2）可便捷地扩展至时间维度，形成 4D 关键点，进而实现时间信息的有效对齐。\n如图 1 所示，借助 4D 关键点，Sparse4D 首先对每个关键点执行多时间戳、多视角及多尺度的特征采样。随后，这些采样得到的特征会输入一个层级融合模块，生成高质量的实例特征，用于三维边界框（3D box）的优化。此外，为缓解基于摄像头的三维检测所面临的病态问题（ill-posed issue）并提升感知性能，我们还明确加入了一个实例级深度重加权模块（instance-level depth reweight module）：该模块会利用从预测深度分布中采样得到的深度置信度，对实例特征进行重加权。该模块采用稀疏方式训练，且无需额外的激光雷达点云监督（Lidar point cloud supervision）。\n综上，本研究的主要贡献包括以下四点：\n・据我们所知，本文提出的 Sparse4D 是首个融合时间上下文信息的稀疏型多视角三维检测算法，能够高效且有效地对齐空间与时间视觉线索，从而实现精准的三维检测。\n・提出了一个可变形 4D 聚合模块（deformable 4D aggregation module），该模块能够灵活完成多维度（点、时间戳、视角及尺度）特征的采样与融合。\n・引入了一个深度重加权模块（depth reweight module），用于缓解基于图像的三维感知系统中存在的病态问题（ill-posed issue）。\n・在具有挑战性的基准数据集 ——nuScenes 数据集上，Sparse4D 在三维检测任务中的性能优于所有现有基于稀疏表示的算法以及大多数基于 BEV 的算法，且在跟踪任务中也表现出色。\nFlashOcc (2023/11) 论文：Fast and Memory-Efficient Occupancy Prediction via Channel-to-Height Plugin\n链接：https://arxiv.org/abs/2311.12058\nOCC 克服感知任务中存在的长尾问题以及更加准确表达物体的几何形状信息\nFlashOcc 主要的优化点是以2D卷积 + BEV特征 + C2H通道到高度实现快速高效的OCC预测。\n整体架构如上，由2D图像编码器 + 视角变换 + BEV编码 + 占据预测头 + 可选的时序融合而构成，比较重要的几个点：（1）借鉴BEVStereo的深度估计思路，然后采用BEVDet论文的Voxel Pooling v2生成BEV特征；（2）占据预测头中，通过C2H通道到高度实现2D特征到3D体素预测。\n详细讲解参考：Flash-Occ：部署友好的Occupancy Network感知算法长文解读来啦\nFast-BEV(2023/01) Fast-BEV: A Fast and Strong Bird’s-Eye View Perception Baseline\n论文链接：https://arxiv.org/abs/2301.12511\n代码链接：https://github.com/Sense-GVT/Fast-BEV\nFast-Ray（沿相机射线的深度分布是均匀的） + LUT + One-Voxel\n数据增强 + IMG/BEV + 随机翻转、旋转、裁剪\nM2BEV(2022/04) M^2BEV: Multi-Camera Joint 3D Detection and Segmentation with Unified Birds-Eye View Representation\n论文链接：https://arxiv.org/abs/2204.05088v1\n代码链接：http://xieenze.github.io/projects/m2bev\n本文提出统一框架 M^2BEV，基于多相机图像输入在 BEV 空间联合完成 3D 目标检测与地图分割任务，通过高效 BEV 编码器、动态框分配策略、BEV 中心性重加权和大规模二维检测预训练与辅助监督机制的四大关键设计缓解深度缺失问题，在 nuScenes 数据集上实现 42.5 mAP 和 57.0 mIoU 的 SOTA 性能，兼具内存效率与推理速度优势。\nBEV 编码器 + Spatial to Channel（S2C）\n动态框分配策略 + FreeAnchor + 分类得分和定位准确率的加权区分正样本\nBEV 中心性重加权 + 距离损失函数\n2D检测 + 预训练权重 + 辅助监督\nLSS(2008/05) Lift, Splat, Shoot: Encoding Images from Arbitrary Camera Rigs by Implicitly Unprojecting to 3D\n论文链接：https://arxiv.org/abs/2008.05711\n本文提出了一种端到端网络架构，通过 “升维 - 投射 - 检测” 三步法（先将任意数量相机的图像升维为特征视锥，再投射到栅格化鸟瞰图网格，最后结合模板轨迹实现运动规划），在无需显式深度估计的情况下，从多相机数据中直接提取鸟瞰图表征，且在相关分割任务中表现优于现有方案，还可与激光雷达真值深度模型对标。\nLift过程：沿相机射线方向，预测深度的概率分布，再与2维特征加权投影到3维空间。\n3D目标检测 OFT: Orthographic Feature Transform for Monocular 3D Object Detection\nCaDNN: Categorical Depth Distribution Network for Monocular 3D Object Detection\nBEVDepth: Acquisition of Reliable Depth for Multi-view 3D Object Detection\nDETR3D: 3D Object Detection from Multi-view Images via 3D-to-2D Queries 论文链接：https://arxiv.org/abs/2110.06922\n代码链接：https://github.com/WangYueFt/detr3d\n参考文献：https://blog.csdn.net/jacke121/article/details/125466191\n**概括：**该文章来源于MIT，Toyota和Li Auto，CMU，Tsinghua，2021年发表于Arxiv，属于Sparse BEV的开山代表作，非常值得一读。本文提出了一种在3D空间上直接预测的top-down方法，先从多路相机图像上提取2D图像特征，再通过相机变换矩阵把3D位置投影到多视角图像，用一组稀疏的3D目标查询集合索引2D图像特征，最后模型为每个目标查询生成一个边界框预测，用集合到集合的损失函数衡量真实值和预测值的差异。该方法的优势有两点，一是不会受到的逐像素深度估计的目标边界框预测的down-top方法的累积误差影响，二是不需要非极大值抑制等后处理，提高推理速度。\n疑问：\n模型结构：\n（1）特征学习\n对六路相机图像，先用Backbone网络ResNet提取2D图像特征，再用Neck网络FPN进一步提取四个多尺度的2D图像特征。\n（2）检测头\nDetection head 采用6层的transformer decode层。受DETR启发，每层都是以一组目标查询去decode生成目标框中心的3D虚拟参考点，再用相机变换矩阵投影参考点到2D图像空间，坐标尺度归一化到-1到1，通过双线性差值采样多尺度的2D图像特征，如果投影坐标落在图像空间之外就置零，之后用采样图像特征和目标查询去更新下一层目标查询。\n最后，对于每个目标查询，用两个MLP网络分别来预测边界框和类别标签。这里采用了预测边界框的中心坐标相对于3D参考点的offset值，更利于网络学习。\nDeformable DETR 2D目标检测 https://www.zhihu.com/column/c_1825558830546808832\nDETR：End-to-End Object Detection with Transformers 论文链接：https://arxiv.org/abs/2005.12872\n代码链接：https://github.com/facebookresearch/detr\n参考文献：（1）https://zhuanlan.zhihu.com/p/430198800\n概述：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。\n疑惑：按照李沐老师读论文的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？\n带着以上疑惑，我们来逐渐拆解DETR。\n集合预测：\n利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）\n业界上，无标准深度学习模型的集合预测，类似的是多标签分类\n无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制\n不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。\n可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。\n模型结构：\n（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维\n（2）Transformer：\nEncoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。\nposition_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。\n三角编码 + learning编码\nDecoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。\n利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用\n将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；\n（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。\n（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。\nVision Transformer-Google-ICLR 2021 https://zhuanlan.zhihu.com/p/1932912065409966537\nTransformer: Attention Is All You Need Abstract：\n老方法现状 + 新方法 + 实验效果 + 额外特点\n基于注意力机制的Transformer 架构\nIntroduction：\n循环神经网络优点和缺点\n注意力机制优点\n本文方法 + 优点\nBackground：\n减少序列计算量\n自注意力\n端到端记忆网络\nModel Architecture：\n宏观上采用编码-解码架构，微观上以注意力机制 + 全链接实现\n编码层：N个 多头自注意力机制 + 逐点全连接前馈网络 + 残差连接 + 层归一化\n解码层：N个 掩码多头自注意力机制 + 多头交叉注意力机制+ 逐点全连接前馈网络 + 残差连接 + 层归一化\n位置编码：如何设计位置编码\n（1）三角编码：通过交替使用正弦和余弦函数对位置和维度进行编码，使模型能够捕捉序列元素的绝对和相对位置关系。\n$$PE(pos, 2i) = \\sin(\\frac{pos}{10000^{2i/d_{model}}}), PE(pos, 2i+1) = \\cos(\\frac{pos}{10000^{2i/d_{model}}})$$\n正余弦项：奇偶维度，维度间关系，相邻维度(2i和2i+1)之间存在数学关系，即三角函数的和角，便于模型捕捉相对位置关系\n分子项：位置关系\n分母项：指数衰减频率，表示维度关系，控制位置编码的频率衰减速度，低频维度（高i值）对应长距离依赖，高频维度（低i值）对应短距离依赖。实现上，用对数优化 $$\\frac{1}{10000^{2i/d_{model}}} = exp(-(2i)*ln(10000) /d_{model})$$。\n波长10000和奇偶正余弦是实现相对依赖关系，推导上三角函数的和角，本质上是旋转矩阵。\n位置关系建模：三角函数的周期性，位置编码一定程度上可以表示相对位置关系 1、每个空间位置生成唯一的编码\n2、不同频率的正余弦函数捕获相对位置关系\n3、位置编码的平移不变性\nCOCO数据集：\nhttps://aistudio.baidu.com/dataset/detail/7122/file\nhttps://cocodataset.org/#home\n2D图像分割 FCN: Fully Convolutional Networks for Semantic Segmentation 论文链接：https://arxiv.org/abs/1411.4038v1\n论文代码：\n语义分割开山之作，首次提出全卷积网络（FCN），彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。\n论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 + 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。\nSegNet/DeconvNet U-Net PSPNet Mask R-CNN 链接：https://zhuanlan.zhihu.com/p/75333140\nDeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs 参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；\nDeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs （1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；\nDeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation 参考link，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP + BN + Image-Level ；（4）移除CRF；\nhttps://blog.csdn.net/qq_36560894/article/details/106352573， Deeplab V3+：Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation 链接：https://arxiv.org/abs/1802.02611\n这是 DeepLabv3+，由 Liang-Chieh Chen 等人发表于 ECCV 2018，是 DeepLab 系列的集大成之作，也是语义分割领域的一代经典基线。\n一、背景与动机：DeepLab 系列的演进\nDeepLab 系列一直围绕一个核心问题：如何在保留空间分辨率的同时扩大感受野。\n┌───────┬────────────────────────────────┬───────────────────────────────────────┐\n│ 版本 │ 核心机制 │ 局限 │\n├───────┼────────────────────────────────┼───────────────────────────────────────┤\n│ v1/v2 │ 空洞卷积 + ASPP │ 较基础 │\n├───────┼────────────────────────────────┼───────────────────────────────────────┤\n│ v3 │ 改进的 ASPP + 全局平均池化分支 │ 仍采用 “编码器输出后直接上采样”，细节恢复不足 │\n└───────┴────────────────────────────────┴────────────────────────────────────────┘\nDeepLabv3 的输出步长（output stride, OS）通常为 16 或 8，即特征图比输入小 16/8 倍，靠空洞卷积保持感受野，但最终边界细节仍依赖单次双线性上采样，较为粗糙。\n与此同时，encoder-decoder 结构（如 U-Net、RefineNet）在恢复细节上表现更好：decoder通过逐步融合低层高分辨率特征来精修边界。\nDeepLabv3+ 的动机就是：把 DeepLabv3 的强大编码器（空洞卷积 + ASPP）与 encoder-decoder 的精细解码能力结合起来。\n二、核心贡献\n贡献 1：将 DeepLabv3 改造为 encoder-decoder 结构\nEncoder（编码器）\n主干网络（如 ResNet）提取特征，采用空洞卷积控制 output stride。\n顶层低分辨率特征送入 ASPP 模块：\n1×1 卷积分支\n三个不同膨胀率（rates，如 6/12/18）的 3×3 空洞卷积分支\n全局平均池化（GAP）分支（image-level pooling）\n各分支拼接（concat）后再过一个 1×1 卷积，得到编码器输出。\nDecoder（解码器）—— 关键创新\nDeepLabv3+ 没有照搬 U-Net 的多级对称解码，而是采用 “轻量两级上采样”：\nASPP输出(OS=16)\n│ 1×1 conv 降维\n▼ 双线性上采样 ×4 ──┐\n│ (到 OS=4)\n主干浅层特征(OS=4) ─1×1 conv降维─┘\n│ concat\n▼\n3×3 conv → 3×3 conv ← 两层卷积精修\n▼ 双线性上采样 ×4\n最终分割图 (OS=1)\n关键设计点：\n只用一层浅层特征（通常是 backbone 的 stride=4 层，如 ResNet 的第一个 block 输出），而非逐级融合所有尺度。这样 decoder 轻量、高效。\n1×1 卷积降维：浅层特征通道数大（如 256），先用 1×1 卷积降到 48 维再 concat，避免浅层特征主导、并降低计算量。\n两层 3×3 卷积精修：concat 后用两个 3×3 卷积细化特征，再上采样回原图分辨率。\noutput stride 灵活：训练时用 OS=16 求速度，推理时可切到 OS=8 提精度（只需改空洞率，无需改架构）。\n贡献 2：Atrous Separable Convolution（空洞深度可分离卷积）\n这是论文标题后半部分的创新，用于降低 ASPP 和 decoder 中 3×3 卷积的计算成本。\n它把两件事合二为一：\nAtrous（空洞）卷积：在卷积核元素间插入空洞，扩大感受野而不增参数量、不降分辨率。\nSeparable（深度可分离）卷积：\nDepthwise：每个输入通道单独用一个卷积核（如 3×3 空洞）。\nPointwise：1×1 卷积做通道间信息融合。\n空洞深度可分离卷积 = 空洞 depthwise + pointwise。\n计算量对比\n以 3×3 空洞卷积、输入输出通道均为 为例：\n标准空洞卷积：参数量 ≈\n空洞深度可分离卷积：参数量 ≈ （depthwise + pointwise ）\n当 较大时，后者远小于前者（约省 ）。\n论文引用 MobileNet 的结论：使用深度可分离卷积可在几乎不损失精度的情况下大幅降低计算量（约 1~2 数量级），这让 DeepLabv3+在移动端也能高效运行。\nDeepLabv3+ 把 ASPP 中所有 3×3 空洞卷积、decoder 中所有 3×3 卷积都换成了这种可分离版本。\n三、实验亮点\n数据集与主干 在 PASCAL VOC 2012（含额外标注，10582 训练图）、Cityscapes、PASCAL-Context 上评测。\n主干网络：ResNet-50 / ResNet-101 / Xception。\nencoder-decoder vs. 纯 DeepLabv3 引入 decoder 后，相比直接上采样的 DeepLabv3，mIoU 提升约 1~2 个点，尤其在物体边界处改善明显。\n在 OS=16 下，decoder 用浅层特征带来的收益尤为突出（因为高层特征分辨率低，更需要浅层细节补偿）。\nASPP vs. 不同 decoder 设计 论文实验了\"加 ASPP\" vs “不加 ASPP（只用 decoder 融合多尺度浅层特征）\"，发现 ASPP + decoder 的组合最优——空洞卷积的多尺度上下文与浅层细节是互补的，缺一不可。 Xception 主干 + 深度可分离卷积 把 ResNet 换成改进的 Xception（更深的 depthwise separable 结构，改动 entry flow、加更多层、用 BN+ReLU），并在ASPP/decoder 全部用空洞深度可分离卷积：\n精度进一步提升（VOC 上达 89% mIoU，当时 SOTA）。\n计算量大幅下降，更适合部署。\n在 Cityscapes 上达到约 82.1% mIoU，验证集与测试集均表现优异。\n速度-精度权衡 通过调整 output stride（8 vs 16）、decoder 卷积通道数、是否用可分离卷积，可在精度与速度间灵活权衡，覆盖服务器端到移动端。\n四、与同类工作的关系\nvs. U-Net / RefineNet：DeepLabv3+ 保留了 encoder-decoder 思想，但 decoder 极度精简（只取一层浅层特征 + 两层 3×3 卷积），而非逐级对称上采样，更轻量。\nvs. PSPNet：PSPNet 用金字塔池化抓全局上下文；DeepLabv3+ 用 ASPP（不同空洞率）抓多尺度上下文，并额外加 decoder 恢复细节，对边界更友好。\nvs. DeepLabv3：v3+ 是 v3 的\"加 decoder\"增强版，ASPP 部分基本继承，主要改进在 decoder 与可分离卷积。\n五、意义与启发\n集大成：DeepLabv3+ 把\"空洞卷积（扩大感受野）+ ASPP（多尺度上下文）+ encoder-decoder（细节恢复）+ 深度可分离卷积（轻量化）“四者整合，是 DeepLab 系列的终结篇，也成为语义分割的标准基线，被广泛引用与复现。\n轻量 decoder即足够：论文证明\"不需要复杂的逐级解码，仅融合一层浅层高分辨率特征\"就能大幅提升边界质量，这对后续轻量分割网络（如BiSeNet、Fast-SCNN）的设计有重要启发。\n空洞可分离卷积的普适价值：把\"扩大感受野\"和\"降低计算量\"统一在一种算子中，是后续高效分割/检测模块（如 LR-ASPP、MobileSeg系列）的常用技巧。\n训练-推理 OS 解耦：训练用大 OS 省显存、推理用小 OS 提精度，这种\"同架构、换参数\"的灵活性成为分割领域的常见实践。\n一句话总结：DeepLabv3+ 在 DeepLabv3 的 ASPP 编码器基础上，嫁接了一个轻量的浅层特征 decoder\n以精修边界，并全面采用空洞深度可分离卷积降低计算量，从而在精度与速度上同时取得突破，成为语义分割领域的经典基线。\nRepVGG: Making VGG-style ConvNets Great Again 论文地址：https://arxiv.org/abs/2101.03697 (CVPR2021)\n论文源码：https://github.com/megvii-model/RepVGG\n这是 CVPR 2021 的一篇论文，核心思想是：用结构重参数化（Structural Re-parameterization）让一个训练时为多分支结构的网络，在推理时等价转换为单分支的 VGG/ResNet 风格网络，从而兼顾训练时的精度与推理时的速度。\n3x3卷积分支（提取特征） + 1x1卷积分支（补充不同感受野的特征） + Identity分支（残差连接，改善梯度）\n卷积和BN合并，3卷积合并1卷积（ (W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)）\n这一步是在onnx导出还是在哪里实现的？\n一、动机：为什么要\"复活\"VGG？\n作者指出，VGG 风格的网络（纯串联的 3×3 卷积 + ReLU）有三个对部署友好的优势：\n推理快：单分支结构内存访问开销小，没有分支融合的额外耗时。\n省显存：不需要保存中间多分支的结果。\n灵活：易于针对不同硬件/算子库做量化、剪枝等优化。\n但 VGG 之所以被淘汰，是因为它精度不够高——缺少 ResNet 那样的多分支（恒等映射 + 1×1\n卷积）结构，导致训练深层网络时梯度流差、表达力不足。\n于是核心矛盾是：多分支结构利于训练精度，单分支结构利于推理效率。\n二、核心方法：结构重参数化\n训练时结构：3 分支 每个 RepVGG Block 在训练时有三条并行分支：\n┌── 3×3 conv + BN ──┐\n输入 ────┼── 1×1 conv + BN ──┼── 相加 ── ReLU ── 输出\n└── Identity(BN) ──┘\n3×3 分支：主要特征提取\n1×1 分支：补充不同感受野的特征\nIdentity 分支（带 BN）：当输入输出通道数、空间尺寸一致时存在，相当于残差连接，改善梯度流\n这种结构和 ResNet 类似，能获得高精度。\n推理时结构：单分支 部署时把上面的三分支等价融合成一个 3×3 卷积：\n输入 ── 3×3 conv + ReLU ── 输出\n融合后变成了纯 VGG 风格，没有多余的分支开销。\n为什么能融合？—— 重参数化推导 关键在于 卷积是线性的，BN 在推理时也是线性的，所以可以把三者合并。\n步骤一：把每个分支的 Conv + BN 融合成一个带偏置的卷积\nBN 在推理阶段的公式为：\ny = γ·(x - μ)/√(σ² + ε) + β\n这是一个仿射变换（线性 + 偏置）。设：\n卷积核权重为 W，则卷积输出 W*x（无偏置时）\nBN 参数 γ, β, μ, σ², ε\n可推导出等效卷积核与偏置：\nW’ = W · (γ / √(σ² + ε))\nb’ = β - γ·μ / √(σ² + ε)\n于是每个分支都变成 Conv(W’, b’)。\n步骤二：把三个分支的卷积相加\n因为三个分支对同一输入做卷积后逐元素相加，而卷积对加法满足分配律：\n(W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)\n处理 1×1 分支和 Identity 分支：\n1×1 卷积：把它的核零填充成 3×3，就能直接加到 3×3 核上。\nIdentity 分支（没有卷积，只有 BN）：相当于一个\"以恒等为单位冲激\"的卷积——构造一个中心为 1、其余为 0 的 3×3 核，再乘以 BN 的等效系数，就能并入。\n最终得到一个单一的 3×3 卷积（带偏置），与原三分支在数学上完全等价。\n▎ 注意：融合只在 BN 处于推理模式（用训练集的滑动均值/方差）时才等价。所以训练完、转为 eval 模式后再融合。\n三、网络整体设计\nRepVGG 是一个类似 VGG 的 stage 架构，共 5 个 stage，每个 stage 由若干个 RepVGG Block 堆叠：\nLayer placement：每个 stage 第一个 block 做 stride=2 下采样（类似 ResNet），此时 Identity 分支不存在（输入输出尺寸不同）。\n逐阶段变宽：每个 stage 的通道数按基础倍数 a, b 缩放，且越深的 stage 越宽（2a, 4a, 8a 之类）。\n针对性加深变宽：通过不同的 a, b 和 stage 深度配置，得到一个模型族：\nRepVGG-A0/A1/A2：轻量级\nRepVGG-B0/B1/B2/B3：更大，追求更高精度\nRepVGG-B1g2/g4、B2g4：使用分组卷积（groupwise conv）的变体，进一步权衡速度\n四、实验结果亮点\nImageNet 分类：RepVGG-B2 在仅 80% 训练 epoch 下达到 Top-1 80%+，超过 ResNet-152、EfficientNet 等同期模型，且推理速度更快。\n速度：在 GPU 和专用加速硬件上，同等精度下比多分支网络（如 ResNet、ResNeXt）快不少，因为推理时是纯单分支。\n等价性验证：作者实测融合前后输出几乎一致（差异在浮点误差量级），证明重参数化是数学等价的。\n迁移到检测/分割：作为 backbone 加在 CenterNet/PSPNet 上也带来提升。\n五、意义与启发\n1.训练-推理解耦：开创性地提出\"训练用复杂结构、推理用简单结构\"的设计范式，不必为了部署而牺牲精度，也不必为了精度而牺牲速度。\n结构重参数化成为通用工具：后续很多工作（如 RepVGG 后续系列、DBB/RepLKNet 等）都沿用了这一思路——把可融合的多分支设计作为\"训练期的可学习结构”。\n简单即高效：在算子库高度优化的今天，“朴素的串联 3×3 卷积\"反而是性价比最高的结构，关键在于怎么把它训好。\n一句话总结：RepVGG 用\"训练三分支、推理一卷积\"的重参数化技巧，让老旧的 VGG 架构在精度和速度上都重新具备竞争力。\n部署论文 部署，link, A White Paper on Neural Network Quantization 自动驾驶泊车领域学习路线 路线 自动驾驶路线的演进，可以“规则系统 → 数据驱动 → 认知建模”\n2004年：“感知-决策-规划-控制”思想模块化，借鉴于机器人领域的成熟思路，经 2004 年 DARPA 挑战赛完成架构固化\n2022年: BEV成为主流\n2023年: Occupancy感知兴起\n2024年: 端到端（E2E）开始落地\n2025年: VLA/VLM + WM 成为新热点\n概念 低速泊车功能：\n行车辅助\n泊车辅助：PCA倒车影像，AVM全景影像，PDC-F前泊车辅助，PDC-R后泊车辅助，BSD超声波盲点检测，PEB超声波紧急制动，RFBAV右前盲区，APA自动泊车辅助\nAVM：全景影像\nAPA：自动搜索车位，自动泊入/泊出，自选车位，无感泊车\n远程泊车辅助：RSPA遥控直进直出，RPA-S短距离遥控泊车，RPA-L长距离遥控泊车，AVP-LP记忆泊车/点对点泊车，AVM-MP高精地图泊车/召唤泊车\n架构 框架 代码——架构\n基础\n编译：本地/交叉编译，g++/gcc/cmake/bash/docker\n调试：本地回灌/可视化，gdb/core\n检测：clang-format/cppcheck/cmakelint/detect-secrets/asan\n提交：git/commit_config\n测试：gtest\nADAM通信\nTaskflow调度\n进程 + 通用功能\n配置中心\n故障上报\n系统稳定性\n负载与性能：CPU占比/算法时延\n进程消失：进程Core或者进程OOM\n无输出：\n标定 感知 方案 2D-PLD：\n数据：线库位数据量 46w，机械库位数据量 56W，640x640 BEV图像；\n模型-线库位，旋转目标框（c3 + FPN + PAN + SPPF），80x80特征检测角点，40x40特征检测车位线和轮挡，20x20特征检测空/占用库位框和头框。\n模型-机械库位，20x20特征多了斜坡，40x40特征多了尾杆，20x20多了限位块。\n后处理，NMS出来，遍历车位框，粗匹配头框和角点框和车位线框，精细匹配头框和车位线框，确定入库点（未匹配，需推理），计算车位类型（垂直、水平、倾斜），计算车位方向，计算尾点，过滤异常车位，计算车辆精度标志位\n4D-PLD：\nFreespace：\n单鱼眼方案：4 x img —-\u003e CNNs —-\u003e 4 x feat map —-\u003e IPM —-\u003e fusion —-\u003e bev-result\n后处理IPM，依赖外参精度\n依赖地面平面假设，地面不平case影响精度\nIPM 方案：4 x img —-\u003e IPM —-\u003e bev img —-\u003e CNNs —-\u003e bev-result\n前处理IPM，转换丢失信息\n依赖地面平面假设，地面不平case影响精度\nMulvision-bev方案：4 x img —\u003e CNNs —\u003e view-trans–fusion —\u003e bev-seg/bev-seg-sign\nview-trans–fusion: MLP-VPN/transformer/LSS，选择MLP方案，MLP—\u003e 4 x feat-map —\u003e MPL —\u003e bev feat-map GLD接地线方案：实例级分割接地线（包含语义类别和位置坐标）\n地面平面假设 + IPM投影，4 x img —\u003e CNNs —\u003e [pv2BEV] —-\u003edecode + —\u003epts\u0026cls\n| object-qury ———\u003e|\n—\u003e pv-seg\npv2BEV: view-transformer + view-encode + bev feat-map\nOD：fastBEV，两head（Neck_3d + Bbox_gead + Decode + NMS）,3dbox + label\n深度均匀分布，查找表是voxel-\u003euv关系，逆体素化+逆视锥化\n4x768x960\n点云范围：[-9,-9,0,9,9,3]，[-18,-18,-2,18,18,4]\n小目标：行人/立柱/锥桶/禁停立柱/闸机开/闸机关/水马/防撞桶/禁停牌/地锁开/地锁关\n大目标：轿车/卡车/公交车/工程车/人骑自行车/三轮车\nHPA，多了一路前视图-\u003ebackbone-\u003eneck-\u003enneck_fusion-\u003econcat\n0到5米，5到10米，10米外精度\nint8 apa J6M 58.8fps/orinx 89.3fps, hpa J6M 38.4fps\n深度假设局限，远距离目标不准，遮挡区域特征填充错误，纹理缺失区域精度下降，影响窄车位，复杂场景下深度误差导致碰撞\n极端条件鲁棒性，强光/逆光场景，夜间低照、导致感知失效影响泊车安全\n多维度优化：深度感知增强（引入轻量级深度估计、结合几何先验与学习型深度、自适应深度分布建模）、编码器结构优化（探索注意力机制、轻量化bev编码设计、特征融合策略优化）、长时序融合（扩展至更长历史窗口、引入时序注意力机制、动态关键帧选择策略）、鲁棒性增强（极端场景数据增强、域自适应训练策略）、多模态融合（相机+激光、bev空间多模态对齐、自适应模态权重学习）\nOCC：\n数据真值生成：数据输入 + 预处理 + 点云处理 + 占据栅格\n数据输入：多模态数据（图像 + 点云语义 + 定位 + 障碍物标注）\n预处理：时间同步 + 坐标系转换，以第一帧为参考坐标系\n点云处理：目标框合并（合并动静态/未跟踪目标框+坐标转换+尺度扩大+提取id和类别）、动态点云过滤（移除动态物体点云+过滤可行驶区域和自车周围点云+特定场景噪声处理）、坐标转换（统一转换到第一帧LiDAR坐标系+可选Delaunay三角po分稠密化）\n栅格生成：滑动窗口构建（选取前后多帧数据+合并不可行驶区域点云+过滤低速场景(速度阈值)）、多帧融合（转换到当前帧坐标系+合并可行驶区域点云+裁剪到预设范围）、语义增强（静志物体融合更新+动态物体语义标注+未跟踪物体标签分配）、CUDA体素化投票（CUDA加速体素坐标转换+投票机制确定语义类别+道路·路缘特殊处理）\n后处理：3D语义占据栅格（BFS填充可行驶区域空洞+垂直立柱结构填充+输出3D语义占据栅格 (npz格式)）\n模型：FlashOCC，2D卷积代替3D卷积，通道-高度交换\n默认、可行驶区域、路沿、墙体、立柱、机动车、轿车、行人、不可见、空目标\n范围：xy方向，3.,6.2,3,3 0.05/0.05 z方向 -1.4-1.8 voxel size 0.05 * 0.05 * 0.4 near_grid_size 120x184x8\nbackbone(resnet18) -\u003e neck(FPN)-\u003eNeck Fuse-\u003eView Transformers(LSS)-\u003eBEV Encoder(Resnet18+BiFPN)-\u003e BEV Decoder(OCC head)\n损失函数：1.0 * Dice Loss（衡量预测与真值的重叠程度，特别适合类别不平衡的情况） + 0.2 * CE Loss（标准的分类损失，衡量预测概率分布与真实分布的差异）+ Depth Loss （对深度估计预测的概率分布施加约束，衡量分布的“不确定性”）\nRV（Range View），前视相机\n障碍物 （动静态+ 与bev结果匹配后 + 车灯检测模型 + 车辆细分类模型） + 车道线（车道线信息 + 斑马线 + 地面标识） + 交通信号灯/交通标志牌 + + 人脸/车牌脱敏 + 环境灯光感知（灯光属性） BEV，6V\n障碍物（动态） + 车道线（车道线信息） + 环境识别 数据量：\n功能 PLD FS OD OCC 方案 IPM2D IPM2D BEV3D BEV3D 训练数据量（帧） 58W 112W 78W 30W 测试集数量（帧） 0.5W(线库位有0.4W帧，机械库位0.1W) 1W帧 0.4W帧 1W帧 可支持类型 线库位/机械库位 消防箱、消防水管、大货车车头车尾；消防水管的定义，是在消防箱附近、立柱附近的直径大于10cm的水管 功能 PLD FS OD OCC 竞品：PLD/FS (80W帧), OD/OCC (500W帧)，单车型 鱼眼分割/IPM检查（2W-3W帧），OCC增加50W帧，OD增加1000-2000Clib;\nFreespace BEV模型（BEV Depth） 用途：用于小车、卡车、巴士、二轮、三轮、行人共6个类别的障碍物目标检测\n输入：周视六张图像和radar点\n输出：每个障碍物目标的定位框，包括三维位置（xyz），朝向角，尺寸（长宽高），类别和置信度\n模型说明：模型共包含Image-view Encoder、View Transformer、BEV Encoder、radar encoder和Det Head五个部分。输入的环视6张图先通过Image-view Encoder提取出2d图像特征并预测出其对应的深度图，将得到的2d特征、深度图和相机参数经过View Transformer，将2d图像特征投影成bev空间的特征，该特征和通过radar点提取到的radar bev feature 相加后，送入BEV Encoder中进一步提取其高级语义\n特征，最后经过后续的Det Head，得到各个目标的3d框信息。\n后处理：过滤低置信度的框、iou nms、射线nms\n方案优势：BEV相比传统方法具有天然的视角优势，方便多传感器融合，还能解决遮挡问题；radar前融合相比于后融合方式，camera模型能够避免由过滤radar噪点带来的静止目标漏检，radar模型能够抑制纯camera模型的射线fp问题、使定位更准确。\n偏差报告\n感知融合：\n1、空间库位，误释放——十字路口、禁停信息、公交车站牌、\n对标，比亚迪夏\n2、自定义车位，误释放——禁停信息\n3、车位内有三角指示牌，误释放\n三角警示牌为行车场景元素，不在泊车实现需求内。\n对标，深蓝S05等竞品车均不负责检测三角警示牌，同样会出现漏检/误检为锥桶，地锁等通用障碍物类别\n4、斜坡场景，导致底图畸变，库位显示过大6.6米，实际4.5米\n（1）坡度场景导致底图畸变，基于底图的检测无法获取库位的实际位置，偏差较大，目前单帧的检测方案无法解决。\n（2）无碰撞风险，且停靠到位，仅导致车机动画显示与实际存在差别。\n蔚来ET5在该类型场景下库位不释放或泊偏压线，秦L无法泊出，显示泊车不可用. 小鹏p7+显示坡度过大不释放库位。\n5、斜坡场景，泊入压线\n（1）感知结果贴合检出，坡度场景导致底图畸变，入库后偏右。\n（2）与中心偏离小于5cm，在误差范围内。\n蔚来ET5在该类型场景下库位不释放或泊偏压线，秦L无法泊出，显示泊车不可用. 小鹏p7+显示坡度过大不释放库位\n6、斜坡场景，揉库\n（1）坡度场景导致距离库位较远时感知误差较大，在靠近后更新真实位置，入库后更新实际库位长度。\n（2）无碰撞风险，且停靠到位，规控多揉库一次。\n蔚来ET5在该类型场景下库位不释放或泊偏压线，秦L无法泊出，显示泊车不可用. 小鹏p7+显示坡度过大不释放库位，P181也有类似问题，维持现状处理。\n7、泊偏\n（1）车位线磨损、不清晰场景，无有效车位特征，模型检出不稳定，不满足后视修正条件，导致无法更新库位，未能弥补定位误差\n（1）强行将这类无库位特征的数据加入模型训练，风险较大，会导致模型误识别增加。\n（2）库位线不清晰，无准确的有效特征，受限场景。\nDX11、理想L8-Pro（J5方案）、小鹏P7在库位线模糊场景下均会存在刮蹭风险\n8、误识别库位，花坛中间\n（1）区域拥有完整的库位特征，在距离较远时提前释放，符合预期。\n（2）靠近后，看到后方区域，正常关闭。\n（3）无碰撞风险。\nKX11-A5其他项目在有库位特征的地方也会误检；\n对标比亚迪，也有误检情况。\nOD 训练数据：https://confluence.geely.com/pages/viewpage.action?pageId=155645828\n融合 参考：[自动驾驶感知实践：从3D到BEV] 后融合感知方案\n多源库位融合\n单源时序库位跟踪，时序对齐 / 坐标对齐 + 数据关联 + 航迹更新 / 特征管理 + 航迹管理 + 轨迹上报\n同跟踪流程一样，先时空对齐，轨迹预测，再数据关联，最后就是轨迹更新和特征融合，轨迹管理，轨迹上报。\n有几个特点，第一个是采用局部定位来实现空间对齐，再用约束速度为0的CV常速运动模型来实现时间对齐， 下面就是数据关联，这里最简单最快速的方式最邻近匹配，设置阈值 + 计算相似度 + 分配算法\n多源语义库位融合，数据对齐 + [全局轨迹预测]+ 数据关联 + 轨迹更新 / 特征融合 + [轨迹管理] + [轨迹上报] 超声 传感器特性：\n超声USS：八个方向测试\n锥桶（5cm）\n75cm圆柱形（5cm）\n立柱面（5cm）、立柱角（5cm，偶发10cm）、\n购物车（±5cm，偶发10cm）\n禁停牌（5cm，偶发+10cm）\n25x25x30cm纸箱（+5cm-+10cm，后方无法检测）\n假人（-5cm~-10cm）\n16cm路沿（+10cm，50%检测不到）\n定位 规划 ",
+  "wordCount" : "1928",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-08-31T13:20:44Z",
+  "dateModified": "2026-08-31T13:20:44Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20260831132044/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      论文阅读
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-08-31T13:20:44+00:00'>2026年8月31日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="博客与博主">博客与博主<a hidden class="anchor" aria-hidden="true" href="#博客与博主">#</a></h2>
+<ul>
+<li>黄浴，https://www.zhihu.com/people/yuhuang2019</li>
+<li><a href="https://www.zhihu.com/column/c_1596466202909507584">https://www.zhihu.com/column/c_1596466202909507584</a></li>
+<li><a href="https://www.zhihu.com/column/c_1806461708782407680">https://www.zhihu.com/column/c_1806461708782407680</a></li>
+</ul>
+<h2 id="world-model-世界模型">World Model 世界模型<a hidden class="anchor" aria-hidden="true" href="#world-model-世界模型">#</a></h2>
+<h2 id="vlm--vla-视觉语言模型视觉语言动作">VLM / VLA 视觉语言模型/视觉语言动作<a hidden class="anchor" aria-hidden="true" href="#vlm--vla-视觉语言模型视觉语言动作">#</a></h2>
+<p>参考：<a href="https://gri.feishu.cn/wiki/IEsHwmanTi61WokDCmCcPgnUnJh">从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶</a></p>
+<p>在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的</p>
+<p>“推理引擎&quot;与车辆驾驶的&quot;动作输出模块“整合在同一个架构中。</p>
+<p>典型的VLA模型由三大组件构成:</p>
+<ol>
+<li>视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;</li>
+<li>VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等</li>
+<li>动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号&ndash;方向盘转角、油门开度、刹车力度等。</li>
+</ol>
+<p>三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成</p>
+<p>看见一理解一行动”的闭环。</p>
+<p>然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，</p>
+<ol>
+<li>
+<p>工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。</p>
+</li>
+<li>
+<p>认知层面，VLA依赖的语言模型基于互联网图文预训练，其&quot;常识”与现实物理世界的动力学规律存在本质脱节</p>
+</li>
+</ol>
+<p>——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。</p>
+<p>此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。</p>
+<p>综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”</p>
+<p>的实时驾驶任务。</p>
+<h3 id="omnidrive-nvidia-cvpr2025">OmniDrive-NVIDIA-CVPR 2025<a hidden class="anchor" aria-hidden="true" href="#omnidrive-nvidia-cvpr2025">#</a></h3>
+<h3 id="parkingworld-end-to-end-autonomous-parking-reinforcement-learning-from-corrective-experience-in-3dgs-simulation">ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation<a hidden class="anchor" aria-hidden="true" href="#parkingworld-end-to-end-autonomous-parking-reinforcement-learning-from-corrective-experience-in-3dgs-simulation">#</a></h3>
+<p>链接：https://arxiv.org/abs/2506.05667</p>
+<p>总结：</p>
+<h2 id="e2e-端到端">E2E 端到端<a hidden class="anchor" aria-hidden="true" href="#e2e-端到端">#</a></h2>
+<p><a href="https://arxiv.org/pdf/2605.25029">https://arxiv.org/pdf/2605.25029</a></p>
+<p>(VAVAD,DriveVLM)</p>
+<p>DINO, RTRT-DETR</p>
+<h3 id="multipark202508">MultiPark(2025/08)<a hidden class="anchor" aria-hidden="true" href="#multipark202508">#</a></h3>
+<p>MultiPark: Multimodal Parking Transformer with Next-Segment Prediction</p>
+<p><a href="https://arxiv.org/abs/2508.11537">https://arxiv.org/abs/2508.11537</a></p>
+<p><a href="https://r2.yangly1993.top/1788143823899.png">https://r2.yangly1993.top/1788143823899.png</a></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NTNmNDhjZTliZTk1MTdmYjY4ZmUyZmViY2ZmZTNhNTVfNHU5SXN0eUJERWJlMFRsZnlJSjNzZU9BcXpYUmtqVnVfVG9rZW46SnV3bmJQN3F3b253YkJ4UXJ2UmNZYlV2bmdjXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<ol>
+<li>通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头</li>
+</ol>
+<h3 id="vad-v2">VAD v2<a hidden class="anchor" aria-hidden="true" href="#vad-v2">#</a></h3>
+<h3 id="vad">VAD<a hidden class="anchor" aria-hidden="true" href="#vad">#</a></h3>
+<h2 id="bev-空间">BEV 空间<a hidden class="anchor" aria-hidden="true" href="#bev-空间">#</a></h2>
+<p>综述：</p>
+<p><a href="https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving">https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving</a></p>
+<p>3D Object Detection for Autonomous Driving: A Review and New Outlooks</p>
+<p>NVAutoNet: Fast and Accurate 360∘ 3D Visual Perception For Self Driving，2023</p>
+<h3 id="simplebev202411">SimpleBEV(2024/11)<a hidden class="anchor" aria-hidden="true" href="#simplebev202411">#</a></h3>
+<p>论文：SimpleBEV: Improved LiDAR-Camera Fusion Architecture for 3D Object Detection</p>
+<p>链接：https://arxiv.org/pdf/2411.05292</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NTE5NWM1NmJmOTA3YjI0Y2M2N2M5NTE4YTYyYzI0YzhfVWgwWkE2dmgzbW1pYWlTbk9yQkNUSVZFbzNBTlVhVHBfVG9rZW46S2VxT2JtdHZIb0prQ2l4dVBPZ2MxaUlzbjhmXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>参考<a href="https://zhuanlan.zhihu.com/p/7206753708">link</a>，（1）相机支路上，对离散深度估计优化，提出了两阶段深度估计，第一阶段先将深度概率估计结果和特征 合并Cat操作，通过卷积层获得离散深度概率，第二阶段再结合激光点云投影获得点云真值深度加权，无点云处直接用估计深度；（2）激光支路上，采用常见的SECOND点云特征提取网络结构，将多个稀疏3D卷积层依次应用到特征图上，生成多尺度3D特征。此外引入引入了多尺度特征融合策略，以及将不同阶段的多尺度3D特征转化为多个二维BEV特征。然后，利用多次上采样和卷积运算融合多个BEV特征，得到最终的LiDAR-BEV特征。最后，将Camera分支和LiDAR分支得到的BEV特征进行通道维度的合并，并送入到BEV Encoder模块完成进一步的特征提取，最后接3D检测头输出最终的3D检测结果。</p>
+<h3 id="sparselif">SparseLIF<a hidden class="anchor" aria-hidden="true" href="#sparselif">#</a></h3>
+<p><a href="https://www.zhihu.com/column/c_1658611768455737344">https://www.zhihu.com/column/c_1658611768455737344</a></p>
+<p>SparseLIF: High-Performance Sparse LiDAR-Camera Fusion for 3D Object Detection</p>
+<h3 id="bevdet-occupancy">BEVDet-Occupancy<a hidden class="anchor" aria-hidden="true" href="#bevdet-occupancy">#</a></h3>
+<p><a href="https://github.com/Charmve/OccNet-Course">https://github.com/Charmve/OccNet-Course</a></p>
+<h3 id="q-petr">Q-PETR<a hidden class="anchor" aria-hidden="true" href="#q-petr">#</a></h3>
+<p>Q-PETR: Quantization-aware Position Embedding Transformation for Multi-View 3D Object Detection</p>
+<h3 id="petrv2">PETRV2<a hidden class="anchor" aria-hidden="true" href="#petrv2">#</a></h3>
+<h3 id="petr">PETR<a hidden class="anchor" aria-hidden="true" href="#petr">#</a></h3>
+<h3 id="bevdepth">BevDepth:<a hidden class="anchor" aria-hidden="true" href="#bevdepth">#</a></h3>
+<h3 id="bevfusion">BevFusion<a hidden class="anchor" aria-hidden="true" href="#bevfusion">#</a></h3>
+<p>BevFusion：Multi-Task Multi-Sensor Fusion with Unified Bird’s-Eye View Representation，2022 | MIT提出</p>
+<ul>
+<li><a href="https://developer.aliyun.com/article/1388649">https://developer.aliyun.com/article/1388649</a></li>
+</ul>
+<p>论文地址：<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/abs/2205.13542">BEVFusion: Multi-Task Multi-Sensor Fusion with Unified Bird&rsquo;s-Eye View Representation</a></p>
+<p>开源地址：</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NjFmMDQ4OWMyMTlkMDRhYjBjMjU3OWI0YTdlODkzZTZfaE85eDk4WFdHbGhrODZnRHcwMWdXcFlzYVBhUDltTm9fVG9rZW46UXhtUmJCdE5tb2RhQnR4U1VFYWNpQkVsbnZlXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>Camera-to-BVE View Transform：为了解决深度的不确定性问题，采用了类似LSS和BEVDet的方法，通过预测每个像素点的离散深度分布来明确其深度。</p>
+<h3 id="bevdet">BEVDet<a hidden class="anchor" aria-hidden="true" href="#bevdet">#</a></h3>
+<p>BEVDet: High-Performance Multi-Camera 3D Object Detection in Bird-Eye-View</p>
+<p>论文链接：https://arxiv.org/abs/2112.11790</p>
+<p>代码链接：</p>
+<p>参考链接：</p>
+<p>该论文提出了一种BEVDet的模块化多相机 3D 目标检测范式，通过图像视图编码器、视图转换器、BEV 编码器和任务专用头实现 BEV 空间检测，结合 BEV 空间专属数据增强策略与 Scale-NMS 优化策略，在 nuScenes 数据集上实现了精度与效率的优异平衡，其高性能版本 BEVDet-Base 和高速版本 BEVDet-Tiny 均展现出领先性能。</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=MWFmNWE4NzU3ZDFhYTI1ZTE4MTk2ZmYyZjEwNjVjZTlfTEUwVERNSHVsREdqMVZyem5XNGg4Q002b1Y4Z1h1UFJfVG9rZW46RGRzaWJ4OUxObzdFSUV4R1RaZWNKYnlhbkNnXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>View Transformer视图转换器：借鉴LSS，提出的视图转换器构建 BEVDet 原型系统：该视图转换器以图像视图特征为输入，通过分类方式密集预测深度信息；随后利用分类得分与衍生的图像视图特征渲染预定义点云。</p>
+<h3 id="bevformer">BEVFormer<a hidden class="anchor" aria-hidden="true" href="#bevformer">#</a></h3>
+<p>BEVFormer: Learning Bird&rsquo;s-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers</p>
+<p>论文链接：https://arxiv.org/abs/2203.17270</p>
+<p>代码链接：</p>
+<p>参考链接：https://zhuanlan.zhihu.com/p/543335939</p>
+<p>ECCV 2022</p>
+<p>该论文提出 BEVFormer 框架，借助时空 Transformer，通过网格状 BEV 查询、空间交叉注意力（聚合多相机空间特征）和时间自注意力（融合历史 BEV 时间特征），从多相机图像中学习统一的鸟瞰图（BEV）表示，在nuScenes 等数据集的 3D 检测、地图分割任务上实现 SOTA 性能，且提升了速度估计准确性和低可见度物体检测召回率。</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmFhZjAzYTcwMjI4MzkzYzhhYTU3YmE2YmYyMmZhNTZfNjE0bk9sQ3gxeHZORGdydWRDb0psOFVMc1d1dUFlUWFfVG9rZW46QzljU2JuQ0JMb0luaDR4dE50dGNFMXFmbkZmXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>以多相机的图像作为输入，通过Backbone提取多相机特征，然后以transfomer作为基础架构，引进BEV查询 + 时序自注意力机制 + 空间交叉注意力机制，进一步实现通用BEV特征提取，最后连接检测头和分割头实现不同感知任务。</p>
+<ul>
+<li>时序特征提取：核心解决是仅静态图像难以推断运动目标的速度和难以检测到高度遮挡的目标问题。第一步是生成BEV查询向量，其是一组网格状可学习参数的查询向量Q，表示HxWxC的空间网格区域，自车位置落在网格中心，并增加位置编码；再对前一时刻的历史BEV特征处理以自车运动对齐当前帧的查询向量Q，得到特征B&rsquo;<em>{t-1}；最后，以时间自注意力机制以Q、P、V处理得到当前时刻的推导bev特征，以解决时间差内的目标位移，其中Qp是BEV查询向量在P = (x,y)点，V是Q和B&rsquo;</em>{t-1}的拼接，。</li>
+</ul>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=YzRkNTkxODk1MzA5YWI0NzBlNzk0ZTE2NDBlYjAzNDlfaTF3Q25yTlozVlJMNEEwY2U2UGF2TVNqZVlEYnNiVVBfVG9rZW46RDU1MmJCU1Znb2x1RW14S3FnaWMwRVJPbjRiXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>Sparse4D v2: Recurrent Temporal Fusion with Sparse Model</p>
+<p>论文链接：https://arxiv.org/pdf/2305.14018</p>
+<h3 id="motr">MOTR<a hidden class="anchor" aria-hidden="true" href="#motr">#</a></h3>
+<p>旷视-ECCV2022</p>
+<p><a href="https://zhuanlan.zhihu.com/p/1941989039378006811">https://zhuanlan.zhihu.com/p/1941989039378006811</a></p>
+<h3 id="sparse4d-v1202211">Sparse4D v1(2022/11)<a hidden class="anchor" aria-hidden="true" href="#sparse4d-v1202211">#</a></h3>
+<p>Sparse4D v1：Sparse4D: Multi-view 3D Object Detection with Sparse Spatial-Temporal Fusion</p>
+<p>迈向长时序稀疏化30感知的新实践</p>
+<p>论文链接：https://arxiv.org/pdf/2211.10581 代码链接：https://github.com/linxuewu/Sparse4D</p>
+<p>参考链接：</p>
+<ul>
+<li>
+<p><a href="https://blog.csdn.net/weixin_43163941/article/details/148685632">https://blog.csdn.net/weixin_43163941/article/details/148685632</a></p>
+</li>
+<li>
+<p><a href="https://baike.baidu.com/item/Sparse4D/63991179">https://baike.baidu.com/item/Sparse4D/63991179</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/1944869098413594105">https://zhuanlan.zhihu.com/p/1944869098413594105</a></p>
+</li>
+</ul>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=MWNiYTIwZmY4NDFmYjQzMDViNDBmNTc1ZGVjNDFlNjVfeXB6TWIzelZQUElCRWx2dmlxeEw0T0NHYUtyQ2pONWhfVG9rZW46U3lRRGJmUnhhb0d2V3d4bE1aWWNCYkRQbnBiXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>**概述：**该论文提出一种名为 Sparse4D 的稀疏多视图 3D 目标检测方法，通过稀疏 4D 采样、层次化特征融合及实例级深度重加权模块，融合多时间戳、多视图、多尺度特征并迭代优化anchor，在 nuScenes 数据集上性能优于现有多数Sparse-based和 BEV-based 方法，且更适用于边缘设备部署，还可扩展至 3D 目标跟踪任务。</p>
+<p><strong>疑问：</strong></p>
+<p>1、稀疏 4D 采样实现？</p>
+<p>2、层次化特征融合实现？</p>
+<p>3、实例级深度重加权模块实现？</p>
+<p>Deformable 4D Aggregation可变形 4D 聚合模块：实例特征质量决定稀疏感知系统表现，该模块以稀疏特征采样与层次化特征融合，来构建空间与时间维度上的高质量实例特征。</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=OWJjYzFhNjg5M2FmYzY3Y2M0NTA0ZTY1ODg1NTE5Y2RfbmNGdVVqQ3ppckFMMDg4cjRPUEhwdmtsYWhnREcyOEdfVG9rZW46VHFiQmJFZU5Cb2ROZXF4MUdhUmN6QlNabm1lXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>1、图a部分，4D 关键点生成：</p>
+<p>第一步是对于每个实例候选anchor框，从单一点扩展到多关键点以采样更精细特征，这些关键点分为两部分，</p>
+<ul>
+<li>
+<p>一部分是固定关键点 $$k_{F}$$，表征几何先验信息，放置在anchor框的中心和6个面的中心。</p>
+</li>
+<li>
+<p>另一部分是可学习关键点$$k_{L}$$，表征自适应特性，通过网络学习实例的最具表征能力的特征，实现上以实例特征经过子网络预测3D坐标，再计算对应偏移量，用yaw角的旋转矩阵变化，最后以anchor的尺寸和中心位置实现缩放和平移，从而得到可学习关键点的3D坐标。</p>
+</li>
+</ul>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NWFhYzUxNGI2NzQwZGEyMmM4NTQzZjNkMWU4YjU5YWZfOUcwcVVpdTRYaEVFMklOUHg0aFJleHFIZ1pDSkFpb1pfVG9rZW46RjBtN2IyVzhYb0hKdFh4ZjBZbmN5dk85bllnXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>第二步是关键点的时序扩展，以提高深度估计精度，实现上采用常速运动模型，按ahncor的速度向量计算当前帧$$t_{0}$$的3D关键点在历史帧$$t$$的位置（这里t0和t应该是时间序列的索引，dt表示时间间隔），</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=MDk5MDRlYWE0ODgzNGQ1ZWE4MGVlMWIyYTM1ZmRiMzBfa2ZOdU5ZOHEzbFMxRk9paTRnTngwSktWREZvS2wzUVpfVG9rZW46U05rWWJHZGI0bzltRXp4Y1Z6cGNDSHNZbnJkXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>再结合自车的运动信息（旋转矩阵和平移矩阵），将这些点统一映射到历史帧坐标系中，</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=OGQ3ODJlOWIzYTg3ZGJjNGJhYTllOGUwOGFmMGJjNGRfUFgwb2s5aG1MSkZtS2RJTDVHSEdJd2p2TVhTaXdIa1RfVG9rZW46VkZIVWJXbFNzb3R6ak54Y3piZWNQWElFbkFmXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>最终每个 anchor 都能得到一组随时间延展的关键点集合，从而可以通过当前帧提取到不同时序上同一个实例的特征，实现时序上对齐并聚合不同帧的特征。</p>
+<p>2、图b部分，稀疏采样</p>
+<ol start="0">
+<li>摘要</li>
+</ol>
+<p>基于鸟瞰图（BEV-base）的方法近期在多视角三维检测任务中取得了显著进展。与基于 BEV 的方法相比，基于稀疏（Sparse-base）的方法虽在性能上稍显落后，但仍具备诸多不可忽视的优势。为进一步推动稀疏三维检测的发展，本研究提出了一种名为 Sparse4D 的新型方法，该方法通过对时空特征进行稀疏采样与融合，实现anchor boxes的迭代优化。具体而言，该方法包含两大核心模块：</p>
+<p>（1）稀疏 4D 采样（Sparse 4D Sampling）：针对每个三维锚框，分配多个 4D 关键点，并将这些关键点投影到多视角、多尺度、多时间戳的图像特征上，以采样对应的特征；</p>
+<p>（2）层级特征融合（Hierarchy Feature Fusion）：对来自不同视角 / 尺度、不同时间戳及不同关键点的采样特征进行层级融合，生成高质量的实例特征。通过这种方式，Sparse4D 无需依赖密集视角转换或全局注意力机制，即可高效且有效地完成三维检测任务，同时更易于在边缘设备上部署。</p>
+<p>此外，本研究还引入了一个实例级深度重加权模块（instance-level depth reweight module），以缓解三维到二维投影过程中的病态问题（ill-posed issue）。实验结果表明，在 nuScenes 数据集的检测任务中，该方法的性能优于所有基于稀疏表示的方法，且超过了大多数基于 BEV 的方法。</p>
+<ol>
+<li>介绍</li>
+</ol>
+<p>多视角视觉三维感知（Multi-view visual 3D perception）在自动驾驶系统中扮演着关键角色，尤其对于低成本部署而言意义重大。与激光雷达（Lidar）模态相比，摄像头能够为远距离检测和纯视觉元素识别提供有价值的视觉线索。然而，由于缺乏明确的深度信息（depth cues），从二维图像中实现三维感知属于病态问题（ill-posed issue），这使得 “如何合理融合多摄像头图像以应对三维检测等三维感知任务” 成为长期存在的挑战。目前，该领域的主流方法主要分为两类：基于鸟瞰图（BEV）的方法和基于稀疏表示的方法。</p>
+<blockquote>
+<ul>
+<li>
+<p>Lidar modality（激光雷达模态）：“模态” 此处指传感器的类型 / 数据形式，激光雷达（Lidar）通过发射激光束测量距离，能直接输出高精度三维点云，是自动驾驶中获取深度信息的常用传感器，但成本较高。</p>
+</li>
+<li>
+<p>Vision-only element identification（纯视觉元素识别）：指仅依靠摄像头图像（不依赖激光雷达、毫米波雷达等其他传感器）完成目标（如车辆、行人、交通标志）的识别，是降低自动驾驶系统成本的重要技术方向。</p>
+</li>
+<li>
+<p>Depth cues（深度线索）：指图像中能暗示物体远近关系的信息，如物体大小变化、遮挡关系、纹理梯度等；摄像头图像需通过算法间接推断深度线索，而激光雷达可直接获取深度，这是二者的核心差异。</p>
+</li>
+<li>
+<p>Ill-posed issue（病态问题）：同前文，此处特指 “二维图像→三维感知” 的固有矛盾 —— 同一幅二维图像可能对应多种三维场景（例如，远处大物体与近处小物体在图像中可能呈现相同大小），导致解不唯一、结果易受干扰。</p>
+</li>
+</ul>
+</blockquote>
+<p>基于鸟瞰图（BEV）的方法 [12, 17–19, 29, 49] 通过将多视角图像特征转换到统一的 BEV 空间中来实现三维检测，并取得了优异的性能提升。然而，尽管 BEV 模式具备诸多优势，其仍存在以下一些不可避免的缺点：</p>
+<p>（1）从图像到 BEV 的视角转换需要进行密集特征采样或特征重排，该过程复杂度高且计算成本高昂，不利于在低成本边缘设备上部署；</p>
+<p>（2）最大感知范围受限于 BEV 特征图的尺寸，导致难以在感知范围、效率与精度之间实现平衡；</p>
+<p>（3）BEV 特征会对高度维度进行压缩，同时伴随纹理线索的丢失，因此 BEV 特征无法胜任交通标志检测等部分感知任务。</p>
+<blockquote>
+<ul>
+<li>
+<p>Dense feature sampling（密集特征采样）：指在特征转换过程中，对图像特征图上的每个像素或绝大多数像素点进行采样以提取信息，与 “稀疏采样”（仅采样关键点位）相对；该操作虽能保留更多细节，但会显著增加计算量。</p>
+</li>
+<li>
+<p>BEV feature map（BEV 特征图）：将多视角图像特征转换到鸟瞰视角后形成的特征矩阵，其尺寸（如宽、高）直接决定了 BEV 空间的覆盖范围 —— 尺寸越大，感知范围理论上越广，但计算和存储成本也会随之剧增。</p>
+</li>
+<li>
+<p>Height dimension compression（高度维度压缩）：BEV 视角是从空中俯视场景，会将三维空间中的 “高度” 信息（如车辆的高度、交通标志的离地高度）压缩到二维平面特征中，导致高度相关的纹理细节（如标志上的文字、图案）丢失，因此难以用于需要精细高度 / 纹理信息的任务（如交通标志识别）。</p>
+</li>
+</ul>
+</blockquote>
+<p>与基于 BEV 的方法不同，基于稀疏表示的算法 [5,35,41] 无需密集视角转换模块，而是直接采样稀疏特征用于三维锚框（3D anchors）的优化，因此能够缓解上述问题。在这类方法中，最具代表性的稀疏三维检测方法是 DETR3D [41]。然而，该方法的模型性能存在局限 —— 因为对于每个锚框查询（anchor query），DETR3D 仅采样单个三维参考点（3D reference point）的特征。近年来，SRCN3D [35] 采用感兴趣区域对齐（RoI-Align [9]）技术来采样多视角特征，但该方法效率不够高，且无法精确对齐来自不同视角的特征点。与此同时，现有稀疏三维检测方法均未充分利用丰富的时间上下文信息（temporal context），因此与当前性能最优（state-of-the-art）的基于 BEV 的方法相比，仍存在显著的性能差距。</p>
+<blockquote>
+<ul>
+<li>
+<p>3D anchors refinement（三维锚框优化）：“优化” 指在初始锚框（预设的三维边界框）基础上，结合采样到的特征信息调整锚框的位置、尺寸、姿态等参数，使其更精准地匹配真实目标，是提升三维检测精度的核心步骤。</p>
+</li>
+<li>
+<p>Anchor query（锚框查询）：在检测模型（尤其基于 Transformer 的模型，如 DETR 系列）中，指对每个初始锚框进行 “查询” 以获取对应特征的过程，本质是建立锚框与图像特征间关联的操作。</p>
+</li>
+<li>
+<p>RoI-Align（感兴趣区域对齐）：一种从图像特征图中提取特定区域（感兴趣区域，RoI）特征的技术，能解决传统采样方法中因区域位置非整数导致的特征错位问题，常用于目标检测、实例分割任务，此处用于多视角特征的精准提取。</p>
+</li>
+<li>
+<p>Temporal context（时间上下文信息）：指连续帧图像中包含的时间维度信息（如目标的运动趋势、帧间位置变化），利用该信息可提升动态场景（如自动驾驶中车辆、行人移动场景）下检测的稳定性与准确性。</p>
+</li>
+<li>
+<p>State-of-the-art（SOTA，当前性能最优）：技术领域常用术语，指在特定任务（如三维检测）中，目前公开报道的性能最好、最先进的方法或模型。</p>
+</li>
+</ul>
+</blockquote>
+<p>本研究致力于突破基于稀疏表示的三维检测方法的性能局限。为解决现有方法存在的问题，我们提出了一个名为 Sparse4D 的新型框架 —— 该框架利用分布在三维锚框（3D anchor box）区域内的多个关键点进行特征采样。与单点采样方式 [41] 和感兴趣区域对齐（RoI-Align）采样方式 [35] 相比，我们的采样方式具有两大核心优势：（1）能够高效提取每个锚框内部丰富且完整的上下文信息；（2）可便捷地扩展至时间维度，形成 4D 关键点，进而实现时间信息的有效对齐。</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=OGM4ZWRhMGRjZjY3ODNhNzdlODQ1MDJlZmU1NDQyNDRfUG9KWW83aTM5SXhsRm13RVR4a3dUcGtaUlQ2TXJ4VXVfVG9rZW46SnNiR2JvWGNYb0FVMjN4SG9MemNiZ2xmbk9vXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>如图 1 所示，借助 4D 关键点，Sparse4D 首先对每个关键点执行多时间戳、多视角及多尺度的特征采样。随后，这些采样得到的特征会输入一个层级融合模块，生成高质量的实例特征，用于三维边界框（3D box）的优化。此外，为缓解基于摄像头的三维检测所面临的病态问题（ill-posed issue）并提升感知性能，我们还明确加入了一个实例级深度重加权模块（instance-level depth reweight module）：该模块会利用从预测深度分布中采样得到的深度置信度，对实例特征进行重加权。该模块采用稀疏方式训练，且无需额外的激光雷达点云监督（Lidar point cloud supervision）。</p>
+<p>综上，本研究的主要贡献包括以下四点：</p>
+<p>・据我们所知，本文提出的 Sparse4D 是首个融合时间上下文信息的稀疏型多视角三维检测算法，能够高效且有效地对齐空间与时间视觉线索，从而实现精准的三维检测。</p>
+<p>・提出了一个可变形 4D 聚合模块（deformable 4D aggregation module），该模块能够灵活完成多维度（点、时间戳、视角及尺度）特征的采样与融合。</p>
+<p>・引入了一个深度重加权模块（depth reweight module），用于缓解基于图像的三维感知系统中存在的病态问题（ill-posed issue）。</p>
+<p>・在具有挑战性的基准数据集 ——nuScenes 数据集上，Sparse4D 在三维检测任务中的性能优于所有现有基于稀疏表示的算法以及大多数基于 BEV 的算法，且在跟踪任务中也表现出色。</p>
+<h3 id="flashocc-202311">FlashOcc (2023/11)<a hidden class="anchor" aria-hidden="true" href="#flashocc-202311">#</a></h3>
+<p>论文：Fast and Memory-Efficient Occupancy Prediction via Channel-to-Height Plugin</p>
+<p>链接：https://arxiv.org/abs/2311.12058</p>
+<blockquote>
+<p>OCC 克服感知任务中存在的长尾问题以及更加准确表达物体的几何形状信息</p>
+</blockquote>
+<p>FlashOcc 主要的优化点是以2D卷积 + BEV特征 + C2H通道到高度实现快速高效的OCC预测。</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=YzlmYjYyY2JkMGRhOWIzNjJhNDE1ZTIzNTViMGEzNzNfOVV2dTdWdWdQWWRLNzIyNFRrYlhkNWhoS254SFJ1a0ZfVG9rZW46RUVHZmJLemJVb0g3Tk14Sno0M2MxSmFlbnFnXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>整体架构如上，由2D图像编码器 + 视角变换 + BEV编码 + 占据预测头 + 可选的时序融合而构成，比较重要的几个点：（1）借鉴BEVStereo的深度估计思路，然后采用BEVDet论文的Voxel Pooling v2生成BEV特征；（2）占据预测头中，通过C2H通道到高度实现2D特征到3D体素预测。</p>
+<p>详细讲解参考：<a href="https://zhuanlan.zhihu.com/p/678409689">Flash-Occ：部署友好的Occupancy Network感知算法长文解读来啦</a></p>
+<h3 id="fast-bev202301">Fast-BEV(2023/01)<a hidden class="anchor" aria-hidden="true" href="#fast-bev202301">#</a></h3>
+<p>Fast-BEV: A Fast and Strong Bird&rsquo;s-Eye View Perception Baseline</p>
+<p>论文链接：https://arxiv.org/abs/2301.12511</p>
+<p>代码链接：https://github.com/Sense-GVT/Fast-BEV</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGI5ZWU2ZjRjN2E2ZDRjYzYwMWExNTI1YjE3NTg1NjVfTUx5dU1YRzRHSUhQbnVLYWxkRFR2empib2Q0NmpXd0JfVG9rZW46VnBidmJrNW1nb0JUUU14bzNFSmNjUUlXbnFjXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<ol>
+<li>
+<p>Fast-Ray（沿相机射线的深度分布是均匀的） + LUT + One-Voxel</p>
+</li>
+<li>
+<p>数据增强 + IMG/BEV + 随机翻转、旋转、裁剪</p>
+</li>
+</ol>
+<h3 id="m2bev202204">M2BEV(2022/04)<a hidden class="anchor" aria-hidden="true" href="#m2bev202204">#</a></h3>
+<p>M^2BEV: Multi-Camera Joint 3D Detection and Segmentation with Unified Birds-Eye View Representation</p>
+<p>论文链接：https://arxiv.org/abs/2204.05088v1</p>
+<p>代码链接：http://xieenze.github.io/projects/m2bev</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTE3NGQzNzMzMDUzOTYwMzcyYWJlYzJjNzY3YWE5MjlfOGZmbWkwN1lLYmJlWDlGdmpEOGpUZzh6MVFYMDJCdUZfVG9rZW46S0NybmJpaFhEb3piN2N4RlE2dmNZcXlzbkFmXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>本文提出统一框架 M^2BEV，基于多相机图像输入在 BEV 空间联合完成 3D 目标检测与地图分割任务，通过高效 BEV 编码器、动态框分配策略、BEV 中心性重加权和大规模二维检测预训练与辅助监督机制的四大关键设计缓解深度缺失问题，在 nuScenes 数据集上实现 42.5 mAP 和 57.0 mIoU 的 SOTA 性能，兼具内存效率与推理速度优势。</p>
+<ol>
+<li>
+<p>BEV 编码器 + Spatial to Channel（S2C）</p>
+</li>
+<li>
+<p>动态框分配策略 + FreeAnchor + 分类得分和定位准确率的加权区分正样本</p>
+</li>
+<li>
+<p>BEV 中心性重加权 + 距离损失函数</p>
+</li>
+<li>
+<p>2D检测 + 预训练权重 + 辅助监督</p>
+</li>
+</ol>
+<h3 id="lss200805">LSS(2008/05)<a hidden class="anchor" aria-hidden="true" href="#lss200805">#</a></h3>
+<p>Lift, Splat, Shoot: Encoding Images from Arbitrary Camera Rigs by Implicitly Unprojecting to 3D</p>
+<p>论文链接：https://arxiv.org/abs/2008.05711</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=YWFkNTE0YzlkYmVmZjk4MTZmMTc5NjgxMWRhODliMWVfT0NhVDFMeHd5M2xYblRBRTNONGdGdVBiMndvSUlmeXlfVG9rZW46SEpHcGJJVGVkb3lGVE54MkF1VWNpSFpxbjhmXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>本文提出了一种端到端网络架构，通过 “升维 - 投射 - 检测” 三步法（先将任意数量相机的图像升维为特征视锥，再投射到栅格化鸟瞰图网格，最后结合模板轨迹实现运动规划），在无需显式深度估计的情况下，从多相机数据中直接提取鸟瞰图表征，且在相关分割任务中表现优于现有方案，还可与激光雷达真值深度模型对标。</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NjZlOGFkMmRjYzNhN2ExNTkwMTA1MmJkZDYxZDQ5MjhfY1NlMTVsN2dGRnBHcVBBNjNpZHVVN0JLRkZTdzM4VUtfVG9rZW46VW1GeGIxOXZwb1Z5ZEl4UEJtV2MwT2ttbmxmXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>Lift过程：沿相机射线方向，预测深度的概率分布，再与2维特征加权投影到3维空间。</p>
+<h2 id="3d目标检测">3D目标检测<a hidden class="anchor" aria-hidden="true" href="#3d目标检测">#</a></h2>
+<p>OFT: Orthographic Feature Transform for Monocular 3D Object Detection</p>
+<p>CaDNN: Categorical Depth Distribution Network for Monocular 3D Object Detection</p>
+<p>BEVDepth: Acquisition of Reliable Depth for Multi-view 3D Object Detection</p>
+<h5 id="detr3d-3d-object-detection-from-multi-view-images-via-3d-to-2d-queries">DETR3D: 3D Object Detection from Multi-view Images via 3D-to-2D Queries<a hidden class="anchor" aria-hidden="true" href="#detr3d-3d-object-detection-from-multi-view-images-via-3d-to-2d-queries">#</a></h5>
+<p>论文链接：https://arxiv.org/abs/2110.06922</p>
+<p>代码链接：https://github.com/WangYueFt/detr3d</p>
+<p>参考文献：https://blog.csdn.net/jacke121/article/details/125466191</p>
+<p>**概括：**该文章来源于MIT，Toyota和Li Auto，CMU，Tsinghua，2021年发表于Arxiv，属于Sparse BEV的开山代表作，非常值得一读。本文提出了一种在3D空间上直接预测的top-down方法，先从多路相机图像上提取2D图像特征，再通过相机变换矩阵把3D位置投影到多视角图像，用一组稀疏的3D目标查询集合索引2D图像特征，最后模型为每个目标查询生成一个边界框预测，用集合到集合的损失函数衡量真实值和预测值的差异。该方法的优势有两点，一是不会受到的逐像素深度估计的目标边界框预测的down-top方法的累积误差影响，二是不需要非极大值抑制等后处理，提高推理速度。</p>
+<p><strong>疑问：</strong></p>
+<p><strong>模型结构：</strong></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=MzRkMjEyYTNmM2RhYTFjZDE5YmE2NzA5MDYwZDA5NWRfeE16YjBIUUtZMVBSd1Y4anRrbFoxa0t1SXhJWTdjMDNfVG9rZW46VWFNNmJGZWhDbzFEc2J4WHVhaGN1YkdQbjNlXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>（1）特征学习</p>
+<p>对六路相机图像，先用Backbone网络ResNet提取2D图像特征，再用Neck网络FPN进一步提取四个多尺度的2D图像特征。</p>
+<p>（2）检测头</p>
+<p>Detection head 采用6层的transformer decode层。受DETR启发，每层都是以一组目标查询去decode生成目标框中心的3D虚拟参考点，再用相机变换矩阵投影参考点到2D图像空间，坐标尺度归一化到-1到1，通过双线性差值采样多尺度的2D图像特征，如果投影坐标落在图像空间之外就置零，之后用采样图像特征和目标查询去更新下一层目标查询。</p>
+<p>最后，对于每个目标查询，用两个MLP网络分别来预测边界框和类别标签。这里采用了预测边界框的中心坐标相对于3D参考点的offset值，更利于网络学习。</p>
+<h5 id="deformable-detr">Deformable DETR<a hidden class="anchor" aria-hidden="true" href="#deformable-detr">#</a></h5>
+<h2 id="2d目标检测">2D目标检测<a hidden class="anchor" aria-hidden="true" href="#2d目标检测">#</a></h2>
+<p><a href="https://www.zhihu.com/column/c_1825558830546808832">https://www.zhihu.com/column/c_1825558830546808832</a></p>
+<h5 id="detrend-to-end-object-detection-with-transformers">DETR：End-to-End Object Detection with Transformers<a hidden class="anchor" aria-hidden="true" href="#detrend-to-end-object-detection-with-transformers">#</a></h5>
+<p>论文链接：https://arxiv.org/abs/2005.12872</p>
+<p>代码链接：<a href="https://github.com/facebookresearch/detr">https://github.com/facebookresearch/detr</a></p>
+<p>参考文献：（1）https://zhuanlan.zhihu.com/p/430198800</p>
+<p><strong>概述</strong>：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。</p>
+<p><strong>疑惑</strong>：按照<a href="https://link.zhihu.com/?target=https%3A//www.bilibili.com/video/BV1H44y1t75x">李沐老师读论文</a>的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？</p>
+<p>带着以上疑惑，我们来逐渐拆解DETR。</p>
+<p><strong>集合预测：</strong></p>
+<p>利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）</p>
+<ul>
+<li>
+<p>业界上，无标准深度学习模型的集合预测，类似的是多标签分类</p>
+</li>
+<li>
+<p>无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制</p>
+</li>
+<li>
+<p>不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。</p>
+</li>
+<li>
+<p>可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。</p>
+</li>
+</ul>
+<p><strong>模型结构：</strong></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=ODM4NGNjMWMyNzkzNTllMmUwZjI1ZWIyODBiODQ0MmVfa1M3bFdPWnlzYjJFbUxrRUZoVVkyclI5bTFaak1lM2JfVG9rZW46TFFSQWJPQkU4b0M2THZ4U1FQcWNVWnpRbkJlXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维</p>
+<p>（2）Transformer：</p>
+<ul>
+<li>
+<p>Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。</p>
+<ul>
+<li>
+<p>position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。</p>
+</li>
+<li>
+<p>三角编码 + learning编码</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。</p>
+</li>
+<li>
+<p>利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用</p>
+</li>
+</ul>
+<p>将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；</p>
+<p>（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。</p>
+<p>（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。</p>
+<h5 id="vision-transformer-google-iclr-2021">Vision Transformer-Google-ICLR 2021<a hidden class="anchor" aria-hidden="true" href="#vision-transformer-google-iclr-2021">#</a></h5>
+<p><a href="https://zhuanlan.zhihu.com/p/1932912065409966537">https://zhuanlan.zhihu.com/p/1932912065409966537</a></p>
+<h5 id="transformer-attention-is-all-you-need">Transformer: Attention Is All You Need<a hidden class="anchor" aria-hidden="true" href="#transformer-attention-is-all-you-need">#</a></h5>
+<p>Abstract：</p>
+<ul>
+<li>
+<p>老方法现状 + 新方法 + 实验效果 + 额外特点</p>
+</li>
+<li>
+<p>基于注意力机制的Transformer 架构</p>
+</li>
+</ul>
+<p>Introduction：</p>
+<ul>
+<li>
+<p>循环神经网络优点和缺点</p>
+</li>
+<li>
+<p>注意力机制优点</p>
+</li>
+<li>
+<p>本文方法 + 优点</p>
+</li>
+</ul>
+<p>Background：</p>
+<ul>
+<li>
+<p>减少序列计算量</p>
+</li>
+<li>
+<p>自注意力</p>
+</li>
+<li>
+<p>端到端记忆网络</p>
+</li>
+</ul>
+<p>Model Architecture：</p>
+<ul>
+<li>
+<p>宏观上采用编码-解码架构，微观上以注意力机制 + 全链接实现</p>
+</li>
+<li>
+<p>编码层：N个 多头自注意力机制 + 逐点全连接前馈网络 + 残差连接 + 层归一化</p>
+</li>
+<li>
+<p>解码层：N个 掩码多头自注意力机制 + 多头交叉注意力机制+ 逐点全连接前馈网络 + 残差连接 + 层归一化</p>
+</li>
+</ul>
+<p>位置编码：<a href="https://fleetwood.dev/posts/you-could-have-designed-SOTA-positional-encoding">如何设计位置编码</a></p>
+<p>（1）三角编码：通过<strong>交替</strong>使用<strong>正弦和余弦函数</strong>对<strong>位置和维度</strong>进行编码，使模型能够捕捉序列元素的绝对和相对位置关系。</p>
+<p>$$PE(pos, 2i) = \sin(\frac{pos}{10000^{2i/d_{model}}}), PE(pos, 2i+1) = \cos(\frac{pos}{10000^{2i/d_{model}}})$$</p>
+<p>正余弦项：奇偶维度，维度间关系，相邻维度(2i和2i+1)之间存在数学关系，即三角函数的和角，便于模型捕捉相对位置关系</p>
+<p>分子项：位置关系</p>
+<p>分母项：指数衰减频率，表示维度关系，控制位置编码的频率衰减速度，低频维度（高i值）对应长距离依赖，高频维度（低i值）对应短距离依赖。实现上，用对数优化 $$\frac{1}{10000^{2i/d_{model}}} = exp(-(2i)*ln(10000) /d_{model})$$。</p>
+<p>波长10000和奇偶正余弦是实现相对依赖关系，推导上三角函数的和角，本质上是旋转矩阵。</p>
+<ol>
+<li>位置关系建模：三角函数的周期性，位置编码一定程度上可以表示相对位置关系</li>
+</ol>
+<p>1、每个空间位置生成唯一的编码</p>
+<p>2、不同频率的正余弦函数捕获相对位置关系</p>
+<p>3、位置编码的平移不变性</p>
+<p>COCO数据集：</p>
+<ul>
+<li>
+<p><a href="https://aistudio.baidu.com/dataset/detail/7122/file">https://aistudio.baidu.com/dataset/detail/7122/file</a></p>
+</li>
+<li>
+<p><a href="https://cocodataset.org/#home">https://cocodataset.org/#home</a></p>
+</li>
+</ul>
+<h2 id="2d图像分割">2D图像分割<a hidden class="anchor" aria-hidden="true" href="#2d图像分割">#</a></h2>
+<h3 id="fcn-fully-convolutional-networks-for-semantic-segmentation">FCN: Fully Convolutional Networks for Semantic Segmentation<a hidden class="anchor" aria-hidden="true" href="#fcn-fully-convolutional-networks-for-semantic-segmentation">#</a></h3>
+<p>论文链接：<a href="https://arxiv.org/abs/1411.4038v1">https://arxiv.org/abs/1411.4038v1</a></p>
+<p>论文代码：</p>
+<p><strong>语义分割开山之作</strong>，首次提出<strong>全卷积网络（FCN）</strong>，彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。</p>
+<p>论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 + 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。</p>
+<h3 id="segnetdeconvnet">SegNet/DeconvNet<a hidden class="anchor" aria-hidden="true" href="#segnetdeconvnet">#</a></h3>
+<h3 id="u-net">U-Net<a hidden class="anchor" aria-hidden="true" href="#u-net">#</a></h3>
+<h3 id="pspnet">PSPNet<a hidden class="anchor" aria-hidden="true" href="#pspnet">#</a></h3>
+<h3 id="mask-r-cnn">Mask R-CNN<a hidden class="anchor" aria-hidden="true" href="#mask-r-cnn">#</a></h3>
+<p>链接：<a href="https://zhuanlan.zhihu.com/p/75333140">https://zhuanlan.zhihu.com/p/75333140</a></p>
+<h3 id="deeplab-v1semantic-image-segmentation-with-deep-convolutional-nets-and-fully-connected-crfs">DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs<a hidden class="anchor" aria-hidden="true" href="#deeplab-v1semantic-image-segmentation-with-deep-convolutional-nets-and-fully-connected-crfs">#</a></h3>
+<p>参考<a href="https://zhuanlan.zhihu.com/p/75333140">link</a>，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；</p>
+<h3 id="deeplab-v2deeplab-semantic-image-segmentation-with-deep-convolutional-nets-atrous-convolution-and-fully-connected-crfs">DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs<a hidden class="anchor" aria-hidden="true" href="#deeplab-v2deeplab-semantic-image-segmentation-with-deep-convolutional-nets-atrous-convolution-and-fully-connected-crfs">#</a></h3>
+<p>（1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；</p>
+<h3 id="deeplab-v3rethinking-atrous-convolution-for-semantic-image-segmentation">DeepLab V3：<a href="https://arxiv.org/abs/1706.05587">Rethinking Atrous Convolution for Semantic Image Segmentation</a><a hidden class="anchor" aria-hidden="true" href="#deeplab-v3rethinking-atrous-convolution-for-semantic-image-segmentation">#</a></h3>
+<p>参考<a href="https://blog.csdn.net/qq_36560894/article/details/106352573">link</a>，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP + BN + Image-Level ；（4）移除CRF；</p>
+<ul>
+<li><a href="https://blog.csdn.net/qq_36560894/article/details/106352573">https://blog.csdn.net/qq_36560894/article/details/106352573</a>，</li>
+</ul>
+<h3 id="deeplab-v3encoder-decoder-with-atrous-separable-convolution-for-semantic-image-segmentation">Deeplab V3+：Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation<a hidden class="anchor" aria-hidden="true" href="#deeplab-v3encoder-decoder-with-atrous-separable-convolution-for-semantic-image-segmentation">#</a></h3>
+<p>链接：<a href="https://arxiv.org/abs/1802.02611">https://arxiv.org/abs/1802.02611</a></p>
+<p>这是 DeepLabv3+，由 Liang-Chieh Chen 等人发表于 ECCV 2018，是 DeepLab 系列的集大成之作，也是语义分割领域的一代经典基线。</p>
+<hr>
+<p>一、背景与动机：DeepLab 系列的演进</p>
+<p>DeepLab 系列一直围绕一个核心问题：如何在保留空间分辨率的同时扩大感受野。</p>
+<p>┌───────┬────────────────────────────────┬───────────────────────────────────────┐</p>
+<p>│ 版本 │ 核心机制 │ 局限 │</p>
+<p>├───────┼────────────────────────────────┼───────────────────────────────────────┤</p>
+<p>│ v1/v2 │ 空洞卷积 + ASPP │ 较基础 │</p>
+<p>├───────┼────────────────────────────────┼───────────────────────────────────────┤</p>
+<p>│ v3 │ 改进的 ASPP + 全局平均池化分支 │ 仍采用 &ldquo;编码器输出后直接上采样&rdquo;，细节恢复不足 │</p>
+<p>└───────┴────────────────────────────────┴────────────────────────────────────────┘</p>
+<p>DeepLabv3 的输出步长（output stride, OS）通常为 16 或 8，即特征图比输入小 16/8 倍，靠空洞卷积保持感受野，但最终边界细节仍依赖单次双线性上采样，较为粗糙。</p>
+<p>与此同时，encoder-decoder 结构（如 U-Net、RefineNet）在恢复细节上表现更好：decoder通过逐步融合低层高分辨率特征来精修边界。</p>
+<p>DeepLabv3+ 的动机就是：把 DeepLabv3 的强大编码器（空洞卷积 + ASPP）与 encoder-decoder 的精细解码能力结合起来。</p>
+<hr>
+<p>二、核心贡献</p>
+<p>贡献 1：将 DeepLabv3 改造为 encoder-decoder 结构</p>
+<p>Encoder（编码器）</p>
+<ul>
+<li>
+<p>主干网络（如 ResNet）提取特征，采用空洞卷积控制 output stride。</p>
+</li>
+<li>
+<p>顶层低分辨率特征送入 ASPP 模块：</p>
+<ul>
+<li>
+<p>1×1 卷积分支</p>
+</li>
+<li>
+<p>三个不同膨胀率（rates，如 6/12/18）的 3×3 空洞卷积分支</p>
+</li>
+<li>
+<p>全局平均池化（GAP）分支（image-level pooling）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>各分支拼接（concat）后再过一个 1×1 卷积，得到编码器输出。</p>
+</li>
+</ul>
+<p>Decoder（解码器）—— 关键创新</p>
+<p>DeepLabv3+ 没有照搬 U-Net 的多级对称解码，而是采用 &ldquo;轻量两级上采样&rdquo;：</p>
+<p>ASPP输出(OS=16)</p>
+<p>│ 1×1 conv 降维</p>
+<p>▼ 双线性上采样 ×4 ──┐</p>
+<p>│ (到 OS=4)</p>
+<p>主干浅层特征(OS=4) ─1×1 conv降维─┘</p>
+<p>│ concat</p>
+<p>▼</p>
+<p>3×3 conv → 3×3 conv ← 两层卷积精修</p>
+<p>▼ 双线性上采样 ×4</p>
+<p>最终分割图 (OS=1)</p>
+<p>关键设计点：</p>
+<ol>
+<li>
+<p>只用一层浅层特征（通常是 backbone 的 stride=4 层，如 ResNet 的第一个 block 输出），而非逐级融合所有尺度。这样 decoder 轻量、高效。</p>
+</li>
+<li>
+<p>1×1 卷积降维：浅层特征通道数大（如 256），先用 1×1 卷积降到 48 维再 concat，避免浅层特征主导、并降低计算量。</p>
+</li>
+<li>
+<p>两层 3×3 卷积精修：concat 后用两个 3×3 卷积细化特征，再上采样回原图分辨率。</p>
+</li>
+<li>
+<p>output stride 灵活：训练时用 OS=16 求速度，推理时可切到 OS=8 提精度（只需改空洞率，无需改架构）。</p>
+</li>
+</ol>
+<p>贡献 2：Atrous Separable Convolution（空洞深度可分离卷积）</p>
+<p>这是论文标题后半部分的创新，用于降低 ASPP 和 decoder 中 3×3 卷积的计算成本。</p>
+<p>它把两件事合二为一：</p>
+<ol>
+<li>
+<p>Atrous（空洞）卷积：在卷积核元素间插入空洞，扩大感受野而不增参数量、不降分辨率。</p>
+</li>
+<li>
+<p>Separable（深度可分离）卷积：</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>Depthwise：每个输入通道单独用一个卷积核（如 3×3 空洞）。</p>
+</li>
+<li>
+<p>Pointwise：1×1 卷积做通道间信息融合。</p>
+</li>
+</ul>
+<p>空洞深度可分离卷积 = 空洞 depthwise + pointwise。</p>
+<p>计算量对比</p>
+<p>以 3×3 空洞卷积、输入输出通道均为 为例：</p>
+<ul>
+<li>
+<p>标准空洞卷积：参数量 ≈</p>
+</li>
+<li>
+<p>空洞深度可分离卷积：参数量 ≈ （depthwise + pointwise ）</p>
+</li>
+</ul>
+<p>当 较大时，后者远小于前者（约省 ）。</p>
+<p>论文引用 MobileNet 的结论：使用深度可分离卷积可在几乎不损失精度的情况下大幅降低计算量（约 1~2 数量级），这让 DeepLabv3+在移动端也能高效运行。</p>
+<p>DeepLabv3+ 把 ASPP 中所有 3×3 空洞卷积、decoder 中所有 3×3 卷积都换成了这种可分离版本。</p>
+<hr>
+<p>三、实验亮点</p>
+<ol>
+<li>数据集与主干</li>
+</ol>
+<ul>
+<li>
+<p>在 PASCAL VOC 2012（含额外标注，10582 训练图）、Cityscapes、PASCAL-Context 上评测。</p>
+</li>
+<li>
+<p>主干网络：ResNet-50 / ResNet-101 / Xception。</p>
+</li>
+</ul>
+<ol start="2">
+<li>encoder-decoder vs. 纯 DeepLabv3</li>
+</ol>
+<ul>
+<li>
+<p>引入 decoder 后，相比直接上采样的 DeepLabv3，mIoU 提升约 1~2 个点，尤其在物体边界处改善明显。</p>
+</li>
+<li>
+<p>在 OS=16 下，decoder 用浅层特征带来的收益尤为突出（因为高层特征分辨率低，更需要浅层细节补偿）。</p>
+</li>
+</ul>
+<ol start="3">
+<li>ASPP vs. 不同 decoder 设计</li>
+</ol>
+<ul>
+<li>论文实验了&quot;加 ASPP&quot; vs &ldquo;不加 ASPP（只用 decoder 融合多尺度浅层特征）&quot;，发现 ASPP + decoder 的组合最优——空洞卷积的多尺度上下文与浅层细节是互补的，缺一不可。</li>
+</ul>
+<ol start="4">
+<li>Xception 主干 + 深度可分离卷积</li>
+</ol>
+<ul>
+<li>
+<p>把 ResNet 换成改进的 Xception（更深的 depthwise separable 结构，改动 entry flow、加更多层、用 BN+ReLU），并在ASPP/decoder 全部用空洞深度可分离卷积：</p>
+<ul>
+<li>
+<p>精度进一步提升（VOC 上达 89% mIoU，当时 SOTA）。</p>
+</li>
+<li>
+<p>计算量大幅下降，更适合部署。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>在 Cityscapes 上达到约 82.1% mIoU，验证集与测试集均表现优异。</p>
+</li>
+</ul>
+<ol start="5">
+<li>速度-精度权衡</li>
+</ol>
+<p>通过调整 output stride（8 vs 16）、decoder 卷积通道数、是否用可分离卷积，可在精度与速度间灵活权衡，覆盖服务器端到移动端。</p>
+<hr>
+<p>四、与同类工作的关系</p>
+<ul>
+<li>
+<p>vs. U-Net / RefineNet：DeepLabv3+ 保留了 encoder-decoder 思想，但 decoder 极度精简（只取一层浅层特征 + 两层 3×3 卷积），而非逐级对称上采样，更轻量。</p>
+</li>
+<li>
+<p>vs. PSPNet：PSPNet 用金字塔池化抓全局上下文；DeepLabv3+ 用 ASPP（不同空洞率）抓多尺度上下文，并额外加 decoder 恢复细节，对边界更友好。</p>
+</li>
+<li>
+<p>vs. DeepLabv3：v3+ 是 v3 的&quot;加 decoder&quot;增强版，ASPP 部分基本继承，主要改进在 decoder 与可分离卷积。</p>
+</li>
+</ul>
+<hr>
+<p>五、意义与启发</p>
+<ol>
+<li>
+<p>集大成：DeepLabv3+ 把&quot;空洞卷积（扩大感受野）+ ASPP（多尺度上下文）+ encoder-decoder（细节恢复）+ 深度可分离卷积（轻量化）&ldquo;四者整合，是 DeepLab 系列的终结篇，也成为语义分割的标准基线，被广泛引用与复现。</p>
+</li>
+<li>
+<p>轻量 decoder即足够：论文证明&quot;不需要复杂的逐级解码，仅融合一层浅层高分辨率特征&quot;就能大幅提升边界质量，这对后续轻量分割网络（如BiSeNet、Fast-SCNN）的设计有重要启发。</p>
+</li>
+<li>
+<p>空洞可分离卷积的普适价值：把&quot;扩大感受野&quot;和&quot;降低计算量&quot;统一在一种算子中，是后续高效分割/检测模块（如 LR-ASPP、MobileSeg系列）的常用技巧。</p>
+</li>
+<li>
+<p>训练-推理 OS 解耦：训练用大 OS 省显存、推理用小 OS 提精度，这种&quot;同架构、换参数&quot;的灵活性成为分割领域的常见实践。</p>
+</li>
+</ol>
+<hr>
+<p>一句话总结：DeepLabv3+ 在 DeepLabv3 的 ASPP 编码器基础上，嫁接了一个轻量的浅层特征 decoder</p>
+<p>以精修边界，并全面采用空洞深度可分离卷积降低计算量，从而在精度与速度上同时取得突破，成为语义分割领域的经典基线。</p>
+<h3 id="repvgg-making-vgg-style-convnets-great-again"><strong>RepVGG: Making VGG-style ConvNets Great Again</strong><a hidden class="anchor" aria-hidden="true" href="#repvgg-making-vgg-style-convnets-great-again">#</a></h3>
+<p>论文地址：<a href="https://arxiv.org/abs/2101.03697">https://arxiv.org/abs/2101.03697</a> (CVPR2021)</p>
+<p>论文源码：<a href="https://github.com/megvii-model/RepVGG">https://github.com/megvii-model/RepVGG</a></p>
+<p>这是 CVPR 2021 的一篇论文，核心思想是：用结构重参数化（Structural Re-parameterization）让一个训练时为多分支结构的网络，在推理时等价转换为单分支的 VGG/ResNet 风格网络，从而兼顾训练时的精度与推理时的速度。</p>
+<ul>
+<li>
+<p>3x3卷积分支（提取特征） + 1x1卷积分支（补充不同感受野的特征） + Identity分支（残差连接，改善梯度）</p>
+</li>
+<li>
+<p>卷积和BN合并，3卷积合并1卷积（ (W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)）</p>
+</li>
+<li>
+<p>这一步是在onnx导出还是在哪里实现的？</p>
+</li>
+</ul>
+<hr>
+<p>一、动机：为什么要&quot;复活&quot;VGG？</p>
+<p>作者指出，VGG 风格的网络（纯串联的 3×3 卷积 + ReLU）有三个对部署友好的优势：</p>
+<ol>
+<li>
+<p>推理快：单分支结构内存访问开销小，没有分支融合的额外耗时。</p>
+</li>
+<li>
+<p>省显存：不需要保存中间多分支的结果。</p>
+</li>
+<li>
+<p>灵活：易于针对不同硬件/算子库做量化、剪枝等优化。</p>
+</li>
+</ol>
+<p>但 VGG 之所以被淘汰，是因为它精度不够高——缺少 ResNet 那样的多分支（恒等映射 + 1×1</p>
+<p>卷积）结构，导致训练深层网络时梯度流差、表达力不足。</p>
+<p>于是核心矛盾是：多分支结构利于训练精度，单分支结构利于推理效率。</p>
+<hr>
+<p>二、核心方法：结构重参数化</p>
+<ol>
+<li>训练时结构：3 分支</li>
+</ol>
+<p>每个 RepVGG Block 在训练时有三条并行分支：</p>
+<p>┌── 3×3 conv + BN ──┐</p>
+<p>输入 ────┼── 1×1 conv + BN ──┼── 相加 ── ReLU ── 输出</p>
+<p>└── Identity(BN) ──┘</p>
+<ul>
+<li>
+<p>3×3 分支：主要特征提取</p>
+</li>
+<li>
+<p>1×1 分支：补充不同感受野的特征</p>
+</li>
+<li>
+<p>Identity 分支（带 BN）：当输入输出通道数、空间尺寸一致时存在，相当于残差连接，改善梯度流</p>
+</li>
+</ul>
+<p>这种结构和 ResNet 类似，能获得高精度。</p>
+<ol start="2">
+<li>推理时结构：单分支</li>
+</ol>
+<p>部署时把上面的三分支等价融合成一个 3×3 卷积：</p>
+<p>输入 ── 3×3 conv + ReLU ── 输出</p>
+<p>融合后变成了纯 VGG 风格，没有多余的分支开销。</p>
+<ol start="3">
+<li>为什么能融合？—— 重参数化推导</li>
+</ol>
+<p>关键在于 卷积是线性的，BN 在推理时也是线性的，所以可以把三者合并。</p>
+<p>步骤一：把每个分支的 Conv + BN 融合成一个带偏置的卷积</p>
+<p>BN 在推理阶段的公式为：</p>
+<p>y = γ·(x - μ)/√(σ² + ε) + β</p>
+<p>这是一个仿射变换（线性 + 偏置）。设：</p>
+<ul>
+<li>
+<p>卷积核权重为 W，则卷积输出 W*x（无偏置时）</p>
+</li>
+<li>
+<p>BN 参数 γ, β, μ, σ², ε</p>
+</li>
+</ul>
+<p>可推导出等效卷积核与偏置：</p>
+<p>W&rsquo; = W · (γ / √(σ² + ε))</p>
+<p>b&rsquo; = β - γ·μ / √(σ² + ε)</p>
+<p>于是每个分支都变成 Conv(W&rsquo;, b&rsquo;)。</p>
+<p>步骤二：把三个分支的卷积相加</p>
+<p>因为三个分支对同一输入做卷积后逐元素相加，而卷积对加法满足分配律：</p>
+<p>(W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)</p>
+<p>处理 1×1 分支和 Identity 分支：</p>
+<ul>
+<li>
+<p>1×1 卷积：把它的核零填充成 3×3，就能直接加到 3×3 核上。</p>
+</li>
+<li>
+<p>Identity 分支（没有卷积，只有 BN）：相当于一个&quot;以恒等为单位冲激&quot;的卷积——构造一个中心为 1、其余为 0 的 3×3 核，再乘以 BN 的等效系数，就能并入。</p>
+</li>
+</ul>
+<p>最终得到一个单一的 3×3 卷积（带偏置），与原三分支在数学上完全等价。</p>
+<p>▎ 注意：融合只在 BN 处于推理模式（用训练集的滑动均值/方差）时才等价。所以训练完、转为 eval 模式后再融合。</p>
+<hr>
+<p>三、网络整体设计</p>
+<p>RepVGG 是一个类似 VGG 的 stage 架构，共 5 个 stage，每个 stage 由若干个 RepVGG Block 堆叠：</p>
+<ul>
+<li>
+<p>Layer placement：每个 stage 第一个 block 做 stride=2 下采样（类似 ResNet），此时 Identity 分支不存在（输入输出尺寸不同）。</p>
+</li>
+<li>
+<p>逐阶段变宽：每个 stage 的通道数按基础倍数 a, b 缩放，且越深的 stage 越宽（2a, 4a, 8a 之类）。</p>
+</li>
+<li>
+<p>针对性加深变宽：通过不同的 a, b 和 stage 深度配置，得到一个模型族：</p>
+<ul>
+<li>
+<p>RepVGG-A0/A1/A2：轻量级</p>
+</li>
+<li>
+<p>RepVGG-B0/B1/B2/B3：更大，追求更高精度</p>
+</li>
+<li>
+<p>RepVGG-B1g2/g4、B2g4：使用分组卷积（groupwise conv）的变体，进一步权衡速度</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>四、实验结果亮点</p>
+<ul>
+<li>
+<p>ImageNet 分类：RepVGG-B2 在仅 80% 训练 epoch 下达到 Top-1 80%+，超过 ResNet-152、EfficientNet 等同期模型，且推理速度更快。</p>
+</li>
+<li>
+<p>速度：在 GPU 和专用加速硬件上，同等精度下比多分支网络（如 ResNet、ResNeXt）快不少，因为推理时是纯单分支。</p>
+</li>
+<li>
+<p>等价性验证：作者实测融合前后输出几乎一致（差异在浮点误差量级），证明重参数化是数学等价的。</p>
+</li>
+<li>
+<p>迁移到检测/分割：作为 backbone 加在 CenterNet/PSPNet 上也带来提升。</p>
+</li>
+</ul>
+<hr>
+<p>五、意义与启发</p>
+<p>1.训练-推理解耦：开创性地提出&quot;训练用复杂结构、推理用简单结构&quot;的设计范式，不必为了部署而牺牲精度，也不必为了精度而牺牲速度。</p>
+<ol start="2">
+<li>
+<p>结构重参数化成为通用工具：后续很多工作（如 RepVGG 后续系列、DBB/RepLKNet 等）都沿用了这一思路——把可融合的多分支设计作为&quot;训练期的可学习结构&rdquo;。</p>
+</li>
+<li>
+<p>简单即高效：在算子库高度优化的今天，&ldquo;朴素的串联 3×3 卷积&quot;反而是性价比最高的结构，关键在于怎么把它训好。</p>
+</li>
+</ol>
+<p>一句话总结：RepVGG 用&quot;训练三分支、推理一卷积&quot;的重参数化技巧，让老旧的 VGG 架构在精度和速度上都重新具备竞争力。</p>
+<h2 id="部署论文">部署论文<a hidden class="anchor" aria-hidden="true" href="#部署论文">#</a></h2>
+<ul>
+<li>部署，<a href="https://www.zhihu.com/people/45-62-96-81-72">link</a>, <a href="https://arxiv.org/abs/2106.08295">A White Paper on Neural Network Quantization</a></li>
+</ul>
+<h1 id="自动驾驶泊车领域学习路线">自动驾驶泊车领域学习路线<a hidden class="anchor" aria-hidden="true" href="#自动驾驶泊车领域学习路线">#</a></h1>
+<h2 id="路线">路线<a hidden class="anchor" aria-hidden="true" href="#路线">#</a></h2>
+<p>自动驾驶路线的演进，可以“规则系统 → 数据驱动 → 认知建模”</p>
+<ul>
+<li>
+<p>2004年：“感知-决策-规划-控制”思想模块化，借鉴于机器人领域的成熟思路，经 2004 年 DARPA 挑战赛完成架构固化</p>
+</li>
+<li>
+<p>2022年: BEV成为主流</p>
+</li>
+<li>
+<p>2023年: Occupancy感知兴起</p>
+</li>
+<li>
+<p>2024年: 端到端（E2E）开始落地</p>
+</li>
+<li>
+<p>2025年: VLA/VLM + WM 成为新热点</p>
+</li>
+</ul>
+<h2 id="概念">概念<a hidden class="anchor" aria-hidden="true" href="#概念">#</a></h2>
+<p>低速泊车功能：</p>
+<ul>
+<li>
+<p>行车辅助</p>
+</li>
+<li>
+<p>泊车辅助：PCA倒车影像，AVM全景影像，PDC-F前泊车辅助，PDC-R后泊车辅助，BSD超声波盲点检测，PEB超声波紧急制动，RFBAV右前盲区，APA自动泊车辅助</p>
+<ul>
+<li>
+<p>AVM：全景影像</p>
+</li>
+<li>
+<p>APA：自动搜索车位，自动泊入/泊出，自选车位，无感泊车</p>
+</li>
+</ul>
+</li>
+<li>
+<p>远程泊车辅助：RSPA遥控直进直出，RPA-S短距离遥控泊车，RPA-L长距离遥控泊车，AVP-LP记忆泊车/点对点泊车，AVM-MP高精地图泊车/召唤泊车</p>
+</li>
+</ul>
+<h2 id="架构">架构<a hidden class="anchor" aria-hidden="true" href="#架构">#</a></h2>
+<h2 id="框架">框架<a hidden class="anchor" aria-hidden="true" href="#框架">#</a></h2>
+<p>代码——架构</p>
+<ol>
+<li>
+<p>基础</p>
+<ol>
+<li>
+<p>编译：本地/交叉编译，g++/gcc/cmake/bash/docker</p>
+</li>
+<li>
+<p>调试：本地回灌/可视化，gdb/core</p>
+</li>
+<li>
+<p>检测：clang-format/cppcheck/cmakelint/detect-secrets/asan</p>
+</li>
+<li>
+<p>提交：git/commit_config</p>
+</li>
+<li>
+<p>测试：gtest</p>
+</li>
+</ol>
+</li>
+<li>
+<p>ADAM通信</p>
+</li>
+<li>
+<p>Taskflow调度</p>
+<ol>
+<li>进程 +</li>
+</ol>
+</li>
+<li>
+<p>通用功能</p>
+<ol>
+<li>
+<p>配置中心</p>
+</li>
+<li>
+<p>故障上报</p>
+</li>
+</ol>
+</li>
+<li>
+<p>系统稳定性</p>
+<ol>
+<li>
+<p>负载与性能：CPU占比/算法时延</p>
+</li>
+<li>
+<p>进程消失：进程Core或者进程OOM</p>
+</li>
+<li>
+<p>无输出：</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="标定">标定<a hidden class="anchor" aria-hidden="true" href="#标定">#</a></h2>
+<h2 id="感知">感知<a hidden class="anchor" aria-hidden="true" href="#感知">#</a></h2>
+<h3 id="方案">方案<a hidden class="anchor" aria-hidden="true" href="#方案">#</a></h3>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDNkODNlNWJhNzQxNDJmZDMxYzk4ZDUzZTgzYTQzNzRfZ1U1Z3hyY3VyOXJnSEVBTnBDMU1VMU1hYk44V29MVElfVG9rZW46UVNqS2J5dEtTb0xWcW94ajR4RGNIZmVmbnNjXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=N2YwYjliYWM0OTMzOGFmY2JlNWU2ZjA5OGM2NmVlYmFfdDVFR3RyUnlGa2pXa25HQ0NsZTNBTWZ1RW82cXZ6RnNfVG9rZW46S2tHVWJBTFU2b1A5MVJ4UnVXVmNlZ0VVbm1kXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>2D-PLD：</p>
+<p>数据：线库位数据量 46w，机械库位数据量 56W，640x640 BEV图像；</p>
+<p>模型-线库位，旋转目标框（c3 + FPN + PAN + SPPF），80x80特征检测角点，40x40特征检测车位线和轮挡，20x20特征检测空/占用库位框和头框。</p>
+<p>模型-机械库位，20x20特征多了斜坡，40x40特征多了尾杆，20x20多了限位块。</p>
+<p>后处理，NMS出来，遍历车位框，粗匹配头框和角点框和车位线框，精细匹配头框和车位线框，确定入库点（未匹配，需推理），计算车位类型（垂直、水平、倾斜），计算车位方向，计算尾点，过滤异常车位，计算车辆精度标志位</p>
+<p>4D-PLD：</p>
+<p>Freespace：</p>
+<p>单鱼眼方案：4 x img &mdash;-&gt; CNNs &mdash;-&gt; 4 x feat map &mdash;-&gt; IPM &mdash;-&gt; fusion &mdash;-&gt; bev-result</p>
+<ul>
+<li>
+<p>后处理IPM，依赖外参精度</p>
+</li>
+<li>
+<p>依赖地面平面假设，地面不平case影响精度</p>
+</li>
+</ul>
+<p>IPM 方案：4 x img &mdash;-&gt; IPM &mdash;-&gt; bev img &mdash;-&gt; CNNs &mdash;-&gt; bev-result</p>
+<ul>
+<li>
+<p>前处理IPM，转换丢失信息</p>
+</li>
+<li>
+<p>依赖地面平面假设，地面不平case影响精度</p>
+</li>
+</ul>
+<p>Mulvision-bev方案：4 x img &mdash;&gt; CNNs &mdash;&gt; view-trans&ndash;fusion &mdash;&gt; bev-seg/bev-seg-sign</p>
+<ul>
+<li>view-trans&ndash;fusion: MLP-VPN/transformer/LSS，选择MLP方案，MLP&mdash;&gt; 4 x feat-map &mdash;&gt; MPL &mdash;&gt; bev feat-map</li>
+</ul>
+<p>GLD接地线方案：实例级分割接地线（包含语义类别和位置坐标）</p>
+<p>地面平面假设 + IPM投影，4 x img &mdash;&gt; CNNs &mdash;&gt; [pv2BEV] &mdash;-&gt;decode + &mdash;&gt;pts&amp;cls</p>
+<p>| object-qury ———&gt;|</p>
+<p>&mdash;&gt; pv-seg</p>
+<p>pv2BEV: view-transformer + view-encode + bev feat-map</p>
+<p>OD：fastBEV，两head（Neck_3d + Bbox_gead + Decode + NMS）,3dbox + label</p>
+<ul>
+<li>
+<p>深度均匀分布，查找表是voxel-&gt;uv关系，逆体素化+逆视锥化</p>
+</li>
+<li>
+<p>4x768x960</p>
+</li>
+<li>
+<p>点云范围：[-9,-9,0,9,9,3]，[-18,-18,-2,18,18,4]</p>
+</li>
+<li>
+<p>小目标：行人/立柱/锥桶/禁停立柱/闸机开/闸机关/水马/防撞桶/禁停牌/地锁开/地锁关</p>
+</li>
+<li>
+<p>大目标：轿车/卡车/公交车/工程车/人骑自行车/三轮车</p>
+</li>
+<li>
+<p>HPA，多了一路前视图-&gt;backbone-&gt;neck-&gt;nneck_fusion-&gt;concat</p>
+</li>
+<li>
+<p>0到5米，5到10米，10米外精度</p>
+</li>
+<li>
+<p>int8 apa J6M 58.8fps/orinx 89.3fps, hpa J6M 38.4fps</p>
+</li>
+<li>
+<p>深度假设局限，远距离目标不准，遮挡区域特征填充错误，纹理缺失区域精度下降，影响窄车位，复杂场景下深度误差导致碰撞</p>
+</li>
+<li>
+<p>极端条件鲁棒性，强光/逆光场景，夜间低照、导致感知失效影响泊车安全</p>
+</li>
+<li>
+<p>多维度优化：深度感知增强（引入轻量级深度估计、结合几何先验与学习型深度、自适应深度分布建模）、编码器结构优化（探索注意力机制、轻量化bev编码设计、特征融合策略优化）、长时序融合（扩展至更长历史窗口、引入时序注意力机制、动态关键帧选择策略）、鲁棒性增强（极端场景数据增强、域自适应训练策略）、多模态融合（相机+激光、bev空间多模态对齐、自适应模态权重学习）</p>
+</li>
+</ul>
+<p>OCC：</p>
+<p>数据真值生成：数据输入 + 预处理 + 点云处理 + 占据栅格</p>
+<ul>
+<li>
+<p>数据输入：多模态数据（图像 + 点云语义 + 定位 + 障碍物标注）</p>
+</li>
+<li>
+<p>预处理：时间同步 + 坐标系转换，以第一帧为参考坐标系</p>
+</li>
+<li>
+<p>点云处理：目标框合并（合并动静态/未跟踪目标框+坐标转换+尺度扩大+提取id和类别）、动态点云过滤（移除动态物体点云+过滤可行驶区域和自车周围点云+特定场景噪声处理）、坐标转换（统一转换到第一帧LiDAR坐标系+可选Delaunay三角po分稠密化）</p>
+</li>
+<li>
+<p>栅格生成：滑动窗口构建（选取前后多帧数据+合并不可行驶区域点云+过滤低速场景(速度阈值)）、多帧融合（转换到当前帧坐标系+合并可行驶区域点云+裁剪到预设范围）、语义增强（静志物体融合更新+动态物体语义标注+未跟踪物体标签分配）、CUDA体素化投票（CUDA加速体素坐标转换+投票机制确定语义类别+道路·路缘特殊处理）</p>
+</li>
+<li>
+<p>后处理：3D语义占据栅格（BFS填充可行驶区域空洞+垂直立柱结构填充+输出3D语义占据栅格 (npz格式)）</p>
+</li>
+</ul>
+<p>模型：FlashOCC，2D卷积代替3D卷积，通道-高度交换</p>
+<ul>
+<li>
+<p>默认、可行驶区域、路沿、墙体、立柱、机动车、轿车、行人、不可见、空目标</p>
+</li>
+<li>
+<p>范围：xy方向，3.,6.2,3,3 0.05/0.05 z方向 -1.4-1.8 voxel size 0.05 * 0.05 * 0.4 near_grid_size 120x184x8</p>
+</li>
+<li>
+<p>backbone(resnet18) -&gt; neck(FPN)-&gt;Neck Fuse-&gt;View Transformers(LSS)-&gt;BEV Encoder(Resnet18+BiFPN)-&gt; BEV Decoder(OCC head)</p>
+</li>
+<li>
+<p>损失函数：1.0 * Dice Loss（衡量预测与真值的重叠程度，特别适合类别不平衡的情况） + 0.2 * CE Loss（标准的分类损失，衡量预测概率分布与真实分布的差异）+ Depth Loss （对深度估计预测的概率分布施加约束，衡量分布的“不确定性”）</p>
+</li>
+</ul>
+<p>RV（Range View），前视相机</p>
+<ul>
+<li>障碍物 （动静态+ 与bev结果匹配后 + 车灯检测模型 + 车辆细分类模型） + 车道线（车道线信息 + 斑马线 + 地面标识） + 交通信号灯/交通标志牌 + + 人脸/车牌脱敏 + 环境灯光感知（灯光属性）</li>
+</ul>
+<p>BEV，6V</p>
+<ul>
+<li>障碍物（动态） + 车道线（车道线信息） + 环境识别</li>
+</ul>
+<p>数据量：</p>
+<table>
+	<thead>
+			<tr>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>功能</td>
+					<td>PLD</td>
+					<td></td>
+					<td>FS</td>
+					<td>OD</td>
+					<td>OCC</td>
+			</tr>
+			<tr>
+					<td>方案</td>
+					<td>IPM2D</td>
+					<td></td>
+					<td>IPM2D</td>
+					<td>BEV3D</td>
+					<td>BEV3D</td>
+			</tr>
+			<tr>
+					<td>训练数据量（帧）</td>
+					<td>58W</td>
+					<td></td>
+					<td>112W</td>
+					<td>78W</td>
+					<td>30W</td>
+			</tr>
+			<tr>
+					<td>测试集数量（帧）</td>
+					<td>0.5W(线库位有0.4W帧，机械库位0.1W)</td>
+					<td></td>
+					<td>1W帧</td>
+					<td>0.4W帧</td>
+					<td>1W帧</td>
+			</tr>
+			<tr>
+					<td>可支持类型</td>
+					<td>线库位/机械库位</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>消防箱、消防水管、大货车车头车尾；消防水管的定义，是在消防箱附近、立柱附近的直径大于10cm的水管</td>
+			</tr>
+			<tr>
+					<td>功能</td>
+					<td>PLD</td>
+					<td></td>
+					<td>FS</td>
+					<td>OD</td>
+					<td>OCC</td>
+			</tr>
+	</tbody>
+</table>
+<p>竞品：PLD/FS (80W帧), OD/OCC (500W帧)，单车型 鱼眼分割/IPM检查（2W-3W帧），OCC增加50W帧，OD增加1000-2000Clib;</p>
+<h3 id="freespace">Freespace<a hidden class="anchor" aria-hidden="true" href="#freespace">#</a></h3>
+<h3 id="bev模型bev-depth">BEV模型（BEV Depth）<a hidden class="anchor" aria-hidden="true" href="#bev模型bev-depth">#</a></h3>
+<p>用途：用于小车、卡车、巴士、二轮、三轮、行人共6个类别的障碍物目标检测</p>
+<p>输入：周视六张图像和radar点</p>
+<p>输出：每个障碍物目标的定位框，包括三维位置（xyz），朝向角，尺寸（长宽高），类别和置信度</p>
+<p>模型说明：模型共包含Image-view Encoder、View Transformer、BEV Encoder、radar encoder和Det Head五个部分。输入的环视6张图先通过Image-view Encoder提取出2d图像特征并预测出其对应的深度图，将得到的2d特征、深度图和相机参数经过View Transformer，将2d图像特征投影成bev空间的特征，该特征和通过radar点提取到的radar bev feature 相加后，送入BEV Encoder中进一步提取其高级语义</p>
+<p>特征，最后经过后续的Det Head，得到各个目标的3d框信息。</p>
+<p>后处理：过滤低置信度的框、iou nms、射线nms</p>
+<p>方案优势：BEV相比传统方法具有天然的视角优势，方便多传感器融合，还能解决遮挡问题；radar前融合相比于后融合方式，camera模型能够避免由过滤radar噪点带来的静止目标漏检，radar模型能够抑制纯camera模型的射线fp问题、使定位更准确。</p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=N2VkNWRhOGRiZjQ2NjQ2YTgzODMxYTA4YzE3ZjRmMDNfR01lZW9GdVExbFJpUDRsV2Y1a0hPZzh4cnBQMUFmbU1fVG9rZW46VUUwc2JPUnZqb2VlcVh4NVZIRmNnQlY0blFlXzE3ODgxNTQxMzg6MTc4ODE1NzczOF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>偏差报告</p>
+<p>感知融合：</p>
+<p>1、空间库位，误释放——十字路口、禁停信息、公交车站牌、</p>
+<p>对标，比亚迪夏</p>
+<p>2、自定义车位，误释放——禁停信息</p>
+<p>3、车位内有<strong>三角指示牌</strong>，误释放</p>
+<p>三角警示牌为行车场景元素，不在泊车实现需求内。</p>
+<p>对标，深蓝S05等竞品车均不负责检测三角警示牌，同样会出现漏检/误检为锥桶，地锁等通用障碍物类别</p>
+<p>4、斜坡场景，导致底图畸变，库位显示过大6.6米，实际4.5米</p>
+<p>（1）坡度场景导致底图畸变，基于底图的检测无法获取库位的实际位置，偏差较大，目前单帧的检测方案无法解决。</p>
+<p>（2）无碰撞风险，且停靠到位，仅导致车机动画显示与实际存在差别。</p>
+<p>蔚来ET5在该类型场景下库位不释放或泊偏压线，秦L无法泊出，显示泊车不可用. 小鹏p7+显示坡度过大不释放库位。</p>
+<p>5、斜坡场景，泊入压线</p>
+<p>（1）感知结果贴合检出，坡度场景导致底图畸变，入库后偏右。</p>
+<p>（2）与中心偏离小于5cm，在误差范围内。</p>
+<p>蔚来ET5在该类型场景下库位不释放或泊偏压线，秦L无法泊出，显示泊车不可用. 小鹏p7+显示坡度过大不释放库位</p>
+<p>6、斜坡场景，揉库</p>
+<p>（1）坡度场景导致距离库位较远时感知误差较大，在靠近后更新真实位置，入库后更新实际库位长度。</p>
+<p>（2）无碰撞风险，且停靠到位，规控多揉库一次。</p>
+<p>蔚来ET5在该类型场景下库位不释放或泊偏压线，秦L无法泊出，显示泊车不可用. 小鹏p7+显示坡度过大不释放库位，P181也有类似问题，维持现状处理。</p>
+<p>7、泊偏</p>
+<p>（1）车位线磨损、不清晰场景，无有效车位特征，模型检出不稳定，不满足后视修正条件，导致无法更新库位，未能弥补定位误差</p>
+<p>（1）强行将这类无库位特征的数据加入模型训练，风险较大，会导致模型误识别增加。</p>
+<p>（2）库位线不清晰，无准确的有效特征，受限场景。</p>
+<p>DX11、理想L8-Pro（J5方案）、小鹏P7在库位线模糊场景下均会存在刮蹭风险</p>
+<p>8、误识别库位，花坛中间</p>
+<p>（1）区域拥有完整的库位特征，在距离较远时提前释放，符合预期。</p>
+<p>（2）靠近后，看到后方区域，正常关闭。</p>
+<p>（3）无碰撞风险。</p>
+<p>KX11-A5其他项目在有库位特征的地方也会误检；</p>
+<p>对标比亚迪，也有误检情况。</p>
+<h3 id="od">OD<a hidden class="anchor" aria-hidden="true" href="#od">#</a></h3>
+<p>训练数据：https://confluence.geely.com/pages/viewpage.action?pageId=155645828</p>
+<h3 id="融合">融合<a hidden class="anchor" aria-hidden="true" href="#融合">#</a></h3>
+<p>参考：[自动驾驶感知实践：从3D到BEV] 后融合感知方案</p>
+<p>多源库位融合</p>
+<p>单源时序库位跟踪，时序对齐 / 坐标对齐 + 数据关联 + 航迹更新 / 特征管理 + 航迹管理 + 轨迹上报</p>
+<p>同跟踪流程一样，先时空对齐，轨迹预测，再数据关联，最后就是轨迹更新和特征融合，轨迹管理，轨迹上报。</p>
+<p>有几个特点，第一个是采用局部定位来实现空间对齐，再用约束速度为0的CV常速运动模型来实现时间对齐， 下面就是数据关联，这里最简单最快速的方式最邻近匹配，设置阈值 + 计算相似度 + 分配算法</p>
+<ul>
+<li>多源语义库位融合，数据对齐 + [全局轨迹预测]+ 数据关联 + 轨迹更新 / 特征融合 + [轨迹管理] + [轨迹上报]</li>
+</ul>
+<h2 id="超声">超声<a hidden class="anchor" aria-hidden="true" href="#超声">#</a></h2>
+<p>传感器特性：</p>
+<p>超声USS：八个方向测试</p>
+<ul>
+<li>
+<p>锥桶（5cm）</p>
+</li>
+<li>
+<p>75cm圆柱形（5cm）</p>
+</li>
+<li>
+<p>立柱面（5cm）、立柱角（5cm，偶发10cm）、</p>
+</li>
+<li>
+<p>购物车（±5cm，偶发10cm）</p>
+</li>
+<li>
+<p>禁停牌（5cm，偶发+10cm）</p>
+</li>
+<li>
+<p>25x25x30cm纸箱（+5cm-+10cm，后方无法检测）</p>
+</li>
+<li>
+<p>假人（-5cm~-10cm）</p>
+</li>
+<li>
+<p>16cm路沿（+10cm，50%检测不到）</p>
+</li>
+</ul>
+<h2 id="定位">定位<a hidden class="anchor" aria-hidden="true" href="#定位">#</a></h2>
+<h2 id="规划">规划<a hidden class="anchor" aria-hidden="true" href="#规划">#</a></h2>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/tags/">Tags</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://yangly0.github.io/posts/20260815225154/">
+    <span class="title">下一页 »</span>
+    <span>AdamW: Decoupled Weight Decay Regularization</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            
+            
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>
