@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>论文阅读之图像分割 | 所见所思</title>
+<meta name="keywords" content="tags">
+<meta name="description" content="计算机视觉之图像分割
+FCN: Fully Convolutional Networks for Semantic Segmentation
+论文链接：https://arxiv.org/abs/1411.4038v1
+论文代码：
+语义分割开山之作，首次提出全卷积网络（FCN），彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。
+论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 &#43; 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。
+SegNet/DeconvNet
+U-Net
+PSPNet
+Mask R-CNN
+链接：https://zhuanlan.zhihu.com/p/75333140
+DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs
+参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；
+DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs
+（1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；
+DeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation
+参考link，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP &#43; BN &#43; Image-Level ；（4）移除CRF；">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20261102161547/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20261102161547/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20261102161547/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="论文阅读之图像分割">
+  <meta property="og:description" content="计算机视觉之图像分割 FCN: Fully Convolutional Networks for Semantic Segmentation 论文链接：https://arxiv.org/abs/1411.4038v1
+论文代码：
+语义分割开山之作，首次提出全卷积网络（FCN），彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。
+论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 &#43; 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。
+SegNet/DeconvNet U-Net PSPNet Mask R-CNN 链接：https://zhuanlan.zhihu.com/p/75333140
+DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs 参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；
+DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs （1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；
+DeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation 参考link，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP &#43; BN &#43; Image-Level ；（4）移除CRF；">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-11-02T16:15:47+00:00">
+    <meta property="article:modified_time" content="2026-11-02T16:15:47+00:00">
+    <meta property="article:tag" content="Tags">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="论文阅读之图像分割">
+  <meta name="twitter:description" content="计算机视觉之图像分割 FCN: Fully Convolutional Networks for Semantic Segmentation 论文链接：https://arxiv.org/abs/1411.4038v1
+论文代码：
+语义分割开山之作，首次提出全卷积网络（FCN），彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。
+论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 &#43; 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。
+SegNet/DeconvNet U-Net PSPNet Mask R-CNN 链接：https://zhuanlan.zhihu.com/p/75333140
+DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs 参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；
+DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs （1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；
+DeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation 参考link，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP &#43; BN &#43; Image-Level ；（4）移除CRF；">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "论文阅读之图像分割",
+      "item": "https://yangly0.github.io/posts/20261102161547/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "论文阅读之图像分割",
+  "name": "论文阅读之图像分割",
+  "description": "计算机视觉之图像分割 FCN: Fully Convolutional Networks for Semantic Segmentation 论文链接：https://arxiv.org/abs/1411.4038v1\n论文代码：\n语义分割开山之作，首次提出全卷积网络（FCN），彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。\n论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 + 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。\nSegNet/DeconvNet U-Net PSPNet Mask R-CNN 链接：https://zhuanlan.zhihu.com/p/75333140\nDeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs 参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；\nDeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs （1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；\nDeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation 参考link，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP + BN + Image-Level ；（4）移除CRF；\n",
+  "keywords": [
+    "tags"
+  ],
+  "articleBody": "计算机视觉之图像分割 FCN: Fully Convolutional Networks for Semantic Segmentation 论文链接：https://arxiv.org/abs/1411.4038v1\n论文代码：\n语义分割开山之作，首次提出全卷积网络（FCN），彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。\n论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 + 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。\nSegNet/DeconvNet U-Net PSPNet Mask R-CNN 链接：https://zhuanlan.zhihu.com/p/75333140\nDeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs 参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；\nDeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs （1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；\nDeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation 参考link，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP + BN + Image-Level ；（4）移除CRF；\nhttps://blog.csdn.net/qq_36560894/article/details/106352573， Deeplab V3+：Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation 链接：https://arxiv.org/abs/1802.02611\n这是 DeepLabv3+，由 Liang-Chieh Chen 等人发表于 ECCV 2018，是 DeepLab 系列的集大成之作，也是语义分割领域的一代经典基线。\n一、背景与动机：DeepLab 系列的演进\nDeepLab 系列一直围绕一个核心问题：如何在保留空间分辨率的同时扩大感受野。\n┌───────┬────────────────────────────────┬───────────────────────────────────────┐\n│ 版本 │ 核心机制 │ 局限 │\n├───────┼────────────────────────────────┼───────────────────────────────────────┤\n│ v1/v2 │ 空洞卷积 + ASPP │ 较基础 │\n├───────┼────────────────────────────────┼───────────────────────────────────────┤\n│ v3 │ 改进的 ASPP + 全局平均池化分支 │ 仍采用 “编码器输出后直接上采样”，细节恢复不足 │\n└───────┴────────────────────────────────┴────────────────────────────────────────┘\nDeepLabv3 的输出步长（output stride, OS）通常为 16 或 8，即特征图比输入小 16/8 倍，靠空洞卷积保持感受野，但最终边界细节仍依赖单次双线性上采样，较为粗糙。\n与此同时，encoder-decoder 结构（如 U-Net、RefineNet）在恢复细节上表现更好：decoder通过逐步融合低层高分辨率特征来精修边界。\nDeepLabv3+ 的动机就是：把 DeepLabv3 的强大编码器（空洞卷积 + ASPP）与 encoder-decoder 的精细解码能力结合起来。\n二、核心贡献\n贡献 1：将 DeepLabv3 改造为 encoder-decoder 结构\nEncoder（编码器）\n主干网络（如 ResNet）提取特征，采用空洞卷积控制 output stride。\n顶层低分辨率特征送入 ASPP 模块：\n1×1 卷积分支\n三个不同膨胀率（rates，如 6/12/18）的 3×3 空洞卷积分支\n全局平均池化（GAP）分支（image-level pooling）\n各分支拼接（concat）后再过一个 1×1 卷积，得到编码器输出。\nDecoder（解码器）—— 关键创新\nDeepLabv3+ 没有照搬 U-Net 的多级对称解码，而是采用 “轻量两级上采样”：\nASPP输出(OS=16)\n│ 1×1 conv 降维\n▼ 双线性上采样 ×4 ──┐\n│ (到 OS=4)\n主干浅层特征(OS=4) ─1×1 conv降维─┘\n│ concat\n▼\n3×3 conv → 3×3 conv ← 两层卷积精修\n▼ 双线性上采样 ×4\n最终分割图 (OS=1)\n关键设计点：\n只用一层浅层特征（通常是 backbone 的 stride=4 层，如 ResNet 的第一个 block 输出），而非逐级融合所有尺度。这样 decoder 轻量、高效。\n1×1 卷积降维：浅层特征通道数大（如 256），先用 1×1 卷积降到 48 维再 concat，避免浅层特征主导、并降低计算量。\n两层 3×3 卷积精修：concat 后用两个 3×3 卷积细化特征，再上采样回原图分辨率。\noutput stride 灵活：训练时用 OS=16 求速度，推理时可切到 OS=8 提精度（只需改空洞率，无需改架构）。\n贡献 2：Atrous Separable Convolution（空洞深度可分离卷积）\n这是论文标题后半部分的创新，用于降低 ASPP 和 decoder 中 3×3 卷积的计算成本。\n它把两件事合二为一：\nAtrous（空洞）卷积：在卷积核元素间插入空洞，扩大感受野而不增参数量、不降分辨率。\nSeparable（深度可分离）卷积：\nDepthwise：每个输入通道单独用一个卷积核（如 3×3 空洞）。\nPointwise：1×1 卷积做通道间信息融合。\n空洞深度可分离卷积 = 空洞 depthwise + pointwise。\n计算量对比\n以 3×3 空洞卷积、输入输出通道均为 为例：\n标准空洞卷积：参数量 ≈\n空洞深度可分离卷积：参数量 ≈ （depthwise + pointwise ）\n当 较大时，后者远小于前者（约省 ）。\n论文引用 MobileNet 的结论：使用深度可分离卷积可在几乎不损失精度的情况下大幅降低计算量（约 1~2 数量级），这让 DeepLabv3+在移动端也能高效运行。\nDeepLabv3+ 把 ASPP 中所有 3×3 空洞卷积、decoder 中所有 3×3 卷积都换成了这种可分离版本。\n三、实验亮点\n数据集与主干 在 PASCAL VOC 2012（含额外标注，10582 训练图）、Cityscapes、PASCAL-Context 上评测。\n主干网络：ResNet-50 / ResNet-101 / Xception。\nencoder-decoder vs. 纯 DeepLabv3 引入 decoder 后，相比直接上采样的 DeepLabv3，mIoU 提升约 1~2 个点，尤其在物体边界处改善明显。\n在 OS=16 下，decoder 用浅层特征带来的收益尤为突出（因为高层特征分辨率低，更需要浅层细节补偿）。\nASPP vs. 不同 decoder 设计 论文实验了\"加 ASPP\" vs “不加 ASPP（只用 decoder 融合多尺度浅层特征）\"，发现 ASPP + decoder 的组合最优——空洞卷积的多尺度上下文与浅层细节是互补的，缺一不可。 Xception 主干 + 深度可分离卷积 把 ResNet 换成改进的 Xception（更深的 depthwise separable 结构，改动 entry flow、加更多层、用 BN+ReLU），并在ASPP/decoder 全部用空洞深度可分离卷积：\n精度进一步提升（VOC 上达 89% mIoU，当时 SOTA）。\n计算量大幅下降，更适合部署。\n在 Cityscapes 上达到约 82.1% mIoU，验证集与测试集均表现优异。\n速度-精度权衡 通过调整 output stride（8 vs 16）、decoder 卷积通道数、是否用可分离卷积，可在精度与速度间灵活权衡，覆盖服务器端到移动端。\n四、与同类工作的关系\nvs. U-Net / RefineNet：DeepLabv3+ 保留了 encoder-decoder 思想，但 decoder 极度精简（只取一层浅层特征 + 两层 3×3 卷积），而非逐级对称上采样，更轻量。\nvs. PSPNet：PSPNet 用金字塔池化抓全局上下文；DeepLabv3+ 用 ASPP（不同空洞率）抓多尺度上下文，并额外加 decoder 恢复细节，对边界更友好。\nvs. DeepLabv3：v3+ 是 v3 的\"加 decoder\"增强版，ASPP 部分基本继承，主要改进在 decoder 与可分离卷积。\n五、意义与启发\n集大成：DeepLabv3+ 把\"空洞卷积（扩大感受野）+ ASPP（多尺度上下文）+ encoder-decoder（细节恢复）+ 深度可分离卷积（轻量化）“四者整合，是 DeepLab 系列的终结篇，也成为语义分割的标准基线，被广泛引用与复现。\n轻量 decoder即足够：论文证明\"不需要复杂的逐级解码，仅融合一层浅层高分辨率特征\"就能大幅提升边界质量，这对后续轻量分割网络（如BiSeNet、Fast-SCNN）的设计有重要启发。\n空洞可分离卷积的普适价值：把\"扩大感受野\"和\"降低计算量\"统一在一种算子中，是后续高效分割/检测模块（如 LR-ASPP、MobileSeg系列）的常用技巧。\n训练-推理 OS 解耦：训练用大 OS 省显存、推理用小 OS 提精度，这种\"同架构、换参数\"的灵活性成为分割领域的常见实践。\n一句话总结：DeepLabv3+ 在 DeepLabv3 的 ASPP 编码器基础上，嫁接了一个轻量的浅层特征 decoder\n以精修边界，并全面采用空洞深度可分离卷积降低计算量，从而在精度与速度上同时取得突破，成为语义分割领域的经典基线。\nRepVGG: Making VGG-style ConvNets Great Again 论文地址：https://arxiv.org/abs/2101.03697 (CVPR2021)\n论文源码：https://github.com/megvii-model/RepVGG\n这是 CVPR 2021 的一篇论文，核心思想是：用结构重参数化（Structural Re-parameterization）让一个训练时为多分支结构的网络，在推理时等价转换为单分支的 VGG/ResNet 风格网络，从而兼顾训练时的精度与推理时的速度。\n3x3卷积分支（提取特征） + 1x1卷积分支（补充不同感受野的特征） + Identity分支（残差连接，改善梯度）\n卷积和BN合并，3卷积合并1卷积（ (W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)）\n这一步是在onnx导出还是在哪里实现的？\n一、动机：为什么要\"复活\"VGG？\n作者指出，VGG 风格的网络（纯串联的 3×3 卷积 + ReLU）有三个对部署友好的优势：\n推理快：单分支结构内存访问开销小，没有分支融合的额外耗时。\n省显存：不需要保存中间多分支的结果。\n灵活：易于针对不同硬件/算子库做量化、剪枝等优化。\n但 VGG 之所以被淘汰，是因为它精度不够高——缺少 ResNet 那样的多分支（恒等映射 + 1×1\n卷积）结构，导致训练深层网络时梯度流差、表达力不足。\n于是核心矛盾是：多分支结构利于训练精度，单分支结构利于推理效率。\n二、核心方法：结构重参数化\n训练时结构：3 分支 每个 RepVGG Block 在训练时有三条并行分支：\n┌── 3×3 conv + BN ──┐\n输入 ────┼── 1×1 conv + BN ──┼── 相加 ── ReLU ── 输出\n└── Identity(BN) ──┘\n3×3 分支：主要特征提取\n1×1 分支：补充不同感受野的特征\nIdentity 分支（带 BN）：当输入输出通道数、空间尺寸一致时存在，相当于残差连接，改善梯度流\n这种结构和 ResNet 类似，能获得高精度。\n推理时结构：单分支 部署时把上面的三分支等价融合成一个 3×3 卷积：\n输入 ── 3×3 conv + ReLU ── 输出\n融合后变成了纯 VGG 风格，没有多余的分支开销。\n为什么能融合？—— 重参数化推导 关键在于 卷积是线性的，BN 在推理时也是线性的，所以可以把三者合并。\n步骤一：把每个分支的 Conv + BN 融合成一个带偏置的卷积\nBN 在推理阶段的公式为：\ny = γ·(x - μ)/√(σ² + ε) + β\n这是一个仿射变换（线性 + 偏置）。设：\n卷积核权重为 W，则卷积输出 W*x（无偏置时）\nBN 参数 γ, β, μ, σ², ε\n可推导出等效卷积核与偏置：\nW’ = W · (γ / √(σ² + ε))\nb’ = β - γ·μ / √(σ² + ε)\n于是每个分支都变成 Conv(W’, b’)。\n步骤二：把三个分支的卷积相加\n因为三个分支对同一输入做卷积后逐元素相加，而卷积对加法满足分配律：\n(W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)\n处理 1×1 分支和 Identity 分支：\n1×1 卷积：把它的核零填充成 3×3，就能直接加到 3×3 核上。\nIdentity 分支（没有卷积，只有 BN）：相当于一个\"以恒等为单位冲激\"的卷积——构造一个中心为 1、其余为 0 的 3×3 核，再乘以 BN 的等效系数，就能并入。\n最终得到一个单一的 3×3 卷积（带偏置），与原三分支在数学上完全等价。\n▎ 注意：融合只在 BN 处于推理模式（用训练集的滑动均值/方差）时才等价。所以训练完、转为 eval 模式后再融合。\n三、网络整体设计\nRepVGG 是一个类似 VGG 的 stage 架构，共 5 个 stage，每个 stage 由若干个 RepVGG Block 堆叠：\nLayer placement：每个 stage 第一个 block 做 stride=2 下采样（类似 ResNet），此时 Identity 分支不存在（输入输出尺寸不同）。\n逐阶段变宽：每个 stage 的通道数按基础倍数 a, b 缩放，且越深的 stage 越宽（2a, 4a, 8a 之类）。\n针对性加深变宽：通过不同的 a, b 和 stage 深度配置，得到一个模型族：\nRepVGG-A0/A1/A2：轻量级\nRepVGG-B0/B1/B2/B3：更大，追求更高精度\nRepVGG-B1g2/g4、B2g4：使用分组卷积（groupwise conv）的变体，进一步权衡速度\n四、实验结果亮点\nImageNet 分类：RepVGG-B2 在仅 80% 训练 epoch 下达到 Top-1 80%+，超过 ResNet-152、EfficientNet 等同期模型，且推理速度更快。\n速度：在 GPU 和专用加速硬件上，同等精度下比多分支网络（如 ResNet、ResNeXt）快不少，因为推理时是纯单分支。\n等价性验证：作者实测融合前后输出几乎一致（差异在浮点误差量级），证明重参数化是数学等价的。\n迁移到检测/分割：作为 backbone 加在 CenterNet/PSPNet 上也带来提升。\n五、意义与启发\n1.训练-推理解耦：开创性地提出\"训练用复杂结构、推理用简单结构\"的设计范式，不必为了部署而牺牲精度，也不必为了精度而牺牲速度。\n结构重参数化成为通用工具：后续很多工作（如 RepVGG 后续系列、DBB/RepLKNet 等）都沿用了这一思路——把可融合的多分支设计作为\"训练期的可学习结构”。\n简单即高效：在算子库高度优化的今天，“朴素的串联 3×3 卷积\"反而是性价比最高的结构，关键在于怎么把它训好。\n一句话总结：RepVGG 用\"训练三分支、推理一卷积\"的重参数化技巧，让老旧的 VGG 架构在精度和速度上都重新具备竞争力。\n",
+  "wordCount" : "726",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-11-02T16:15:47Z",
+  "dateModified": "2026-11-02T16:15:47Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20261102161547/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      论文阅读之图像分割
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-11-02T16:15:47+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="计算机视觉之图像分割">计算机视觉之图像分割<a hidden class="anchor" aria-hidden="true" href="#计算机视觉之图像分割">#</a></h2>
+<h3 id="fcn-fully-convolutional-networks-for-semantic-segmentation">FCN: Fully Convolutional Networks for Semantic Segmentation<a hidden class="anchor" aria-hidden="true" href="#fcn-fully-convolutional-networks-for-semantic-segmentation">#</a></h3>
+<p>论文链接：<a href="https://arxiv.org/abs/1411.4038v1">https://arxiv.org/abs/1411.4038v1</a></p>
+<p>论文代码：</p>
+<p><strong>语义分割开山之作</strong>，首次提出<strong>全卷积网络（FCN）</strong>，彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。</p>
+<p>论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 + 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。</p>
+<h3 id="segnetdeconvnet">SegNet/DeconvNet<a hidden class="anchor" aria-hidden="true" href="#segnetdeconvnet">#</a></h3>
+<h3 id="u-net">U-Net<a hidden class="anchor" aria-hidden="true" href="#u-net">#</a></h3>
+<h3 id="pspnet">PSPNet<a hidden class="anchor" aria-hidden="true" href="#pspnet">#</a></h3>
+<h3 id="mask-r-cnn">Mask R-CNN<a hidden class="anchor" aria-hidden="true" href="#mask-r-cnn">#</a></h3>
+<p>链接：<a href="https://zhuanlan.zhihu.com/p/75333140">https://zhuanlan.zhihu.com/p/75333140</a></p>
+<h3 id="deeplab-v1semantic-image-segmentation-with-deep-convolutional-nets-and-fully-connected-crfs">DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs<a hidden class="anchor" aria-hidden="true" href="#deeplab-v1semantic-image-segmentation-with-deep-convolutional-nets-and-fully-connected-crfs">#</a></h3>
+<p>参考<a href="https://zhuanlan.zhihu.com/p/75333140">link</a>，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；</p>
+<h3 id="deeplab-v2deeplab-semantic-image-segmentation-with-deep-convolutional-nets-atrous-convolution-and-fully-connected-crfs">DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs<a hidden class="anchor" aria-hidden="true" href="#deeplab-v2deeplab-semantic-image-segmentation-with-deep-convolutional-nets-atrous-convolution-and-fully-connected-crfs">#</a></h3>
+<p>（1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；</p>
+<h3 id="deeplab-v3rethinking-atrous-convolution-for-semantic-image-segmentation">DeepLab V3：<a href="https://arxiv.org/abs/1706.05587">Rethinking Atrous Convolution for Semantic Image Segmentation</a><a hidden class="anchor" aria-hidden="true" href="#deeplab-v3rethinking-atrous-convolution-for-semantic-image-segmentation">#</a></h3>
+<p>参考<a href="https://blog.csdn.net/qq_36560894/article/details/106352573">link</a>，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP + BN + Image-Level ；（4）移除CRF；</p>
+<ul>
+<li><a href="https://blog.csdn.net/qq_36560894/article/details/106352573">https://blog.csdn.net/qq_36560894/article/details/106352573</a>，</li>
+</ul>
+<h3 id="deeplab-v3encoder-decoder-with-atrous-separable-convolution-for-semantic-image-segmentation">Deeplab V3+：Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation<a hidden class="anchor" aria-hidden="true" href="#deeplab-v3encoder-decoder-with-atrous-separable-convolution-for-semantic-image-segmentation">#</a></h3>
+<p>链接：<a href="https://arxiv.org/abs/1802.02611">https://arxiv.org/abs/1802.02611</a></p>
+<p>这是 DeepLabv3+，由 Liang-Chieh Chen 等人发表于 ECCV 2018，是 DeepLab 系列的集大成之作，也是语义分割领域的一代经典基线。</p>
+<hr>
+<p>一、背景与动机：DeepLab 系列的演进</p>
+<p>DeepLab 系列一直围绕一个核心问题：如何在保留空间分辨率的同时扩大感受野。</p>
+<p>┌───────┬────────────────────────────────┬───────────────────────────────────────┐</p>
+<p>│ 版本 │ 核心机制 │ 局限 │</p>
+<p>├───────┼────────────────────────────────┼───────────────────────────────────────┤</p>
+<p>│ v1/v2 │ 空洞卷积 + ASPP │ 较基础 │</p>
+<p>├───────┼────────────────────────────────┼───────────────────────────────────────┤</p>
+<p>│ v3 │ 改进的 ASPP + 全局平均池化分支 │ 仍采用 &ldquo;编码器输出后直接上采样&rdquo;，细节恢复不足 │</p>
+<p>└───────┴────────────────────────────────┴────────────────────────────────────────┘</p>
+<p>DeepLabv3 的输出步长（output stride, OS）通常为 16 或 8，即特征图比输入小 16/8 倍，靠空洞卷积保持感受野，但最终边界细节仍依赖单次双线性上采样，较为粗糙。</p>
+<p>与此同时，encoder-decoder 结构（如 U-Net、RefineNet）在恢复细节上表现更好：decoder通过逐步融合低层高分辨率特征来精修边界。</p>
+<p>DeepLabv3+ 的动机就是：把 DeepLabv3 的强大编码器（空洞卷积 + ASPP）与 encoder-decoder 的精细解码能力结合起来。</p>
+<hr>
+<p>二、核心贡献</p>
+<p>贡献 1：将 DeepLabv3 改造为 encoder-decoder 结构</p>
+<p>Encoder（编码器）</p>
+<ul>
+<li>
+<p>主干网络（如 ResNet）提取特征，采用空洞卷积控制 output stride。</p>
+</li>
+<li>
+<p>顶层低分辨率特征送入 ASPP 模块：</p>
+<ul>
+<li>
+<p>1×1 卷积分支</p>
+</li>
+<li>
+<p>三个不同膨胀率（rates，如 6/12/18）的 3×3 空洞卷积分支</p>
+</li>
+<li>
+<p>全局平均池化（GAP）分支（image-level pooling）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>各分支拼接（concat）后再过一个 1×1 卷积，得到编码器输出。</p>
+</li>
+</ul>
+<p>Decoder（解码器）—— 关键创新</p>
+<p>DeepLabv3+ 没有照搬 U-Net 的多级对称解码，而是采用 &ldquo;轻量两级上采样&rdquo;：</p>
+<p>ASPP输出(OS=16)</p>
+<p>│ 1×1 conv 降维</p>
+<p>▼ 双线性上采样 ×4 ──┐</p>
+<p>│ (到 OS=4)</p>
+<p>主干浅层特征(OS=4) ─1×1 conv降维─┘</p>
+<p>│ concat</p>
+<p>▼</p>
+<p>3×3 conv → 3×3 conv ← 两层卷积精修</p>
+<p>▼ 双线性上采样 ×4</p>
+<p>最终分割图 (OS=1)</p>
+<p>关键设计点：</p>
+<ol>
+<li>
+<p>只用一层浅层特征（通常是 backbone 的 stride=4 层，如 ResNet 的第一个 block 输出），而非逐级融合所有尺度。这样 decoder 轻量、高效。</p>
+</li>
+<li>
+<p>1×1 卷积降维：浅层特征通道数大（如 256），先用 1×1 卷积降到 48 维再 concat，避免浅层特征主导、并降低计算量。</p>
+</li>
+<li>
+<p>两层 3×3 卷积精修：concat 后用两个 3×3 卷积细化特征，再上采样回原图分辨率。</p>
+</li>
+<li>
+<p>output stride 灵活：训练时用 OS=16 求速度，推理时可切到 OS=8 提精度（只需改空洞率，无需改架构）。</p>
+</li>
+</ol>
+<p>贡献 2：Atrous Separable Convolution（空洞深度可分离卷积）</p>
+<p>这是论文标题后半部分的创新，用于降低 ASPP 和 decoder 中 3×3 卷积的计算成本。</p>
+<p>它把两件事合二为一：</p>
+<ol>
+<li>
+<p>Atrous（空洞）卷积：在卷积核元素间插入空洞，扩大感受野而不增参数量、不降分辨率。</p>
+</li>
+<li>
+<p>Separable（深度可分离）卷积：</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>Depthwise：每个输入通道单独用一个卷积核（如 3×3 空洞）。</p>
+</li>
+<li>
+<p>Pointwise：1×1 卷积做通道间信息融合。</p>
+</li>
+</ul>
+<p>空洞深度可分离卷积 = 空洞 depthwise + pointwise。</p>
+<p>计算量对比</p>
+<p>以 3×3 空洞卷积、输入输出通道均为 为例：</p>
+<ul>
+<li>
+<p>标准空洞卷积：参数量 ≈</p>
+</li>
+<li>
+<p>空洞深度可分离卷积：参数量 ≈ （depthwise + pointwise ）</p>
+</li>
+</ul>
+<p>当 较大时，后者远小于前者（约省 ）。</p>
+<p>论文引用 MobileNet 的结论：使用深度可分离卷积可在几乎不损失精度的情况下大幅降低计算量（约 1~2 数量级），这让 DeepLabv3+在移动端也能高效运行。</p>
+<p>DeepLabv3+ 把 ASPP 中所有 3×3 空洞卷积、decoder 中所有 3×3 卷积都换成了这种可分离版本。</p>
+<hr>
+<p>三、实验亮点</p>
+<ol>
+<li>数据集与主干</li>
+</ol>
+<ul>
+<li>
+<p>在 PASCAL VOC 2012（含额外标注，10582 训练图）、Cityscapes、PASCAL-Context 上评测。</p>
+</li>
+<li>
+<p>主干网络：ResNet-50 / ResNet-101 / Xception。</p>
+</li>
+</ul>
+<ol start="2">
+<li>encoder-decoder vs. 纯 DeepLabv3</li>
+</ol>
+<ul>
+<li>
+<p>引入 decoder 后，相比直接上采样的 DeepLabv3，mIoU 提升约 1~2 个点，尤其在物体边界处改善明显。</p>
+</li>
+<li>
+<p>在 OS=16 下，decoder 用浅层特征带来的收益尤为突出（因为高层特征分辨率低，更需要浅层细节补偿）。</p>
+</li>
+</ul>
+<ol start="3">
+<li>ASPP vs. 不同 decoder 设计</li>
+</ol>
+<ul>
+<li>论文实验了&quot;加 ASPP&quot; vs &ldquo;不加 ASPP（只用 decoder 融合多尺度浅层特征）&quot;，发现 ASPP + decoder 的组合最优——空洞卷积的多尺度上下文与浅层细节是互补的，缺一不可。</li>
+</ul>
+<ol start="4">
+<li>Xception 主干 + 深度可分离卷积</li>
+</ol>
+<ul>
+<li>
+<p>把 ResNet 换成改进的 Xception（更深的 depthwise separable 结构，改动 entry flow、加更多层、用 BN+ReLU），并在ASPP/decoder 全部用空洞深度可分离卷积：</p>
+<ul>
+<li>
+<p>精度进一步提升（VOC 上达 89% mIoU，当时 SOTA）。</p>
+</li>
+<li>
+<p>计算量大幅下降，更适合部署。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>在 Cityscapes 上达到约 82.1% mIoU，验证集与测试集均表现优异。</p>
+</li>
+</ul>
+<ol start="5">
+<li>速度-精度权衡</li>
+</ol>
+<p>通过调整 output stride（8 vs 16）、decoder 卷积通道数、是否用可分离卷积，可在精度与速度间灵活权衡，覆盖服务器端到移动端。</p>
+<hr>
+<p>四、与同类工作的关系</p>
+<ul>
+<li>
+<p>vs. U-Net / RefineNet：DeepLabv3+ 保留了 encoder-decoder 思想，但 decoder 极度精简（只取一层浅层特征 + 两层 3×3 卷积），而非逐级对称上采样，更轻量。</p>
+</li>
+<li>
+<p>vs. PSPNet：PSPNet 用金字塔池化抓全局上下文；DeepLabv3+ 用 ASPP（不同空洞率）抓多尺度上下文，并额外加 decoder 恢复细节，对边界更友好。</p>
+</li>
+<li>
+<p>vs. DeepLabv3：v3+ 是 v3 的&quot;加 decoder&quot;增强版，ASPP 部分基本继承，主要改进在 decoder 与可分离卷积。</p>
+</li>
+</ul>
+<hr>
+<p>五、意义与启发</p>
+<ol>
+<li>
+<p>集大成：DeepLabv3+ 把&quot;空洞卷积（扩大感受野）+ ASPP（多尺度上下文）+ encoder-decoder（细节恢复）+ 深度可分离卷积（轻量化）&ldquo;四者整合，是 DeepLab 系列的终结篇，也成为语义分割的标准基线，被广泛引用与复现。</p>
+</li>
+<li>
+<p>轻量 decoder即足够：论文证明&quot;不需要复杂的逐级解码，仅融合一层浅层高分辨率特征&quot;就能大幅提升边界质量，这对后续轻量分割网络（如BiSeNet、Fast-SCNN）的设计有重要启发。</p>
+</li>
+<li>
+<p>空洞可分离卷积的普适价值：把&quot;扩大感受野&quot;和&quot;降低计算量&quot;统一在一种算子中，是后续高效分割/检测模块（如 LR-ASPP、MobileSeg系列）的常用技巧。</p>
+</li>
+<li>
+<p>训练-推理 OS 解耦：训练用大 OS 省显存、推理用小 OS 提精度，这种&quot;同架构、换参数&quot;的灵活性成为分割领域的常见实践。</p>
+</li>
+</ol>
+<hr>
+<p>一句话总结：DeepLabv3+ 在 DeepLabv3 的 ASPP 编码器基础上，嫁接了一个轻量的浅层特征 decoder</p>
+<p>以精修边界，并全面采用空洞深度可分离卷积降低计算量，从而在精度与速度上同时取得突破，成为语义分割领域的经典基线。</p>
+<h3 id="repvgg-making-vgg-style-convnets-great-again"><strong>RepVGG: Making VGG-style ConvNets Great Again</strong><a hidden class="anchor" aria-hidden="true" href="#repvgg-making-vgg-style-convnets-great-again">#</a></h3>
+<p>论文地址：<a href="https://arxiv.org/abs/2101.03697">https://arxiv.org/abs/2101.03697</a> (CVPR2021)</p>
+<p>论文源码：<a href="https://github.com/megvii-model/RepVGG">https://github.com/megvii-model/RepVGG</a></p>
+<p>这是 CVPR 2021 的一篇论文，核心思想是：用结构重参数化（Structural Re-parameterization）让一个训练时为多分支结构的网络，在推理时等价转换为单分支的 VGG/ResNet 风格网络，从而兼顾训练时的精度与推理时的速度。</p>
+<ul>
+<li>
+<p>3x3卷积分支（提取特征） + 1x1卷积分支（补充不同感受野的特征） + Identity分支（残差连接，改善梯度）</p>
+</li>
+<li>
+<p>卷积和BN合并，3卷积合并1卷积（ (W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)）</p>
+</li>
+<li>
+<p>这一步是在onnx导出还是在哪里实现的？</p>
+</li>
+</ul>
+<hr>
+<p>一、动机：为什么要&quot;复活&quot;VGG？</p>
+<p>作者指出，VGG 风格的网络（纯串联的 3×3 卷积 + ReLU）有三个对部署友好的优势：</p>
+<ol>
+<li>
+<p>推理快：单分支结构内存访问开销小，没有分支融合的额外耗时。</p>
+</li>
+<li>
+<p>省显存：不需要保存中间多分支的结果。</p>
+</li>
+<li>
+<p>灵活：易于针对不同硬件/算子库做量化、剪枝等优化。</p>
+</li>
+</ol>
+<p>但 VGG 之所以被淘汰，是因为它精度不够高——缺少 ResNet 那样的多分支（恒等映射 + 1×1</p>
+<p>卷积）结构，导致训练深层网络时梯度流差、表达力不足。</p>
+<p>于是核心矛盾是：多分支结构利于训练精度，单分支结构利于推理效率。</p>
+<hr>
+<p>二、核心方法：结构重参数化</p>
+<ol>
+<li>训练时结构：3 分支</li>
+</ol>
+<p>每个 RepVGG Block 在训练时有三条并行分支：</p>
+<p>┌── 3×3 conv + BN ──┐</p>
+<p>输入 ────┼── 1×1 conv + BN ──┼── 相加 ── ReLU ── 输出</p>
+<p>└── Identity(BN) ──┘</p>
+<ul>
+<li>
+<p>3×3 分支：主要特征提取</p>
+</li>
+<li>
+<p>1×1 分支：补充不同感受野的特征</p>
+</li>
+<li>
+<p>Identity 分支（带 BN）：当输入输出通道数、空间尺寸一致时存在，相当于残差连接，改善梯度流</p>
+</li>
+</ul>
+<p>这种结构和 ResNet 类似，能获得高精度。</p>
+<ol start="2">
+<li>推理时结构：单分支</li>
+</ol>
+<p>部署时把上面的三分支等价融合成一个 3×3 卷积：</p>
+<p>输入 ── 3×3 conv + ReLU ── 输出</p>
+<p>融合后变成了纯 VGG 风格，没有多余的分支开销。</p>
+<ol start="3">
+<li>为什么能融合？—— 重参数化推导</li>
+</ol>
+<p>关键在于 卷积是线性的，BN 在推理时也是线性的，所以可以把三者合并。</p>
+<p>步骤一：把每个分支的 Conv + BN 融合成一个带偏置的卷积</p>
+<p>BN 在推理阶段的公式为：</p>
+<p>y = γ·(x - μ)/√(σ² + ε) + β</p>
+<p>这是一个仿射变换（线性 + 偏置）。设：</p>
+<ul>
+<li>
+<p>卷积核权重为 W，则卷积输出 W*x（无偏置时）</p>
+</li>
+<li>
+<p>BN 参数 γ, β, μ, σ², ε</p>
+</li>
+</ul>
+<p>可推导出等效卷积核与偏置：</p>
+<p>W&rsquo; = W · (γ / √(σ² + ε))</p>
+<p>b&rsquo; = β - γ·μ / √(σ² + ε)</p>
+<p>于是每个分支都变成 Conv(W&rsquo;, b&rsquo;)。</p>
+<p>步骤二：把三个分支的卷积相加</p>
+<p>因为三个分支对同一输入做卷积后逐元素相加，而卷积对加法满足分配律：</p>
+<p>(W₁x + b₁) + (W₂x + b₂) + (W₃x + b₃) = (W₁+W₂+W₃)x + (b₁+b₂+b₃)</p>
+<p>处理 1×1 分支和 Identity 分支：</p>
+<ul>
+<li>
+<p>1×1 卷积：把它的核零填充成 3×3，就能直接加到 3×3 核上。</p>
+</li>
+<li>
+<p>Identity 分支（没有卷积，只有 BN）：相当于一个&quot;以恒等为单位冲激&quot;的卷积——构造一个中心为 1、其余为 0 的 3×3 核，再乘以 BN 的等效系数，就能并入。</p>
+</li>
+</ul>
+<p>最终得到一个单一的 3×3 卷积（带偏置），与原三分支在数学上完全等价。</p>
+<p>▎ 注意：融合只在 BN 处于推理模式（用训练集的滑动均值/方差）时才等价。所以训练完、转为 eval 模式后再融合。</p>
+<hr>
+<p>三、网络整体设计</p>
+<p>RepVGG 是一个类似 VGG 的 stage 架构，共 5 个 stage，每个 stage 由若干个 RepVGG Block 堆叠：</p>
+<ul>
+<li>
+<p>Layer placement：每个 stage 第一个 block 做 stride=2 下采样（类似 ResNet），此时 Identity 分支不存在（输入输出尺寸不同）。</p>
+</li>
+<li>
+<p>逐阶段变宽：每个 stage 的通道数按基础倍数 a, b 缩放，且越深的 stage 越宽（2a, 4a, 8a 之类）。</p>
+</li>
+<li>
+<p>针对性加深变宽：通过不同的 a, b 和 stage 深度配置，得到一个模型族：</p>
+<ul>
+<li>
+<p>RepVGG-A0/A1/A2：轻量级</p>
+</li>
+<li>
+<p>RepVGG-B0/B1/B2/B3：更大，追求更高精度</p>
+</li>
+<li>
+<p>RepVGG-B1g2/g4、B2g4：使用分组卷积（groupwise conv）的变体，进一步权衡速度</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>四、实验结果亮点</p>
+<ul>
+<li>
+<p>ImageNet 分类：RepVGG-B2 在仅 80% 训练 epoch 下达到 Top-1 80%+，超过 ResNet-152、EfficientNet 等同期模型，且推理速度更快。</p>
+</li>
+<li>
+<p>速度：在 GPU 和专用加速硬件上，同等精度下比多分支网络（如 ResNet、ResNeXt）快不少，因为推理时是纯单分支。</p>
+</li>
+<li>
+<p>等价性验证：作者实测融合前后输出几乎一致（差异在浮点误差量级），证明重参数化是数学等价的。</p>
+</li>
+<li>
+<p>迁移到检测/分割：作为 backbone 加在 CenterNet/PSPNet 上也带来提升。</p>
+</li>
+</ul>
+<hr>
+<p>五、意义与启发</p>
+<p>1.训练-推理解耦：开创性地提出&quot;训练用复杂结构、推理用简单结构&quot;的设计范式，不必为了部署而牺牲精度，也不必为了精度而牺牲速度。</p>
+<ol start="2">
+<li>
+<p>结构重参数化成为通用工具：后续很多工作（如 RepVGG 后续系列、DBB/RepLKNet 等）都沿用了这一思路——把可融合的多分支设计作为&quot;训练期的可学习结构&rdquo;。</p>
+</li>
+<li>
+<p>简单即高效：在算子库高度优化的今天，&ldquo;朴素的串联 3×3 卷积&quot;反而是性价比最高的结构，关键在于怎么把它训好。</p>
+</li>
+</ol>
+<p>一句话总结：RepVGG 用&quot;训练三分支、推理一卷积&quot;的重参数化技巧，让老旧的 VGG 架构在精度和速度上都重新具备竞争力。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/tags/">Tags</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yangly0.github.io/posts/20261102161600/">
+    <span class="title">« 上一页</span>
+    <span>论文阅读之计算机视觉</span>
+  </a>
+  <a class="next" href="https://yangly0.github.io/posts/20261102161039/">
+    <span class="title">下一页 »</span>
+    <span>论文阅读之2D目标检测</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            
+            
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

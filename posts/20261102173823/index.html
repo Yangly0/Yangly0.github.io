@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>论文阅读之VLM/VLA | 所见所思</title>
+<meta name="keywords" content="tags">
+<meta name="description" content="VLM / VLA
+参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎&quot;与车辆驾驶的&quot;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+
+
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;
+
+
+VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等
+
+
+动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号&ndash;方向盘转角、油门开度、刹车力度等。
+
+
+三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质
+
+量多模态驾驶数据的采集与标注成本极为高昂。
+
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&quot;常识”与现实物理世界的动力学规律存在本质脱节
+
+——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025
+ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation
+链接：https://arxiv.org/abs/2506.05667
+总结：">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20261102173823/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20261102173823/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20261102173823/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="论文阅读之VLM/VLA">
+  <meta property="og:description" content="VLM / VLA 参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎&#34;与车辆驾驶的&#34;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;
+VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等
+动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。
+三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质 量多模态驾驶数据的采集与标注成本极为高昂。
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&#34;常识”与现实物理世界的动力学规律存在本质脱节 ——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667
+总结：">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-11-02T17:38:23+00:00">
+    <meta property="article:modified_time" content="2026-11-02T17:38:23+00:00">
+    <meta property="article:tag" content="Tags">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="论文阅读之VLM/VLA">
+  <meta name="twitter:description" content="VLM / VLA 参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎&#34;与车辆驾驶的&#34;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;
+VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等
+动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。
+三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质 量多模态驾驶数据的采集与标注成本极为高昂。
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&#34;常识”与现实物理世界的动力学规律存在本质脱节 ——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667
+总结：">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "论文阅读之VLM/VLA",
+      "item": "https://yangly0.github.io/posts/20261102173823/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "论文阅读之VLM/VLA",
+  "name": "论文阅读之VLM\/VLA",
+  "description": "VLM / VLA 参考：从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶\n在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎\u0026quot;与车辆驾驶的\u0026quot;动作输出模块“整合在同一个架构中。\n典型的VLA模型由三大组件构成:\n视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;\nVLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等\n动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号\u0026ndash;方向盘转角、油门开度、刹车力度等。\n三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成\n看见一理解一行动”的闭环。\n然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，\n工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质 量多模态驾驶数据的采集与标注成本极为高昂。\n认知层面，VLA依赖的语言模型基于互联网图文预训练，其\u0026quot;常识”与现实物理世界的动力学规律存在本质脱节 ——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。\n此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。\n综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”\n的实时驾驶任务。\nOmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667\n总结：\n",
+  "keywords": [
+    "tags"
+  ],
+  "articleBody": "VLM / VLA 参考：从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶\n在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎\"与车辆驾驶的\"动作输出模块“整合在同一个架构中。\n典型的VLA模型由三大组件构成:\n视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;\nVLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等\n动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。\n三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成\n看见一理解一行动”的闭环。\n然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，\n工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质 量多模态驾驶数据的采集与标注成本极为高昂。\n认知层面，VLA依赖的语言模型基于互联网图文预训练，其\"常识”与现实物理世界的动力学规律存在本质脱节 ——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。\n此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。\n综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”\n的实时驾驶任务。\nOmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667\n总结：\n",
+  "wordCount" : "38",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-11-02T17:38:23Z",
+  "dateModified": "2026-11-02T17:38:23Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20261102173823/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      论文阅读之VLM/VLA
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-11-02T17:38:23+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="vlm--vla">VLM / VLA<a hidden class="anchor" aria-hidden="true" href="#vlm--vla">#</a></h2>
+<p>参考：<a href="https://gri.feishu.cn/wiki/IEsHwmanTi61WokDCmCcPgnUnJh">从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶</a></p>
+<p>在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎&quot;与车辆驾驶的&quot;动作输出模块“整合在同一个架构中。</p>
+<p>典型的VLA模型由三大组件构成:</p>
+<ol>
+<li>
+<p>视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;</p>
+</li>
+<li>
+<p>VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等</p>
+</li>
+<li>
+<p>动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号&ndash;方向盘转角、油门开度、刹车力度等。</p>
+</li>
+</ol>
+<p>三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成</p>
+<p>看见一理解一行动”的闭环。</p>
+<p>然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，</p>
+<ol>
+<li>工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质</li>
+</ol>
+<p>量多模态驾驶数据的采集与标注成本极为高昂。</p>
+<ol start="2">
+<li>认知层面，VLA依赖的语言模型基于互联网图文预训练，其&quot;常识”与现实物理世界的动力学规律存在本质脱节</li>
+</ol>
+<p>——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。</p>
+<p>此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。</p>
+<p>综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”</p>
+<p>的实时驾驶任务。</p>
+<h3 id="omnidrive-nvidia-cvpr2025">OmniDrive-NVIDIA-CVPR 2025<a hidden class="anchor" aria-hidden="true" href="#omnidrive-nvidia-cvpr2025">#</a></h3>
+<h3 id="parkingworld-end-to-end-autonomous-parking-reinforcement-learning-from-corrective-experience-in-3dgs-simulation">ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation<a hidden class="anchor" aria-hidden="true" href="#parkingworld-end-to-end-autonomous-parking-reinforcement-learning-from-corrective-experience-in-3dgs-simulation">#</a></h3>
+<p>链接：<a href="https://arxiv.org/abs/2506.05667">https://arxiv.org/abs/2506.05667</a></p>
+<p>总结：</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/tags/">Tags</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yangly0.github.io/posts/20261102173855/">
+    <span class="title">« 上一页</span>
+    <span>论文阅读之世界模型</span>
+  </a>
+  <a class="next" href="https://yangly0.github.io/posts/20261102173736/">
+    <span class="title">下一页 »</span>
+    <span>论文阅读之自动驾驶端到端专题</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            
+            
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

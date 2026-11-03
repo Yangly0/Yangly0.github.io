@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>论文阅读之2D目标检测 | 所见所思</title>
+<meta name="keywords" content="论文, 计算机视觉, 目标检测">
+<meta name="description" content="计算机视觉之目标检测
+https://www.zhihu.com/column/c_1825558830546808832
+Deformable DETR(2020/10)
+论文链接：https://arxiv.org/abs/2010.04159
+参考论文：https://zhuanlan.zhihu.com/p/372116181
+论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。
+
+
+Multi-Scale Features &amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。
+
+
+Deformable Attention(&amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部&amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。
+
+
+DETR(2020/05)
+DETR：End-to-End Object Detection with Transformers
+论文链接：https://arxiv.org/abs/2005.12872
+代码链接：https://github.com/facebookresearch/detr
+参考：https://zhuanlan.zhihu.com/p/430198800
+概述：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。
+疑惑：按照李沐老师读论文的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？
+带着以上疑惑，我们来逐渐拆解DETR。
+集合预测：
+利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）
+
+
+业界上，无标准深度学习模型的集合预测，类似的是多标签分类
+
+
+无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制
+
+
+不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。
+
+
+可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。
+
+
+模型结构：
+（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维
+（2）Transformer：
+
+
+Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。
+
+
+position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。
+
+
+三角编码 &#43; learning编码
+
+
+
+
+Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。
+
+
+利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用
+
+
+将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；
+（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。
+（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。
+CenterNet(2019/04)
+Objects as Points
+论文链接：https://arxiv.org/abs/1904.07850">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20261102161039/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20261102161039/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20261102161039/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="论文阅读之2D目标检测">
+  <meta property="og:description" content="计算机视觉之目标检测 https://www.zhihu.com/column/c_1825558830546808832
+Deformable DETR(2020/10) 论文链接：https://arxiv.org/abs/2010.04159
+参考论文：https://zhuanlan.zhihu.com/p/372116181
+论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。
+Multi-Scale Features &amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。
+Deformable Attention(&amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部&amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。
+DETR(2020/05) DETR：End-to-End Object Detection with Transformers
+论文链接：https://arxiv.org/abs/2005.12872
+代码链接：https://github.com/facebookresearch/detr
+参考：https://zhuanlan.zhihu.com/p/430198800
+概述：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。
+疑惑：按照李沐老师读论文的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？
+带着以上疑惑，我们来逐渐拆解DETR。
+集合预测：
+利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）
+业界上，无标准深度学习模型的集合预测，类似的是多标签分类
+无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制
+不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。
+可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。
+模型结构：
+（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维
+（2）Transformer：
+Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。
+position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。
+三角编码 &#43; learning编码
+Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。
+利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用
+将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；
+（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。
+（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。
+CenterNet(2019/04) Objects as Points
+论文链接：https://arxiv.org/abs/1904.07850">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-11-02T16:10:39+00:00">
+    <meta property="article:modified_time" content="2026-11-02T16:10:39+00:00">
+    <meta property="article:tag" content="论文">
+    <meta property="article:tag" content="计算机视觉">
+    <meta property="article:tag" content="目标检测">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="论文阅读之2D目标检测">
+  <meta name="twitter:description" content="计算机视觉之目标检测 https://www.zhihu.com/column/c_1825558830546808832
+Deformable DETR(2020/10) 论文链接：https://arxiv.org/abs/2010.04159
+参考论文：https://zhuanlan.zhihu.com/p/372116181
+论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。
+Multi-Scale Features &amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。
+Deformable Attention(&amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部&amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。
+DETR(2020/05) DETR：End-to-End Object Detection with Transformers
+论文链接：https://arxiv.org/abs/2005.12872
+代码链接：https://github.com/facebookresearch/detr
+参考：https://zhuanlan.zhihu.com/p/430198800
+概述：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。
+疑惑：按照李沐老师读论文的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？
+带着以上疑惑，我们来逐渐拆解DETR。
+集合预测：
+利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）
+业界上，无标准深度学习模型的集合预测，类似的是多标签分类
+无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制
+不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。
+可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。
+模型结构：
+（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维
+（2）Transformer：
+Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。
+position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。
+三角编码 &#43; learning编码
+Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。
+利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用
+将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；
+（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。
+（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。
+CenterNet(2019/04) Objects as Points
+论文链接：https://arxiv.org/abs/1904.07850">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "论文阅读之2D目标检测",
+      "item": "https://yangly0.github.io/posts/20261102161039/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "论文阅读之2D目标检测",
+  "name": "论文阅读之2D目标检测",
+  "description": "计算机视觉之目标检测 https://www.zhihu.com/column/c_1825558830546808832\nDeformable DETR(2020/10) 论文链接：https://arxiv.org/abs/2010.04159\n参考论文：https://zhuanlan.zhihu.com/p/372116181\n论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。\nMulti-Scale Features \u0026amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。\nDeformable Attention(\u0026amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部\u0026amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。\nDETR(2020/05) DETR：End-to-End Object Detection with Transformers\n论文链接：https://arxiv.org/abs/2005.12872\n代码链接：https://github.com/facebookresearch/detr\n参考：https://zhuanlan.zhihu.com/p/430198800\n概述：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。\n疑惑：按照李沐老师读论文的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？\n带着以上疑惑，我们来逐渐拆解DETR。\n集合预测：\n利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）\n业界上，无标准深度学习模型的集合预测，类似的是多标签分类\n无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制\n不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。\n可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。\n模型结构：\n（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维\n（2）Transformer：\nEncoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。\nposition_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。\n三角编码 + learning编码\nDecoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。\n利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用\n将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；\n（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。\n（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。\nCenterNet(2019/04) Objects as Points\n论文链接：https://arxiv.org/abs/1904.07850\n",
+  "keywords": [
+    "论文", "计算机视觉", "目标检测"
+  ],
+  "articleBody": "计算机视觉之目标检测 https://www.zhihu.com/column/c_1825558830546808832\nDeformable DETR(2020/10) 论文链接：https://arxiv.org/abs/2010.04159\n参考论文：https://zhuanlan.zhihu.com/p/372116181\n论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。\nMulti-Scale Features \u0026 Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。\nDeformable Attention(\u0026 Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部\u0026稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。\nDETR(2020/05) DETR：End-to-End Object Detection with Transformers\n论文链接：https://arxiv.org/abs/2005.12872\n代码链接：https://github.com/facebookresearch/detr\n参考：https://zhuanlan.zhihu.com/p/430198800\n概述：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。\n疑惑：按照李沐老师读论文的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？\n带着以上疑惑，我们来逐渐拆解DETR。\n集合预测：\n利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）\n业界上，无标准深度学习模型的集合预测，类似的是多标签分类\n无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制\n不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。\n可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。\n模型结构：\n（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维\n（2）Transformer：\nEncoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。\nposition_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。\n三角编码 + learning编码\nDecoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。\n利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用\n将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；\n（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。\n（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。\nCenterNet(2019/04) Objects as Points\n论文链接：https://arxiv.org/abs/1904.07850\n代码链接：https://github.com/xingyizhou/CenterNet\n参考：https://www.cnblogs.com/fanzhongjie/p/11595925.html\n引言：以最小外接矩形表示目标，目标检测转化为对大量潜在边界框的图像分类问题，分类器判断每个边界框中的图像内容是特定目标还是背景。当前主流的方式有，一阶段采用滑动anchor的方式，二阶段采用候选框的方式，都存在问题是，NMS后处理难以微分和训练。\n相关工作：目标检测经过了几个阶段，区域分类（RCNN、Fast-RCNN）、Anchor（Faster-RCNN）、关键点（CornerNet）到中心点(CenterNet)，以及3D目标检测（Deep3Dbox、3D-RCNN、3D-RCNN）。\n本文提出了将目标作为一个点——即目标BBox的中心点，检测器采用关键点估计来找到中心点，并回归目标的其他属性，例如尺寸，3D位置，方向，甚至姿态。\nbackbone后，添加三个头(conv3x3 + conv1x1)预测80个类别(0-1 heatmap图)、2个中心点的偏置量（Offset）、2个尺寸量（Size）\n对于中心点，采用高斯函数处理+Focal loss\n同Anchor对比：中心点可以看作一个单一的不依赖形状的锚框。但两者存在几个重要区别：第一，我们的 CenterNet 仅基于位置分配\"锚框\"，而非基于框重叠度 ，不需要为前景/背景分类设置人工阈值 。第二，每个物体只有一个正样本\"锚框\"，因此无需非极大值抑制（NMS） ——我们只需在关键点热力图中提取局部峰值 。第三，与传统目标检测器 （输出步幅 stride 为 16）相比，CenterNet 使用更大的输出分辨率（输出步幅为 4），这消除了对多锚框的需求。\nYOLO V4 SSD(2015/12) SSD: Single Shot MultiBox Detector\n论文链接：​SSD: Single Shot MultiBox Detector\n本文结合YOLO的回归思想和Faster R-CNN的anchor机制，以及特征金字塔思想，在多尺度的特征图上预测每个位置预设default boxes的形状偏移量以及所有目标类别置信度。\n网络架构采用VGG16，在不同尺度的特征上实现大中小目标的预测\n用卷积来实现预测头，输出defualt boxes的形状偏移量以及所有目标类别置信度\ndefualt box，类似anchor boxes，每个特征位置生成k个默认框，每个默认框是特征尺度sk（以特征层级的线性关系来计算，最小值是0.2，最大值是0.95）和长宽比ar（默认预设1,2,3,1/2,1/3{1,2,3,1/2,1/3}）的组合.\nYOLO v1(2015/06) \u0026 YOLO v2 \u0026 YOLO v3 YOLO V1：You Only Look Once: Unified, Real-Time Object Detection，CVPR2016\n论文链接：​https://arxiv.org/abs/1506.02640\n参考：​一文通透目标检测：R-CNN、Fast R-CNN、Faster R-CNN、YOLO、SSD、DETR(首发于18年，\n本文提出了回归的思想实现目标检测，将图像划分为一个S×S的网格，对于每个网格单元预测B个边界框和边界框对应的置信度，以及C个类别的概率。\n如果某个物体的中心落在网格单元，则该网格单元负责检测该物体。\n置信度​：包含目标的概率和预测框与真实框之间的交并比的乘积，如果该单元格中不存在目标，则置信度分数应为零。否则，我们希望置信度分数等于预测框与真实框之间的交并比(IOU)。\n网络结构：参考GoogLeNet，24个卷积层（3x3卷积层+1x1降维层）和2个全连接层\nYOLO V2:\nSPPNet(2014/6) Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition，空间金字塔池化\n论文链接：https://arxiv.org/abs/1406.4729\n参考：https://blog.csdn.net/v_july_v/article/details/80170182\n论文提出了空间金字塔池化，（1）结合空间金字塔方法实现CNNs的多尺度输入；（2）只对原图提取一次卷积特征，便得到整张图的卷积特征feature map，然后找到每个候选框在feature map上的映射patch，将此patch作为每个候选框的卷积特征输入到SPP layer和之后的层；\nRCNN(2013/11) \u0026 Fast RCNN(2015/4) \u0026 Faster RCNN(2015/6) 论文链接：\n参考：https://blog.csdn.net/v_july_v/article/details/80170182\nR-CNN（Selective Search + CNN + SVM）：先利用选择性搜索Selective Search算法在图像中从下到上提取2000个左右的可能包含物体的候选区域，再裁剪缩放到统一尺寸，用神经网络（5_conv + 2_fc）提取特征，最后用SVM进行分类。\nFast R-CNN（Selective Search + CNN + ROI）：（1）共享图像特征；（2）借鉴SPP Net方法，增加ROI pooling层，将不同候选特征统一化7x7特征图；（3）增加多任务损失函数(multi-task loss)，用softmax代替SVM分类，用边框回归Bounding Box Regression预测位置，实现端到端的训练。\nFaster R-CNN：(1)RPN（Region Proposal Network），具体实现上 ，用神经网络对feature map预测物体的分类并回归位置；（2）引进anchor机制，解决目标形状的变化问题。\n",
+  "wordCount" : "196",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-11-02T16:10:39Z",
+  "dateModified": "2026-11-02T16:10:39Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20261102161039/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      论文阅读之2D目标检测
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-11-02T16:10:39+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="计算机视觉之目标检测">计算机视觉之目标检测<a hidden class="anchor" aria-hidden="true" href="#计算机视觉之目标检测">#</a></h2>
+<p><a href="https://www.zhihu.com/column/c_1825558830546808832">https://www.zhihu.com/column/c_1825558830546808832</a></p>
+<h3 id="deformable-detr202010">Deformable DETR(2020/10)<a hidden class="anchor" aria-hidden="true" href="#deformable-detr202010">#</a></h3>
+<p>论文链接：<a href="https://arxiv.org/abs/2010.04159">https://arxiv.org/abs/2010.04159</a></p>
+<p>参考论文：<a href="https://zhuanlan.zhihu.com/p/372116181">https://zhuanlan.zhihu.com/p/372116181</a></p>
+<p>论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。</p>
+<ol>
+<li>
+<p>Multi-Scale Features &amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。</p>
+</li>
+<li>
+<p>Deformable Attention(&amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部&amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。</p>
+</li>
+</ol>
+<h3 id="detr202005">DETR(2020/05)<a hidden class="anchor" aria-hidden="true" href="#detr202005">#</a></h3>
+<p>DETR：End-to-End Object Detection with Transformers</p>
+<p>论文链接：<a href="https://arxiv.org/abs/2005.12872">https://arxiv.org/abs/2005.12872</a></p>
+<p>代码链接：<a href="https://github.com/facebookresearch/detr">https://github.com/facebookresearch/detr</a></p>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/430198800">https://zhuanlan.zhihu.com/p/430198800</a></p>
+<p><strong>概述</strong>：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。</p>
+<p><strong>疑惑</strong>：按照<a href="https://link.zhihu.com/?target=https%3A//www.bilibili.com/video/BV1H44y1t75x">李沐老师读论文</a>的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？</p>
+<p>带着以上疑惑，我们来逐渐拆解DETR。</p>
+<p><strong>集合预测：</strong></p>
+<p>利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）</p>
+<ul>
+<li>
+<p>业界上，无标准深度学习模型的集合预测，类似的是多标签分类</p>
+</li>
+<li>
+<p>无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制</p>
+</li>
+<li>
+<p>不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。</p>
+</li>
+<li>
+<p>可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。</p>
+</li>
+</ul>
+<p><strong>模型结构：</strong></p>
+<p>（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维</p>
+<p>（2）Transformer：</p>
+<ul>
+<li>
+<p>Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。</p>
+<ul>
+<li>
+<p>position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。</p>
+</li>
+<li>
+<p>三角编码 + learning编码</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。</p>
+</li>
+<li>
+<p>利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用</p>
+</li>
+</ul>
+<p>将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；</p>
+<p>（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。</p>
+<p>（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。</p>
+<h3 id="centernet201904">CenterNet(2019/04)<a hidden class="anchor" aria-hidden="true" href="#centernet201904">#</a></h3>
+<p>Objects as Points</p>
+<p>论文链接：<a href="https://arxiv.org/abs/1904.07850">https://arxiv.org/abs/1904.07850</a></p>
+<p>代码链接：<a href="https://github.com/xingyizhou/CenterNet">https://github.com/xingyizhou/CenterNet</a></p>
+<p>参考：<a href="https://www.cnblogs.com/fanzhongjie/p/11595925.html">https://www.cnblogs.com/fanzhongjie/p/11595925.html</a></p>
+<p>引言：以最小外接矩形表示目标，目标检测转化为对大量潜在边界框的图像分类问题，分类器判断每个边界框中的图像内容是特定目标还是背景。当前主流的方式有，一阶段采用滑动anchor的方式，二阶段采用候选框的方式，都存在问题是，NMS后处理难以微分和训练。</p>
+<p>相关工作：目标检测经过了几个阶段，区域分类（RCNN、Fast-RCNN）、Anchor（Faster-RCNN）、关键点（CornerNet）到中心点(CenterNet)，以及3D目标检测（Deep3Dbox、3D-RCNN、3D-RCNN）。</p>
+<p>本文提出了将目标作为一个点——即目标BBox的中心点，检测器采用关键点估计来找到中心点，并回归目标的其他属性，例如尺寸，3D位置，方向，甚至姿态。</p>
+<ol>
+<li>
+<p>backbone后，添加三个头(conv3x3 + conv1x1)预测80个类别(0-1 heatmap图)、2个中心点的偏置量（Offset）、2个尺寸量（Size）</p>
+</li>
+<li>
+<p>对于中心点，采用高斯函数处理+Focal loss</p>
+</li>
+<li>
+<p>同Anchor对比：中心点可以看作一个单一的不依赖形状的锚框。但两者存在几个重要区别：第一，我们的 CenterNet 仅基于位置分配&quot;锚框&quot;，而非基于框重叠度 ，不需要为前景/背景分类设置人工阈值 。第二，每个物体只有一个正样本&quot;锚框&quot;，因此无需非极大值抑制（NMS） ——我们只需在关键点热力图中提取局部峰值 。第三，与传统目标检测器 （输出步幅 stride 为 16）相比，CenterNet 使用更大的输出分辨率（输出步幅为 4），这消除了对多锚框的需求。</p>
+</li>
+</ol>
+<h3 id="yolo-v4">YOLO V4<a hidden class="anchor" aria-hidden="true" href="#yolo-v4">#</a></h3>
+<h3 id="ssd201512">SSD(2015/12)<a hidden class="anchor" aria-hidden="true" href="#ssd201512">#</a></h3>
+<p>SSD: Single Shot MultiBox Detector</p>
+<p>论文链接：<a href="https://arxiv.org/abs/1512.02325">​SSD: Single Shot MultiBox Detector</a></p>
+<p>本文结合YOLO的回归思想和Faster R-CNN的anchor机制，以及特征金字塔思想，在多尺度的特征图上预测每个位置预设default boxes的形状偏移量以及所有目标类别置信度。</p>
+<ol>
+<li>
+<p>网络架构采用VGG16，在不同尺度的特征上实现大中小目标的预测</p>
+</li>
+<li>
+<p>用卷积来实现预测头，输出defualt boxes的形状偏移量以及所有目标类别置信度</p>
+</li>
+<li>
+<p>defualt box，类似anchor boxes，每个特征位置生成k个默认框，每个默认框是特征尺度sk（以特征层级的线性关系来计算，最小值是0.2，最大值是0.95）和长宽比ar（默认预设1,2,3,1/2,1/3{1,2,3,1/2,1/3}）的组合.</p>
+</li>
+</ol>
+<h3 id="yolo-v1201506--yolo-v2--yolo-v3">YOLO v1(2015/06) &amp; YOLO v2 &amp; YOLO v3<a hidden class="anchor" aria-hidden="true" href="#yolo-v1201506--yolo-v2--yolo-v3">#</a></h3>
+<p>YOLO V1：You Only Look Once: Unified, Real-Time Object Detection，CVPR2016</p>
+<p>论文链接：<a href="https://arxiv.org/abs/1506.02640">​https://arxiv.org/abs/1506.02640</a></p>
+<p>参考：<a href="https://blog.csdn.net/v_july_v/article/details/80170182">​一文通透目标检测：R-CNN、Fast R-CNN、Faster R-CNN、YOLO、SSD、DETR(首发于18年，</a></p>
+<p>本文提出了回归的思想实现目标检测，将图像划分为一个S×S的网格，对于每个网格单元预测B个边界框和边界框对应的置信度，以及C个类别的概率。</p>
+<ol>
+<li>
+<p>如果某个物体的中心落在网格单元，则该网格单元负责检测该物体。</p>
+</li>
+<li>
+<p>置信度​：包含目标的概率和预测框与真实框之间的交并比的乘积，如果该单元格中不存在目标，则置信度分数应为零。否则，我们希望置信度分数等于预测框与真实框之间的交并比(IOU)。</p>
+</li>
+<li>
+<p>网络结构：参考GoogLeNet，24个卷积层（3x3卷积层+1x1降维层）和2个全连接层</p>
+</li>
+</ol>
+<p>YOLO V2:</p>
+<h3 id="sppnet20146">SPPNet(2014/6)<a hidden class="anchor" aria-hidden="true" href="#sppnet20146">#</a></h3>
+<p>Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition，空间金字塔池化</p>
+<p>论文链接：<a href="https://arxiv.org/abs/1406.4729">https://arxiv.org/abs/1406.4729</a></p>
+<p>参考：<a href="https://blog.csdn.net/v_july_v/article/details/80170182">https://blog.csdn.net/v_july_v/article/details/80170182</a></p>
+<p>论文提出了空间金字塔池化，（1）结合空间金字塔方法实现CNNs的多尺度输入；（2）只对原图提取一次卷积特征，便得到整张图的卷积特征feature map，然后找到每个候选框在feature map上的映射patch，将此patch作为每个候选框的卷积特征输入到SPP layer和之后的层；</p>
+<h3 id="rcnn201311--fast-rcnn20154--faster-rcnn20156">RCNN(2013/11) &amp; Fast RCNN(2015/4) &amp; Faster RCNN(<strong>2015/6</strong>)<a hidden class="anchor" aria-hidden="true" href="#rcnn201311--fast-rcnn20154--faster-rcnn20156">#</a></h3>
+<p>论文链接：</p>
+<p>参考：<a href="https://blog.csdn.net/v_july_v/article/details/80170182">https://blog.csdn.net/v_july_v/article/details/80170182</a></p>
+<p>R-CNN（Selective Search + CNN + SVM）：先利用选择性搜索Selective Search算法在图像中从下到上提取2000个左右的可能包含物体的候选区域，再裁剪缩放到统一尺寸，用神经网络（5_conv + 2_fc）提取特征，最后用SVM进行分类。</p>
+<p>Fast R-CNN（Selective Search + CNN + ROI）：（1）共享图像特征；（2）借鉴SPP Net方法，增加ROI pooling层，将不同候选特征统一化7x7特征图；（3）增加多任务损失函数(multi-task loss)，用softmax代替SVM分类，用边框回归Bounding Box Regression预测位置，实现端到端的训练。</p>
+<p>Faster R-CNN：(1)RPN（Region Proposal Network），具体实现上 ，用神经网络对feature map预测物体的分类并回归位置；（2）引进anchor机制，解决目标形状的变化问题。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/%E8%AE%BA%E6%96%87/">论文</a></li>
+      <li><a href="https://yangly0.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/">计算机视觉</a></li>
+      <li><a href="https://yangly0.github.io/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yangly0.github.io/posts/20261102161547/">
+    <span class="title">« 上一页</span>
+    <span>论文阅读之图像分割</span>
+  </a>
+  <a class="next" href="https://yangly0.github.io/posts/20261102111832/">
+    <span class="title">下一页 »</span>
+    <span>论文阅读之自动驾驶专题</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            
+            
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

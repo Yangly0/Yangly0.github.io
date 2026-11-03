@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>目标检测 on 所见所思</title>
+    <link>https://yangly0.github.io/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/</link>
+    <description>Recent content in 目标检测 on 所见所思</description>
+    <image>
+      <title>所见所思</title>
+      <url>https://yangly0.github.io/images/avatar.webp</url>
+      <link>https://yangly0.github.io/images/avatar.webp</link>
+    </image>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
+    <lastBuildDate>Mon, 02 Nov 2026 16:10:39 +0000</lastBuildDate>
+    <atom:link href="https://yangly0.github.io/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>论文阅读之2D目标检测</title>
+      <link>https://yangly0.github.io/posts/20261102161039/</link>
+      <pubDate>Mon, 02 Nov 2026 16:10:39 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102161039/</guid>
+      <description>&lt;h2 id=&#34;计算机视觉之目标检测&#34;&gt;计算机视觉之目标检测&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.zhihu.com/column/c_1825558830546808832&#34;&gt;https://www.zhihu.com/column/c_1825558830546808832&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;deformable-detr202010&#34;&gt;Deformable DETR(2020/10)&lt;/h3&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/2010.04159&#34;&gt;https://arxiv.org/abs/2010.04159&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考论文：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/372116181&#34;&gt;https://zhuanlan.zhihu.com/p/372116181&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Multi-Scale Features &amp;amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Deformable Attention(&amp;amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部&amp;amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;detr202005&#34;&gt;DETR(2020/05)&lt;/h3&gt;
+&lt;p&gt;DETR：End-to-End Object Detection with Transformers&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/2005.12872&#34;&gt;https://arxiv.org/abs/2005.12872&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;代码链接：&lt;a href=&#34;https://github.com/facebookresearch/detr&#34;&gt;https://github.com/facebookresearch/detr&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/430198800&#34;&gt;https://zhuanlan.zhihu.com/p/430198800&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;概述&lt;/strong&gt;：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;疑惑&lt;/strong&gt;：按照&lt;a href=&#34;https://link.zhihu.com/?target=https%3A//www.bilibili.com/video/BV1H44y1t75x&#34;&gt;李沐老师读论文&lt;/a&gt;的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？&lt;/p&gt;
+&lt;p&gt;带着以上疑惑，我们来逐渐拆解DETR。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;集合预测：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;业界上，无标准深度学习模型的集合预测，类似的是多标签分类&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;模型结构：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维&lt;/p&gt;
+&lt;p&gt;（2）Transformer：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;三角编码 + learning编码&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；&lt;/p&gt;
+&lt;p&gt;（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。&lt;/p&gt;
+&lt;p&gt;（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。&lt;/p&gt;
+&lt;h3 id=&#34;centernet201904&#34;&gt;CenterNet(2019/04)&lt;/h3&gt;
+&lt;p&gt;Objects as Points&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/1904.07850&#34;&gt;https://arxiv.org/abs/1904.07850&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

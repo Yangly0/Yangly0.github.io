@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>自动驾驶 on 所见所思</title>
+    <link>https://yangly0.github.io/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/</link>
+    <description>Recent content in 自动驾驶 on 所见所思</description>
+    <image>
+      <title>所见所思</title>
+      <url>https://yangly0.github.io/images/avatar.webp</url>
+      <link>https://yangly0.github.io/images/avatar.webp</link>
+    </image>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
+    <lastBuildDate>Mon, 02 Nov 2026 11:18:32 +0000</lastBuildDate>
+    <atom:link href="https://yangly0.github.io/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>论文阅读之自动驾驶专题</title>
+      <link>https://yangly0.github.io/posts/20261102111832/</link>
+      <pubDate>Mon, 02 Nov 2026 11:18:32 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102111832/</guid>
+      <description>&lt;h2 id=&#34;bev-目标检测分割&#34;&gt;BEV 目标检测/分割&lt;/h2&gt;
+&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;什么叫做BEV自底向上方法？&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/567880155&#34;&gt;https://zhuanlan.zhihu.com/p/567880155&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;occ&#34;&gt;OCC&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/Charmve/OccNet-Course&#34;&gt;https://github.com/Charmve/OccNet-Course&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;综述&#34;&gt;综述&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving&#34;&gt;https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;3D Object Detection for Autonomous Driving: A Review and New Outlooks&lt;/p&gt;
+&lt;p&gt;NVAutoNet: Fast and Accurate 360∘ 3D Visual Perception For Self Driving，2023&lt;/p&gt;
+&lt;h3 id=&#34;vision-centric-bev-perception-a-survey&#34;&gt;Vision-Centric BEV Perception: A Survey&lt;/h3&gt;
+&lt;h3 id=&#34;sparselif&#34;&gt;SparseLIF&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.zhihu.com/column/c_1658611768455737344&#34;&gt;https://www.zhihu.com/column/c_1658611768455737344&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;SparseLIF: High-Performance Sparse LiDAR-Camera Fusion for 3D Object Detection&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/675420354&#34;&gt;https://zhuanlan.zhihu.com/p/675420354&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.volcengine.com/articles/7402139307621744667&#34;&gt;https://developer.volcengine.com/articles/7402139307621744667&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;selfocc&#34;&gt;SelfOcc&lt;/h3&gt;
+&lt;h3 id=&#34;uniocc&#34;&gt;UniOcc&lt;/h3&gt;
+&lt;h3 id=&#34;renderocc&#34;&gt;RenderOcc&lt;/h3&gt;
+&lt;h3 id=&#34;sparseocc&#34;&gt;SparseOcc&lt;/h3&gt;
+&lt;h3 id=&#34;surroundocc&#34;&gt;SurroundOcc&lt;/h3&gt;
+&lt;h3 id=&#34;deep-height-decoupling-for-precise-vision-based-3d-occupancy-prediction&#34;&gt;Deep Height Decoupling for Precise Vision-based 3D Occupancy Prediction&lt;/h3&gt;
+&lt;h3 id=&#34;occformer2023&#34;&gt;OccFormer(2023)&lt;/h3&gt;
+&lt;p&gt;Dual-path Transformer for Vision-based 3D Semantic Occupancy Prediction [ICCV 2023]&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

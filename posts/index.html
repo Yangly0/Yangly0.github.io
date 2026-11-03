@@ -124,6 +124,239 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之世界模型
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>World Model</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T17:38:55+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之世界模型" href="https://yangly0.github.io/posts/20261102173855/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之VLM/VLA
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>VLM / VLA 参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎&#34;与车辆驾驶的&#34;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;
+VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等
+动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。
+三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质 量多模态驾驶数据的采集与标注成本极为高昂。
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&#34;常识”与现实物理世界的动力学规律存在本质脱节 ——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667
+总结：
+</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T17:38:23+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之VLM/VLA" href="https://yangly0.github.io/posts/20261102173823/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之自动驾驶端到端专题
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>端到端任务 https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头 VAD v2 SparseDrive v2 SparseDrive v1 ParkingE2E(2024/08) ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning
+论文链接：https://arxiv.org/abs/2408.02061
+代码链接：https://github.com/qintonguav/ParkingE2E
+秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 &#43; 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。
+VAD(2023/03) VAD: Vectorized Scene Representation for Efficient Autonomous Driving
+基于矢量场景表征的端到端自动驾驶
+论文链接：https://arxiv.org/abs/2303.12077
+代码链接：https://github.com/hustvl/VAD
+参考：https://zhuanlan.zhihu.com/p/653308051
+论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T17:37:36+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之自动驾驶端到端专题" href="https://yangly0.github.io/posts/20261102173736/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之模型部署、量化
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>部署论文 部署，link, A White Paper on Neural Network Quantization </p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T17:21:42+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之模型部署、量化" href="https://yangly0.github.io/posts/20261102172142/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之数据集
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>数据集 Nuscence COCO https://aistudio.baidu.com/dataset/detail/7122/file
+https://cocodataset.org/#home
+</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T17:20:46+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之数据集" href="https://yangly0.github.io/posts/20261102172046/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之计算机视觉
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>计算机视觉之图像分类任务 ViT(2020/10) An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale, Google, 2022
+论文链接：https://arxiv.org/pdf/2010.11929
+参考：https://zhuanlan.zhihu.com/p/445122996
+论文中最核心的结论是，当拥有足够多的数据进行预训练的时候，ViT的表现就会超过CNN，突破transformer缺少归纳偏置的限制，可以在下游任务中获得较好的迁移效果。
+整体思路：ViT将输入图片分为多个patch（16x16），再将每个patch投影为固定长度的向量送入Transformer，后续encoder的操作和原始Transformer中完全相同。但是因为对图片分类，因此在输入序列中加入一个特殊的token，该token对应的输出即为最后的类别预测。
+Patch embedding：用分块思想将图像转换为序列，输入序列长度W/16 x H/16，每个patch维度16x16x3。
+这里主要是为了模型结构同原始的transformer解决，采用了类似于BERT的做法，加入特殊字符cls，因此patch维度是16x16x3&#43;1，最终会将特殊字符cls对于的输出z^0_L作为encoder的最终输出，表示image presentation（另一种做法，不加cls字符，对所有的tokens的输出做平均，再接一个MLP进行图像分类）。
+Positional encoding：可学习位置编码，这里若有9个patch（3x3），那么1D位置编码就是1到9，如果是2维位置编码就是11，12，……，33，如。位置编码的大小同embedding维度大相同，位置编码结果和embedding是相加操作，得到带位置编码的embedding信息。
+多头注意力机制，多组QKV，每组的维度是原维度/多头数量，最后拼接输出
+进一步讨论了CNN&#43;Transformer，结合CNN的归纳偏置特征和Transformer的全局归纳建模能力，先用CNN提取16x16的特征图，拉成一共向量，长度为196，后续操作和ViT相同。
+Transformer（2017/06） Attention Is All You Need
+论文链接：https://arxiv.org/abs/1706.03762
+论文提出了基于注意力机制的全新网络Transformer架构。
+整个论文，内容解析，Abstract中主要强调了老方法现状、新方法、对应实验效果以及额外特点，Introduction中阐述了循环神经网络优点和缺点、注意力机制优点、本文方法及优点，Background中介绍了减少序列计算量，自注意力，端到端记忆网络三个方面。
+网络架构：宏观上采用编码-解码架构，微观上以注意力机制和全连接层实现；而编码层是 N个 多头自注意力机制、逐点全连接前馈网络、残差连接以及层归一化，解码层则类似，不过是把对多头自注意力机制引进掩码机制，自注意力机制改为交叉注意力机制。
+注意力机制中QKV含义：Q表示查询向量，当前位置希望获得的信息，可类比搜索关键词；K表示关键向量，序列中各位置能提供的信息，可类比索引；V表示数值向量，当查询和键匹配时，实际从各位置获取的实际内容，可类比实际内容。因此，Q和K的相似度或匹配程度决定输出V的权重大小。注意力机制公式 如下：Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V。
+自注意力机制和交叉注意力机制？
+多头注意力机制？
+暂时无法在飞书文档外展示此内容
+位置编码：位置编码本质上是为了解决transformer的位置不变性（位置和空间不敏感），论文采用了正余弦位置编码，参考[link]，对于序列中每个位置pos，隐藏层维度大小d_{model}、隐藏层中的每个维度索引i，位置编码的第i个原始PE(pos, 2i) 和 PE(pos, 2i&#43;1) 分布通过正弦和余弦函数计算： PE(pos, 2i) = \sin(\frac{pos}{10000^{2i/d_{model}}}), PE(pos, 2i&#43;1) = \cos(\frac{pos}{10000^{2i/d_{model}}})
+分子项：分子项用来表示位置关系，对于固定的维度i来说，位置pos的变化，会导致PE编码呈现周期变化。
+分母项：分母项用来表示维度关系，控制位置编码的频率衰减速度，对于固定的位置pos来说，高频维度（低i值，变化敏感）对应短距离（相对位置）依赖，低频维度（高i值，变化缓慢）对应长距离（全局位置）依赖。而这里常数10000是波长，用来控制不同维度之间的频率差异，让不同维度的正余弦函数具有不同的周期。
+实现上，可以用对数优化求解过程 \frac{1}{10000^{2i/d_{model}}} = exp(-(2i)*ln(10000) /d_{model})。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T16:16:00+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之计算机视觉" href="https://yangly0.github.io/posts/20261102161600/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之图像分割
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>计算机视觉之图像分割 FCN: Fully Convolutional Networks for Semantic Segmentation 论文链接：https://arxiv.org/abs/1411.4038v1
+论文代码：
+语义分割开山之作，首次提出全卷积网络（FCN），彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。
+论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 &#43; 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。
+SegNet/DeconvNet U-Net PSPNet Mask R-CNN 链接：https://zhuanlan.zhihu.com/p/75333140
+DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs 参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；
+DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs （1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；
+DeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation 参考link，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP &#43; BN &#43; Image-Level ；（4）移除CRF；
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T16:15:47+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之图像分割" href="https://yangly0.github.io/posts/20261102161547/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之2D目标检测
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>计算机视觉之目标检测 https://www.zhihu.com/column/c_1825558830546808832
+Deformable DETR(2020/10) 论文链接：https://arxiv.org/abs/2010.04159
+参考论文：https://zhuanlan.zhihu.com/p/372116181
+论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。
+Multi-Scale Features &amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。
+Deformable Attention(&amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部&amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。
+DETR(2020/05) DETR：End-to-End Object Detection with Transformers
+论文链接：https://arxiv.org/abs/2005.12872
+代码链接：https://github.com/facebookresearch/detr
+参考：https://zhuanlan.zhihu.com/p/430198800
+概述：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。
+疑惑：按照李沐老师读论文的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？
+带着以上疑惑，我们来逐渐拆解DETR。
+集合预测：
+利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）
+业界上，无标准深度学习模型的集合预测，类似的是多标签分类
+无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制
+不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。
+可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。
+模型结构：
+（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维
+（2）Transformer：
+Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。
+position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。
+三角编码 &#43; learning编码
+Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。
+利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用
+将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；
+（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。
+（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。
+CenterNet(2019/04) Objects as Points
+论文链接：https://arxiv.org/abs/1904.07850
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T16:10:39+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之2D目标检测" href="https://yangly0.github.io/posts/20261102161039/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之自动驾驶专题
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>BEV 目标检测/分割 问题 什么叫做BEV自底向上方法？ https://zhuanlan.zhihu.com/p/567880155
+OCC https://github.com/Charmve/OccNet-Course
+综述 https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving
+3D Object Detection for Autonomous Driving: A Review and New Outlooks
+NVAutoNet: Fast and Accurate 360∘ 3D Visual Perception For Self Driving，2023
+Vision-Centric BEV Perception: A Survey SparseLIF https://www.zhihu.com/column/c_1658611768455737344
+SparseLIF: High-Performance Sparse LiDAR-Camera Fusion for 3D Object Detection
+https://zhuanlan.zhihu.com/p/675420354
+https://developer.volcengine.com/articles/7402139307621744667
+SelfOcc UniOcc RenderOcc SparseOcc SurroundOcc Deep Height Decoupling for Precise Vision-based 3D Occupancy Prediction OccFormer(2023) Dual-path Transformer for Vision-based 3D Semantic Occupancy Prediction [ICCV 2023]
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T11:18:32+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之自动驾驶专题" href="https://yangly0.github.io/posts/20261102111832/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">论文阅读
     </h2>
   </header>
@@ -157,167 +390,12 @@ https://r2.yangly1993.top/1788143823899.png
 <span title='2026-08-31T13:20:44+00:00'>2026年8月31日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
   <a class="entry-link" aria-label="post link to 论文阅读" href="https://yangly0.github.io/posts/20260831132044/"></a>
 </article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">AdamW: Decoupled Weight Decay Regularization
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>
-来源：https://arxiv.org/abs/1711.05101
-AdamW，2017年的一篇论文（2019 ICLR），针对Adam &#43; L2正则项的权重衰减与自适应学习率之间的冲突问题，将权重衰减从梯度更新中解耦，再到权重更新中应用。
-具体的实现，参考link，在AdamW中，权重衰减 $\lambda$ 是乘以学习率 $\eta_t$ 后从参数中减去的，而不是加到梯度上。这种方法被认为可以更好地控制模型的复杂度，防止过拟合，并且在许多情况下可以提高模型的性能。
-</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2026-08-15T22:51:54+00:00'>2026年8月15日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to AdamW: Decoupled Weight Decay Regularization" href="https://yangly0.github.io/posts/20260815225154/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Adam: A Method for Stochastic Optimization
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>
-来源：https://arxiv.org/abs/1412.6980
-Adam 在ICLR 2015年由 OpenAI 的 Diederik Kingma 和多伦多大学的 Jimmy Ba ，2025年被授予 the test of time awards 时间检验奖 ICLR 。
-Adam的全称是Adaptive Moment Estimation，是一种随机优化方法，结合动量法额RMSprop 算法，前者使用动量作为参数更新方向，后者自适应调整学习率来改进梯度下降。补充一下，该方法的优点，本身实现简单，计算高效，内存占有量少，同时还能解决解决包含很高噪声或稀疏梯度的问题，甚至适合解决含大规模数据和参数的优化问题。
-Adam的实现过程，见下图：先计算梯度，再更新梯度的指数滑动加权平均（动量，一阶矩）和梯度平方的指数滑动加权平均（二阶矩），再标准化来修正偏差，最后类似于RMSProp算法的方式重新缩放动量。那与RMSProp的差别点在于更新动量而不是梯度，同时缩放误差因子的$\epsilon$位置有区别，见link。
-详细代码：参考link,
-def adam(params, states, hyperparams): beta1, beta2, eps = 0.9, 0.99, 1e-6 for p, (m, g) in zip(params, states): with torch.no_grad(): m[:] = beta1 * m &#43; (1 - beta1) * p.grad g[:] = beta2 * g &#43; (1 - beta2) * torch.mul(p.grad, p.grad) m_bias_corr = m / (1 - beta1 ** hyperparams[&#39;t&#39;]) g_bias_corr = g / (1 - beta2 ** hyperparams[&#39;t&#39;]) p[:] -= hyperparams[&#39;lr&#39;] * m_bias_corr / (torch.sqrt(g_bias_corr) &#43; eps) p.grad.data.zero_() hyperparams[&#39;t&#39;] &#43;= 1 </p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2026-08-15T09:18:08+00:00'>2026年8月15日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to Adam: A Method for Stochastic Optimization" href="https://yangly0.github.io/posts/20260815091808/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>一句话概括 训练深度神经网络的时候经常会出现的问题是在每次训练的时候输入的数据发生一丝微小的改变，会改变之后的所有层，并且层数越深影响越大。也可以说当输入的分布发生变化，网络就不得不再去适应新的数据分布。这会导致一个模型非常难训练出来。一旦训练速率与参数初始化不恰当，模型就不会收敛。这个现象被称之为covariate shift。并且，对于每一个网络层输入的变化都会产生covariate shift 的现象，作者把内部的网络节点输入的变化称之为Internal Covariate Shift. 第二个问题是梯度弥散或者梯度爆炸的问题，当网络深度很深的时候，前面参数的细微变化会导致后面参数更新变化非常大。
-解决这个问题通常使用normalizing layer——输入白化（转化为平均值和方差为0，并且去相关花）, 并且可以考虑在每个training step以及某一些间隔插入normalizing layer。但是根据论文的举例，使用normalizing layer也就是白化会导致某些参数的更新的效果被抵消，这样的话更新会一直进行下去，但是输出与损失函数并没有发生变化。之所以更新会抵消是因为梯度下降忽略了normalizing layer 参数对其他参数的依赖。也就是梯度流忽略了normalizing layer。如果求梯度的时候考虑normalizing layer，则计算非常的耗时，需要计算协方差矩阵以及白化部分。并且白化并不是处处可微。
-有两个方法简化计算，一个是将每个特征当做是独立随机变量单独进行规范化，这样就不存在协方差矩阵。另一个是在每个mini-batch中计算mini-batch的variance来代替整个数据集的variance。因为对于mini-batch gradient decent，计算整个数据集的variance是不切实际的。
-如果仅仅将每一层的输入都进行规范化，那么会改变原先这一层的表达能力，比如本来有两个值，一个在sigmoid函数的线性区域，一个在sigmoid函数的非线性区域，进行规范化后两个值就都作用在了sigmoid函数的线性区域了，原来sigmoid函数的表达能力就没有了。所以加上了一对参数γ和β，来scale和shift规范化的值。
-为什么Batch Normalization会解决数据分布的问题以及梯度弥散的问题? 首先看数据分布的问题，一般数据z之间都是互相关的，拿二维的数据进行举例，假设第一次输入的数据都是主要都是在第一象限。
-一、核心作用 对一个Batch内特征做标准化，把每层输入拉回近似正态分布，加速训练、减少梯度消失、允许更大学习率、轻微正则化。 公式全称：Batch Normalization，论文《Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift》
-二、前置4个核心参数 设某层输出特征：$x \in \mathbb{R}^{N \times C \times H \times W}$
-BN 为每个通道维护4个参数：
-$\gamma$（scale，可学习）：缩放系数，shape=[C] $\beta$（shift，可学习）：偏移系数，shape=[C] $\mu_{running}$：全局滑动均值（推理用，不参与梯度） $\sigma^2_{running}$：全局滑动方差（推理用，不参与梯度） 动量 momentum 一般默认 $(m=0.1)$
-三、训练阶段完整前向计算（逐通道执行） 步骤1：对单个通道，计算本Batch所有元素均值 把N、H、W全部压扁，只保留通道维度： $$ \mu_B = \frac{1}{N\cdot H\cdot W}\sum_{n,h,w} x_{n,c,h,w} $$
-...</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2026-08-08T22:28:35+00:00'>2026年8月8日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift" href="https://yangly0.github.io/posts/20260808222835/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">装机
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>硬件装机 方案一：DIY https://www.imsun.org/archives/1764.html
-方案二：零刻GTi15 Ultra 迷你主机&#43;零刻EX Pro扩展坞，外接技嘉风魔OC RTX 5070独立显卡 自己DIY台式机的人都放下了ATX台式的执念
-软件装机 个人使用软件：
-(win) vscode &#43; git &#43; obsidian &#43; typora &#43; clashverge &#43; Chrome (linux) vscode &#43; git &#43; zsh (linux) zsh-syntax-highlighting&#43; zsh-autosuggestions &#43; zsh-history-substring-search (win/linux) starship &#43; fzf &#43; zoxide/z &#43; eza Win 参考：https://zhuanlan.zhihu.com/p/678607774
-安装前，终端上运行winget settings命令，先设置如下安装路径，
-{ &#34;installBehavior&#34;: { &#34;scope&#34;: &#34;user&#34;, &#34;installLocation&#34;: &#34;D:\\DevTools&#34; } } 依次运行以下命令，安装对应的软件和配置：
-# 升级终端 winget install --id Microsoft.Powershell --source winget # node&amp;npm winget install -e --id OpenJS.NodeJS # restart node --version npm --version # npm install -g npm@latest # 更新npm版本 # Git winget install Git.Git # Vscode winget install Microsoft.VisualStudioCode # 7-ZIP winget install 7zip.7zip # Typora winget install appmakes.Typora # Obsidian winget install Obsidian.Obsidian # ClashVerge winget install ClashVergeRev.ClashVergeRev # IDM winget install Tonec.InternetDownloadManager # Chrome 手动安装 # winget install chrome ? # 自定义Prompt Starship winget install Starship.Starship Add-Content -Path $PROFILE -Value @&#39; # starship Invoke-Expression (&amp;starship init powershell) &#39;@ New-Item -ItemType Directory &#34;$env:USERPROFILE\.config&#34; -Force | Out-Null starship preset pure-preset -o &#34;$env:USERPROFILE\.config\starship.toml&#34; # 智能移动 zoxide winget install ajeetdsouza.zoxide Add-Content -Path $PROFILE -Value @&#39; # zoxide Invoke-Expression (&amp; { (zoxide init powershell | Out-String) }) function zi { cd (zoxide query -i | Out-String).Trim() } &#39;@ # 模糊搜索 winget install junegunn.fzf Install-Module PSFzf # 管理员权限 Add-Content -Path $PROFILE -Value @&#39; # fzf &amp; PSFzf Import-Module PSFzf Set-PsFzfOption -PSReadlineChordProvider &#39;Ctrl&#43;t&#39; -PSReadlineChordReverseHistory &#39;Ctrl&#43;r&#39; Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion } &#39;@ # 语法高亮bat winget install sharkdp.bat # 高亮eza winget install eza-community.eza Add-Content -Path $PROFILE -Value @&#39; # eza function Get-DirectoryContent { eza --classify --color-scale --icons=always --group-directories-first --time-style iso @args } function Get-GitIgnoredDirectoryContent { Get-DirectoryContent --git-ignore --git --git-repos @args } Set-Alias -Name lsg -Value Get-GitIgnoredDirectoryContent function Get-DetialedGitIgnoredDirectoryContent { Get-GitIgnoredDirectoryContent --long @args } Set-Alias -Name llg -Value Get-DetialedGitIgnoredDirectoryContent &#39;@ Linux # 1、安装 Zsh sudo apt update &amp;&amp; sudo apt install zsh -y # 验证 Zsh zsh --version # 切换到 zsh（相当于重启终端） chsh -s $(which zsh) echo &#39; # zsh exec zsh &#39; &gt;&gt; ~/.bashshrc source ~/.bashrc # 2、Zsh主题 starship curl -sS https://starship.rs/install.sh | sh # 配置启动主题，写入以下内容到~/.zshrc echo &#39;eval &#34;$(starship init zsh)&#34;&#39; &gt;&gt; ~/.zshrc # 配置主题 pure mkdir -p ~/.config &amp;&amp; touch ~/.config/starship.toml starship preset pure-preset -o ~/.config/starship.toml source ~/.zshrc # --- pure mkdir -p &#34;$HOME/.zsh&#34; git clone https://github.com/sindresorhus/pure.git &#34;$HOME/.zsh/pure&#34; echo &#39; # pure fpath&#43;=($HOME/.zsh/pure) autoload -U promptinit; promptinit prompt pure &#39; &gt;&gt; ~/.zshrc # 3、Zsh 插件 mkdir -p ${ZSH_CUSTOM:-~/.zsh/plugins} # 命令高亮 zsh-syntax-highlighting git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting echo &#39; # zsh-syntax-highlighting source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh &#39; &gt;&gt; ~/.zshrc # 自动补全 zsh-autosuggestions git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions echo &#39; # zsh-autosuggestions source ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-autosuggestions/zsh-autosuggestions.zsh &#39; &gt;&gt; ~/.zshrc # 历史命令 zsh-history-substring-search git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.zsh/plugins}/zsh-history-substring-search echo &#39; # zsh-history-substring-search source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh bindkey &#34;$terminfo[kcuu1]&#34; history-substring-search-up bindkey &#34;$terminfo[kcud1]&#34; history-substring-search-down export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=&#34;fg=green,bold&#34; &#39; &gt;&gt; ~/.zshrc # 模糊搜索 fzf git clone --depth 1 https://github.com/junegunn/fzf.git ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf ${ZSH_CUSTOM:-~/.zsh/plugins}/fzf/install # sudo apt install fzf # echo &#34;source &lt;(fzf --zsh)&#34; &gt;&gt; ~/.zshrc # 智能移动 zoxide curl -sSfL https://ghproxy.net/https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh echo -e &#39; # zoxide export PATH=&#34;$HOME/.local/bin:$PATH&#34; eval &#34;$(zoxide init zsh)&#34; &#39; &gt;&gt; ~/.zshrc # (待定)智能移动 z git clone --depth 1 https://github.com/rupa/z.git ${ZSH_CUSTOM:-~/.zsh/plugins}/z echo &#39;# z source ~/.zsh/plugins/z/z.sh &#39; &gt;&gt; ~/.zshrc # 重启 source ~/.zshrc # eza sudo apt update sudo apt install -y gpg sudo mkdir -p /etc/apt/keyrings wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main&#34; | sudo tee /etc/apt/sources.list.d/gierens.list sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list sudo apt update sudo apt install -y eza Vscode: Github dark theme&#43;ClaudeCode &#43; GitLens
-</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2026-02-15T21:27:30+00:00'>2026年2月15日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to 装机" href="https://yangly0.github.io/posts/20260215212730/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">LSS: Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>
-LSS，它的核心思想：参考视锥体原理，将图像上的每个点看作是相机发射的一条射线在空间中的投射。这条射线在3D空间中具体位置可以根据相机内外参获得，在这条射线上会去采样很多点，对于每个点去估计一个深度的置信度（即这个深度位置有物体的概率）。射线整体上的深度置信度，通过softmax归一化为1。我们将图像上这个点的特征乘上射线上每个点的置信度，就可以获得射线上每个点的特征。
-LSS 显示预测离散的深度信息，以深度信息和2D特征计算BEV特征，最后对BEV特征预测轨迹。具体的实现，
-1、EfficientNet魔改
-（1）先是Stem层的Rule被Swish替换，第一个好处是梯度流动更平滑，第二个好处是输入归一化的RGB图像，再经过3x3卷积层，本身输入像数值范围在0到1或者-1到1之间，输出特征会包含大量的负值，swish会保留负值微小贡献，从而使信息保留更完整；第三是NAS搜索发现的最优选择，论文在MobileNetV2上提升0.5点；第四是计算上从Rule的1次比较Ops到Swish的3次Ops（1次exp&#43;1次除法&#43;1次乘法），Stem只执行一次，开销可忽略。 （2）再是drop_connect_rate，以i/L概率调整跨层连接输出，这里有两个细节点，第一个点是以递增概率实现，因为浅层是边缘、纹理、颜色等基础特征，对所有任务都重要，丢弃会破坏底层表示，高层是语义、物体概率等高级特征，更抽象，冗余度高，强制学习鲁棒性；第二个点是网络不能过度依赖某一层，必须学习冗余路径；整体表现上训练稍慢 (~5% 更多 epochs 收敛)，但测试集精度提升 1-2%，深度估计更鲁棒 (对天气、光照变化)； （3） 轻量化的 FPN架构，对5x特征上采样，最后同4x concat在一起，再接两个3x3 CBL。 2、Lift过程：以1x1卷积预测D个深度bin &#43; C个特征通道，再从通道维度上分离二者，对深度bin进行softmax归一化得到深度概率分布，用深度概率乘以特征，最后输出深度概率和带深度信息的特征。
-3、Splat过程：pilar 补充一点，目标是BEV特征，BEV特征就是顶，LSS是从点出发，逐步求解出BEV特征，因此叫做自底向上方法。
-参考：LSS(2020年ECCV) 类的思路进行图像深度估计
-</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2026-01-04T15:08:31+00:00'>2026年1月4日</span>&nbsp;·&nbsp;<span>Jonah Philion, Sanja Fidler</span></footer>
-  <a class="entry-link" aria-label="post link to LSS: Lift, Splat, Shoot: Encoding Images from  Arbitrary Camera Rigs by Implicitly  Unprojecting to 3D" href="https://yangly0.github.io/posts/20260104150831/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">个人密码管理器vaultwarden
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>本文是自建vaultwarden，实现个人密码管理。
-描述 Vaultwarden，Bitwarden 客户端 API 的替代服务器实现，用 Rust 编写并与官方 Bitwarden 客户端兼容，非常适合运行官方资源密集型服务可能不理想的自托管部署。
-部署 部署请参考：Vaultwarden Wiki和中文版，建议Docker Compose &#43; Caddy部署，将Vaultwarden 服务器和代理都将请求重定向到正确的地方。
-1、安装Vaultwarden之前，先安装依赖环境 Docker 和Docker Compose。
-sudo curl -L &#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&#34; -o /usr/local/bin/docker-compose 2、配置Docker Compose。
-mkdir ~/vaultwarden cd ~/vaultwarden vim compose.yml 需要设置的几个点：
-Vaultwarden下image镜像为1.30.5，最新版本网页端无法登录； Vaultwarden下 environment 的 DOMAIN 域名； caddy下 environment 的DOMAIN 域名（和vaultwarden一致）和EMAIL邮件。 services: vaultwarden: image: vaultwarden/server:1.30.5 container_name: vaultwarden restart: always environment: DOMAIN: &#34;TODO1&#34; # 使用反向代理时必填您的域名 SIGNUPS_ALLOWED: &#34;true&#34; # 是否支持注册 volumes: - ~/vaultwarden:/data # 数据位置 caddy: image: caddy:2 container_name: caddy restart: always ports: - 80:80 # ACME HTTP-01 验证需要 - 443:443 - 443:443/udp # HTTP/3 需要 volumes: - ./Caddyfile:/etc/caddy/Caddyfile:ro - ./caddy-config:/config - ./caddy-data:/data - ./certificate.crt:/etc/caddy/certificate.crt - ./private.key:/etc/caddy/private.key environment: DOMAIN: &#34;TODO2&#34; # 您的域名，以 http 或 https 作为前缀 EMAIL: &#34;TODO3&#34; # 用于 ACME 注册的电子邮件地址 LOG_FILE: &#34;./data/access.loig&#34; 3、创建Caddyfile配置文件，内容不用修改。
-...</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2025-02-11T22:01:59+00:00'>2025年2月11日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to 个人密码管理器vaultwarden" href="https://yangly0.github.io/posts/20250211220159/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">如何搭建一个博客系统？
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>本文是介绍了如何快速搭建一个 hugo 博客网站，设置 PaperMod 主题，并构建一个自动发布的博客系统。
-0x01 快速开始 1、软件安装：软件包链接Releases · gohugoio/hugo，建议安装带extended的扩展版本。
-# 下载 wget hugo_extended_0.xxx.x_linux-amd64.deb # 安装 sudo dpkg -i hugo_extended_0.xxx.x_linux-amd64.deb # 验证 hugo version 2、博客发布，访问http://localhost:1313/，查看渲染的博客内容。
-# 创建博客站点，yaml配置方式，默认是toml配置方式 hugo new site blog --format yaml # 进入博客 cd blog # 创建文章 hugo new posts/first_post.md # 博客发布 hugo server --disableFastRender --navigateToChanged --environment pruction --bind 0.0.0.0 0x02 适配主题 1、主题安装，主题库链接hugo-PaperMod，其他主题可以参考themes。
-# 进入博客 cd blog # 下载主题（依赖git，需要提前安装git） git init git submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod 2、主题适配，参考hugo-PaperMod文档，手动复制config.yml内容到 hugo.yaml，注意提前备份hugo.yaml。
-...</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2024-11-23T21:51:51+00:00'>2024年11月23日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to 如何搭建一个博客系统？" href="https://yangly0.github.io/posts/20241123215151/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">数据结构与算法 个人篇
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>本文是个人日常对数据结构与算法的学习内容，部分参考AcWing和OI Wiki。
-输入输出 ref：OJ的自我修养：C&#43;&#43;输入输出总结_c&#43;&#43; oj的输入输出-CSDN博客
-#include &lt;bits/stdc&#43;&#43;.h&gt; //全部头文件 using namespace std; // c语言 int n; while(scanf(&#34;%d&#34;, &amp;n) != EOF &amp;&amp; n!= 0){ int a, b; for(int i=0; i &lt; n; &#43;&#43;i){ scanf(&#34;%d%d&#34;, &amp;a, &amp;b); printf(&#34;%d %d\n&#34;, a, b); } } // c&#43;&#43;语言 /*&gt;&gt; 数值带定长 */ int n, a; while(cin &gt;&gt; n){ // 忽略空格，回车，Tab，遇到EOF会跳出循环 for(int i=0; i &lt; n; &#43;&#43;i){ cin &gt;&gt; a; cout &lt;&lt; a &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 数值带不定长 */ int m, b; cin &gt;&gt; m; for (int i = 0; i &lt; m; i&#43;&#43;) { while (cin &gt;&gt; b) { cout &lt;&lt; b &lt;&lt; &#39; &#39;; if (getchar() == &#39;\n&#39;){ // 遇到回车结束 cout &lt;&lt; &#39;\n&#39;; break; } } } /*&gt;&gt; 字符串 */ string str; cin &gt;&gt; str; // cin遇到空格结束读取 /*&gt;&gt; 字符串带空格 */ string str; // getline函数可以获取包含空格的字符，以回车键结束 while(getline(cin, str)){ // 遇到EOF或者CTRL&#43;Z退出 cout &lt; str &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 字符串带逗号 */ string strs, str; cin &gt;&gt; strs; stringstream input(strs); while(getline(input, str, &#39;,&#39;)){ cout &lt;&lt; str &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; // python 版本 while True: try: n = int(input()) for _ in range(n): lis = list(map(int, input().split())) print(sum(lis[1:])) except: break 数据结构 有序数组 区间范围值$[l,r]$：upper_bounder(…,…,r) - lower_bounder(…,…,l)
-...</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2024-10-26T09:57:32+00:00'>2024年10月26日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to 数据结构与算法 个人篇" href="https://yangly0.github.io/posts/20241026095732/"></a>
-</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="next" href="https://yangly0.github.io/posts/page/2/">下一页&nbsp;&nbsp;»
+    </a>
+  </nav>
+</footer>
     </main>
     
 <footer class="footer">

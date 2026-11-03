@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>论文阅读之自动驾驶端到端专题 | 所见所思</title>
+<meta name="keywords" content="tags">
+<meta name="description" content="端到端任务
+https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08)
+MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+
+
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头
+
+VAD v2
+SparseDrive v2
+SparseDrive v1
+ParkingE2E(2024/08)
+ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning
+论文链接：https://arxiv.org/abs/2408.02061
+代码链接：https://github.com/qintonguav/ParkingE2E
+
+秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 &#43; 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。
+VAD(2023/03)
+VAD: Vectorized Scene Representation for Efficient Autonomous Driving
+基于矢量场景表征的端到端自动驾驶
+论文链接：https://arxiv.org/abs/2303.12077
+代码链接：https://github.com/hustvl/VAD
+
+参考：https://zhuanlan.zhihu.com/p/653308051
+论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20261102173736/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20261102173736/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20261102173736/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="论文阅读之自动驾驶端到端专题">
+  <meta property="og:description" content="端到端任务 https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头 VAD v2 SparseDrive v2 SparseDrive v1 ParkingE2E(2024/08) ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning
+论文链接：https://arxiv.org/abs/2408.02061
+代码链接：https://github.com/qintonguav/ParkingE2E
+秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 &#43; 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。
+VAD(2023/03) VAD: Vectorized Scene Representation for Efficient Autonomous Driving
+基于矢量场景表征的端到端自动驾驶
+论文链接：https://arxiv.org/abs/2303.12077
+代码链接：https://github.com/hustvl/VAD
+参考：https://zhuanlan.zhihu.com/p/653308051
+论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-11-02T17:37:36+00:00">
+    <meta property="article:modified_time" content="2026-11-02T17:37:36+00:00">
+    <meta property="article:tag" content="Tags">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="论文阅读之自动驾驶端到端专题">
+  <meta name="twitter:description" content="端到端任务 https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头 VAD v2 SparseDrive v2 SparseDrive v1 ParkingE2E(2024/08) ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning
+论文链接：https://arxiv.org/abs/2408.02061
+代码链接：https://github.com/qintonguav/ParkingE2E
+秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 &#43; 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。
+VAD(2023/03) VAD: Vectorized Scene Representation for Efficient Autonomous Driving
+基于矢量场景表征的端到端自动驾驶
+论文链接：https://arxiv.org/abs/2303.12077
+代码链接：https://github.com/hustvl/VAD
+参考：https://zhuanlan.zhihu.com/p/653308051
+论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "论文阅读之自动驾驶端到端专题",
+      "item": "https://yangly0.github.io/posts/20261102173736/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "论文阅读之自动驾驶端到端专题",
+  "name": "论文阅读之自动驾驶端到端专题",
+  "description": "端到端任务 https://arxiv.org/pdf/2605.25029\n(VAVAD,DriveVLM)\nDINO, RTRT-DETR\nMultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction\nhttps://arxiv.org/abs/2508.11537\nhttps://r2.yangly1993.top/1788143823899.png\n通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头 VAD v2 SparseDrive v2 SparseDrive v1 ParkingE2E(2024/08) ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning\n论文链接：https://arxiv.org/abs/2408.02061\n代码链接：https://github.com/qintonguav/ParkingE2E\n秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 + 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。\nVAD(2023/03) VAD: Vectorized Scene Representation for Efficient Autonomous Driving\n基于矢量场景表征的端到端自动驾驶\n论文链接：https://arxiv.org/abs/2303.12077\n代码链接：https://github.com/hustvl/VAD\n参考：https://zhuanlan.zhihu.com/p/653308051\n论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。\n",
+  "keywords": [
+    "tags"
+  ],
+  "articleBody": "端到端任务 https://arxiv.org/pdf/2605.25029\n(VAVAD,DriveVLM)\nDINO, RTRT-DETR\nMultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction\nhttps://arxiv.org/abs/2508.11537\nhttps://r2.yangly1993.top/1788143823899.png\n通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头 VAD v2 SparseDrive v2 SparseDrive v1 ParkingE2E(2024/08) ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning\n论文链接：https://arxiv.org/abs/2408.02061\n代码链接：https://github.com/qintonguav/ParkingE2E\n秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 + 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。\nVAD(2023/03) VAD: Vectorized Scene Representation for Efficient Autonomous Driving\n基于矢量场景表征的端到端自动驾驶\n论文链接：https://arxiv.org/abs/2303.12077\n代码链接：https://github.com/hustvl/VAD\n参考：https://zhuanlan.zhihu.com/p/653308051\n论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。\nUniAD(2022/12) Planning-oriented Autonomous Driving\n论文地址：https://arxiv.org/abs/2212.10156\n代码链接：https://github.com/OpenDriveLab/UniAD\n参考：https://zhuanlan.zhihu.com/p/642373931\n论文提出了以面向规划为目标的统一自动驾驶框架（UniAD），先用BevFomer提取多视图的BEV特征，然后用四大TransFormer架构模块实现感知和预测，TrackFormer、MapFormer完成目标检测跟踪和地图全景分割，以及MotionFormer、OccFormer完成目标轨迹及目标占用的预测，最后接一个规划器Planner，采用目标预测轨迹和预测占用的信息实现自车轨迹的规划。\n",
+  "wordCount" : "75",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-11-02T17:37:36Z",
+  "dateModified": "2026-11-02T17:37:36Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20261102173736/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      论文阅读之自动驾驶端到端专题
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-11-02T17:37:36+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="端到端任务">端到端任务<a hidden class="anchor" aria-hidden="true" href="#端到端任务">#</a></h2>
+<p><a href="https://arxiv.org/pdf/2605.25029">https://arxiv.org/pdf/2605.25029</a></p>
+<p>(VAVAD,DriveVLM)</p>
+<p>DINO, RTRT-DETR</p>
+<h3 id="multipark202508">MultiPark(2025/08)<a hidden class="anchor" aria-hidden="true" href="#multipark202508">#</a></h3>
+<p>MultiPark: Multimodal Parking Transformer with Next-Segment Prediction</p>
+<p><a href="https://arxiv.org/abs/2508.11537">https://arxiv.org/abs/2508.11537</a></p>
+<p><a href="https://r2.yangly1993.top/1788143823899.png">https://r2.yangly1993.top/1788143823899.png</a></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NDkwOGUwNzhlNmJmMjZkOWE2NzUzNzg0ODY2Zjc4NTFfVjM1ZTZ5ZlVZdzExVzh6dlRuNHh6TWdwalByUWJLdU5fVG9rZW46SnV3bmJQN3F3b253YkJ4UXJ2UmNZYlV2bmdjXzE3OTM1ODk3NTA6MTc5MzU5MzM1MF9WNA&add_watermark=true&scene_type=CCM"></p>
+<ol>
+<li>通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头</li>
+</ol>
+<h3 id="vad-v2">VAD v2<a hidden class="anchor" aria-hidden="true" href="#vad-v2">#</a></h3>
+<h3 id="sparsedrive-v2">SparseDrive v2<a hidden class="anchor" aria-hidden="true" href="#sparsedrive-v2">#</a></h3>
+<h3 id="sparsedrive-v1">SparseDrive v1<a hidden class="anchor" aria-hidden="true" href="#sparsedrive-v1">#</a></h3>
+<h3 id="parkinge2e202408">ParkingE2E(2024/08)<a hidden class="anchor" aria-hidden="true" href="#parkinge2e202408">#</a></h3>
+<p>ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning</p>
+<p>论文链接：<a href="https://arxiv.org/abs/2408.02061">https://arxiv.org/abs/2408.02061</a></p>
+<p>代码链接：<a href="https://github.com/qintonguav/ParkingE2E">https://github.com/qintonguav/ParkingE2E</a></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=Y2U0ZjA5YWZjOWJjMWIxZGY0YzE4NzhhZDdmMDRiOTlfYnl0MWZZbm5KU1hYYnVERUVPU0ZoeTNyWDV6elRnMkRfVG9rZW46T1lvcmJsRktQb0xwbmt4bEE1OGN3VHc5bkJnXzE3OTM1ODk3NTA6MTc5MzU5MzM1MF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 + 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。</p>
+<h3 id="vad202303">VAD(2023/03)<a hidden class="anchor" aria-hidden="true" href="#vad202303">#</a></h3>
+<p>VAD: Vectorized Scene Representation for Efficient Autonomous Driving</p>
+<p>基于矢量场景表征的端到端自动驾驶</p>
+<p>论文链接：<a href="https://arxiv.org/abs/2303.12077">https://arxiv.org/abs/2303.12077</a></p>
+<p>代码链接：<a href="https://github.com/hustvl/VAD">https://github.com/hustvl/VAD</a></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGVjNWRlOGEzODQ3MmFmYjc5YTQ4NzRjMWJlYTJmZTFfc3R5WGk5cjlSMG56TFN0dHgxTWY3TXdKOVN0aVBxQndfVG9rZW46T1VWbWI1VFhRb1poM3F4WnFyMGNGSlk3bmRJXzE3OTM1ODk3NTA6MTc5MzU5MzM1MF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/653308051">https://zhuanlan.zhihu.com/p/653308051</a></p>
+<p>论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。</p>
+<h3 id="uniad202212">UniAD(2022/12)<a hidden class="anchor" aria-hidden="true" href="#uniad202212">#</a></h3>
+<p>Planning-oriented Autonomous Driving</p>
+<p>论文地址：<a href="https://arxiv.org/abs/2212.10156">https://arxiv.org/abs/2212.10156</a></p>
+<p>代码链接：<a href="https://github.com/OpenDriveLab/UniAD">https://github.com/OpenDriveLab/UniAD</a></p>
+<p><img loading="lazy" src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=MTI3ZWM4ZTRkNTUwNDVmNjhlYzhlZGRkY2MxOTE5NGVfTVFUU0ZoVzdLMXZSMlVHcVd4U3VPN2JlOWhWRVBuWXRfVG9rZW46VVFDSGJuUjdtb05pa2d4WEJjQWNMaEVMbmFnXzE3OTM1ODk3NTA6MTc5MzU5MzM1MF9WNA&add_watermark=true&scene_type=CCM"></p>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/642373931">https://zhuanlan.zhihu.com/p/642373931</a></p>
+<p>论文提出了以面向规划为目标的统一自动驾驶框架（UniAD），先用BevFomer提取多视图的BEV特征，然后用四大TransFormer架构模块实现感知和预测，TrackFormer、MapFormer完成目标检测跟踪和地图全景分割，以及MotionFormer、OccFormer完成目标轨迹及目标占用的预测，最后接一个规划器Planner，采用目标预测轨迹和预测占用的信息实现自车轨迹的规划。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/tags/">Tags</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yangly0.github.io/posts/20261102173823/">
+    <span class="title">« 上一页</span>
+    <span>论文阅读之VLM/VLA</span>
+  </a>
+  <a class="next" href="https://yangly0.github.io/posts/20261102172142/">
+    <span class="title">下一页 »</span>
+    <span>论文阅读之模型部署、量化</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            
+            
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

@@ -12,8 +12,139 @@
     <generator>Hugo</generator>
     <language>zh</language>
     <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
-    <lastBuildDate>Mon, 31 Aug 2026 13:20:44 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 17:38:55 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>论文阅读之世界模型</title>
+      <link>https://yangly0.github.io/posts/20261102173855/</link>
+      <pubDate>Mon, 02 Nov 2026 17:38:55 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102173855/</guid>
+      <description>&lt;h2 id=&#34;world-model&#34;&gt;World Model&lt;/h2&gt;</description>
+    </item>
+    <item>
+      <title>论文阅读之VLM/VLA</title>
+      <link>https://yangly0.github.io/posts/20261102173823/</link>
+      <pubDate>Mon, 02 Nov 2026 17:38:23 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102173823/</guid>
+      <description>&lt;h2 id=&#34;vlm--vla&#34;&gt;VLM / VLA&lt;/h2&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://gri.feishu.cn/wiki/IEsHwmanTi61WokDCmCcPgnUnJh&#34;&gt;从“看懂”到“预判”：VLA+世界模型如何重塑自动驾驶&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的“推理引擎&amp;quot;与车辆驾驶的&amp;quot;动作输出模块“整合在同一个架构中。&lt;/p&gt;
+&lt;p&gt;典型的VLA模型由三大组件构成:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号&amp;ndash;方向盘转角、油门开度、刹车力度等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成&lt;/p&gt;
+&lt;p&gt;看见一理解一行动”的闭环。&lt;/p&gt;
+&lt;p&gt;然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;量多模态驾驶数据的采集与标注成本极为高昂。&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;认知层面，VLA依赖的语言模型基于互联网图文预训练，其&amp;quot;常识”与现实物理世界的动力学规律存在本质脱节&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。&lt;/p&gt;
+&lt;p&gt;此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。&lt;/p&gt;
+&lt;p&gt;综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”&lt;/p&gt;
+&lt;p&gt;的实时驾驶任务。&lt;/p&gt;
+&lt;h3 id=&#34;omnidrive-nvidia-cvpr2025&#34;&gt;OmniDrive-NVIDIA-CVPR 2025&lt;/h3&gt;
+&lt;h3 id=&#34;parkingworld-end-to-end-autonomous-parking-reinforcement-learning-from-corrective-experience-in-3dgs-simulation&#34;&gt;ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation&lt;/h3&gt;
+&lt;p&gt;链接：&lt;a href=&#34;https://arxiv.org/abs/2506.05667&#34;&gt;https://arxiv.org/abs/2506.05667&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;总结：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>论文阅读之自动驾驶端到端专题</title>
+      <link>https://yangly0.github.io/posts/20261102173736/</link>
+      <pubDate>Mon, 02 Nov 2026 17:37:36 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102173736/</guid>
+      <description>&lt;h2 id=&#34;端到端任务&#34;&gt;端到端任务&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://arxiv.org/pdf/2605.25029&#34;&gt;https://arxiv.org/pdf/2605.25029&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;(VAVAD,DriveVLM)&lt;/p&gt;
+&lt;p&gt;DINO, RTRT-DETR&lt;/p&gt;
+&lt;h3 id=&#34;multipark202508&#34;&gt;MultiPark(2025/08)&lt;/h3&gt;
+&lt;p&gt;MultiPark: Multimodal Parking Transformer with Next-Segment Prediction&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://arxiv.org/abs/2508.11537&#34;&gt;https://arxiv.org/abs/2508.11537&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://r2.yangly1993.top/1788143823899.png&#34;&gt;https://r2.yangly1993.top/1788143823899.png&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=NDkwOGUwNzhlNmJmMjZkOWE2NzUzNzg0ODY2Zjc4NTFfVjM1ZTZ5ZlVZdzExVzh6dlRuNHh6TWdwalByUWJLdU5fVG9rZW46SnV3bmJQN3F3b253YkJ4UXJ2UmNZYlV2bmdjXzE3OTM1ODk3NTA6MTc5MzU5MzM1MF9WNA&amp;add_watermark=true&amp;scene_type=CCM&#34;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;通用的BEV表征：2D图像特征 + IPM投影到BEV空间 + FSD/OCC 头&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;vad-v2&#34;&gt;VAD v2&lt;/h3&gt;
+&lt;h3 id=&#34;sparsedrive-v2&#34;&gt;SparseDrive v2&lt;/h3&gt;
+&lt;h3 id=&#34;sparsedrive-v1&#34;&gt;SparseDrive v1&lt;/h3&gt;
+&lt;h3 id=&#34;parkinge2e202408&#34;&gt;ParkingE2E(2024/08)&lt;/h3&gt;
+&lt;p&gt;ParkingE2E: Camera-based End-to-end Parking Network, from Images to Planning&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/2408.02061&#34;&gt;https://arxiv.org/abs/2408.02061&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;代码链接：&lt;a href=&#34;https://github.com/qintonguav/ParkingE2E&#34;&gt;https://github.com/qintonguav/ParkingE2E&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=Y2U0ZjA5YWZjOWJjMWIxZGY0YzE4NzhhZDdmMDRiOTlfYnl0MWZZbm5KU1hYYnVERUVPU0ZoeTNyWDV6elRnMkRfVG9rZW46T1lvcmJsRktQb0xwbmt4bEE1OGN3VHc5bkJnXzE3OTM1ODk3NTA6MTc5MzU5MzM1MF9WNA&amp;add_watermark=true&amp;scene_type=CCM&#34;&gt;&lt;/p&gt;
+&lt;p&gt;秦通团队，本文采用模仿学习方法，通过模仿人类驾驶轨迹，实现从 RGB 图像到路径规划的端到端规划。整体架构由编码器 + 自回归轨迹解码器构成，（1）对于编码器，采用LSS方式提取BEV特征的相机编码器，以及对BEV空间下目标热力图提取目标车位特征的目标编码器，最后以目标车位特征以query，BEVC特征作为kv，结合位置编码，采用交叉注意机制得到融合特征；（2）对于解码器，受 Pix2seq启发，将轨迹规划视为序列预测问题，使用 Transformer 解码器逐步自回归地预测轨迹点。&lt;/p&gt;
+&lt;h3 id=&#34;vad202303&#34;&gt;VAD(2023/03)&lt;/h3&gt;
+&lt;p&gt;VAD: Vectorized Scene Representation for Efficient Autonomous Driving&lt;/p&gt;
+&lt;p&gt;基于矢量场景表征的端到端自动驾驶&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/2303.12077&#34;&gt;https://arxiv.org/abs/2303.12077&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;代码链接：&lt;a href=&#34;https://github.com/hustvl/VAD&#34;&gt;https://github.com/hustvl/VAD&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGVjNWRlOGEzODQ3MmFmYjc5YTQ4NzRjMWJlYTJmZTFfc3R5WGk5cjlSMG56TFN0dHgxTWY3TXdKOVN0aVBxQndfVG9rZW46T1VWbWI1VFhRb1poM3F4WnFyMGNGSlk3bmRJXzE3OTM1ODk3NTA6MTc5MzU5MzM1MF9WNA&amp;add_watermark=true&amp;scene_type=CCM&#34;&gt;&lt;/p&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/653308051&#34;&gt;https://zhuanlan.zhihu.com/p/653308051&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文整体思想是从栅格化到transfoemer的矢量化建模，整体架构如下，BEV Encoder用于编码输入的环视图像，并将其转化为鸟瞰图视角（BEV）下的特征图；Vectorized Motion Transformer提取场景中的动态目标信息，实现动态目标检测和矢量化的轨迹预测；Vectorized Map Transformer提取场景中矢量化的静态元素信息（如车道线，路沿和人行道）；Planning Transformer以隐式的动静态场景特征作为输入，提取其中与驾驶决策规划相关的信息，并完成自动驾驶车辆的轨迹规划。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>论文阅读之模型部署、量化</title>
+      <link>https://yangly0.github.io/posts/20261102172142/</link>
+      <pubDate>Mon, 02 Nov 2026 17:21:42 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102172142/</guid>
+      <description>&lt;h2 id=&#34;部署论文&#34;&gt;部署论文&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;部署，&lt;a href=&#34;https://www.zhihu.com/people/45-62-96-81-72&#34;&gt;link&lt;/a&gt;, &lt;a href=&#34;https://arxiv.org/abs/2106.08295&#34;&gt;A White Paper on Neural Network Quantization&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>论文阅读之数据集</title>
+      <link>https://yangly0.github.io/posts/20261102172046/</link>
+      <pubDate>Mon, 02 Nov 2026 17:20:46 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102172046/</guid>
+      <description>&lt;h2 id=&#34;数据集&#34;&gt;数据集&lt;/h2&gt;
+&lt;h3 id=&#34;nuscence&#34;&gt;Nuscence&lt;/h3&gt;
+&lt;h3 id=&#34;coco&#34;&gt;COCO&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://aistudio.baidu.com/dataset/detail/7122/file&#34;&gt;https://aistudio.baidu.com/dataset/detail/7122/file&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://cocodataset.org/#home&#34;&gt;https://cocodataset.org/#home&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>论文阅读之图像分割</title>
+      <link>https://yangly0.github.io/posts/20261102161547/</link>
+      <pubDate>Mon, 02 Nov 2026 16:15:47 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102161547/</guid>
+      <description>&lt;h2 id=&#34;计算机视觉之图像分割&#34;&gt;计算机视觉之图像分割&lt;/h2&gt;
+&lt;h3 id=&#34;fcn-fully-convolutional-networks-for-semantic-segmentation&#34;&gt;FCN: Fully Convolutional Networks for Semantic Segmentation&lt;/h3&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/1411.4038v1&#34;&gt;https://arxiv.org/abs/1411.4038v1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文代码：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;语义分割开山之作&lt;/strong&gt;，首次提出&lt;strong&gt;全卷积网络（FCN）&lt;/strong&gt;，彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。&lt;/p&gt;
+&lt;p&gt;论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 + 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。&lt;/p&gt;
+&lt;h3 id=&#34;segnetdeconvnet&#34;&gt;SegNet/DeconvNet&lt;/h3&gt;
+&lt;h3 id=&#34;u-net&#34;&gt;U-Net&lt;/h3&gt;
+&lt;h3 id=&#34;pspnet&#34;&gt;PSPNet&lt;/h3&gt;
+&lt;h3 id=&#34;mask-r-cnn&#34;&gt;Mask R-CNN&lt;/h3&gt;
+&lt;p&gt;链接：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/75333140&#34;&gt;https://zhuanlan.zhihu.com/p/75333140&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;deeplab-v1semantic-image-segmentation-with-deep-convolutional-nets-and-fully-connected-crfs&#34;&gt;DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs&lt;/h3&gt;
+&lt;p&gt;参考&lt;a href=&#34;https://zhuanlan.zhihu.com/p/75333140&#34;&gt;link&lt;/a&gt;，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；&lt;/p&gt;
+&lt;h3 id=&#34;deeplab-v2deeplab-semantic-image-segmentation-with-deep-convolutional-nets-atrous-convolution-and-fully-connected-crfs&#34;&gt;DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs&lt;/h3&gt;
+&lt;p&gt;（1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；&lt;/p&gt;
+&lt;h3 id=&#34;deeplab-v3rethinking-atrous-convolution-for-semantic-image-segmentation&#34;&gt;DeepLab V3：&lt;a href=&#34;https://arxiv.org/abs/1706.05587&#34;&gt;Rethinking Atrous Convolution for Semantic Image Segmentation&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;参考&lt;a href=&#34;https://blog.csdn.net/qq_36560894/article/details/106352573&#34;&gt;link&lt;/a&gt;，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP + BN + Image-Level ；（4）移除CRF；&lt;/p&gt;</description>
+    </item>
     <item>
       <title>论文阅读</title>
       <link>https://yangly0.github.io/posts/20260831132044/</link>

@@ -12,20 +12,41 @@
     <generator>Hugo</generator>
     <language>zh</language>
     <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
-    <lastBuildDate>Mon, 31 Aug 2026 13:20:44 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 17:38:55 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Tags</title>
       <link>https://yangly0.github.io/tags/tags/</link>
-      <pubDate>Mon, 31 Aug 2026 13:20:44 +0000</pubDate>
+      <pubDate>Mon, 02 Nov 2026 17:38:55 +0000</pubDate>
       <guid>https://yangly0.github.io/tags/tags/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>计算机视觉</title>
+      <link>https://yangly0.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/</link>
+      <pubDate>Mon, 02 Nov 2026 16:16:00 +0000</pubDate>
+      <guid>https://yangly0.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/</guid>
       <description></description>
     </item>
     <item>
       <title>论文</title>
       <link>https://yangly0.github.io/tags/%E8%AE%BA%E6%96%87/</link>
-      <pubDate>Sat, 15 Aug 2026 22:51:54 +0000</pubDate>
+      <pubDate>Mon, 02 Nov 2026 16:16:00 +0000</pubDate>
       <guid>https://yangly0.github.io/tags/%E8%AE%BA%E6%96%87/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>目标检测</title>
+      <link>https://yangly0.github.io/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/</link>
+      <pubDate>Mon, 02 Nov 2026 16:10:39 +0000</pubDate>
+      <guid>https://yangly0.github.io/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>自动驾驶</title>
+      <link>https://yangly0.github.io/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/</link>
+      <pubDate>Mon, 02 Nov 2026 11:18:32 +0000</pubDate>
+      <guid>https://yangly0.github.io/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/</guid>
       <description></description>
     </item>
     <item>
@@ -61,20 +82,6 @@
       <link>https://yangly0.github.io/tags/%23%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/</link>
       <pubDate>Sun, 04 Jan 2026 15:08:31 +0000</pubDate>
       <guid>https://yangly0.github.io/tags/%23%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>技术</title>
-      <link>https://yangly0.github.io/tags/%E6%8A%80%E6%9C%AF/</link>
-      <pubDate>Tue, 11 Feb 2025 22:01:59 +0000</pubDate>
-      <guid>https://yangly0.github.io/tags/%E6%8A%80%E6%9C%AF/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>数据结构与算法</title>
-      <link>https://yangly0.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</link>
-      <pubDate>Sat, 26 Oct 2024 09:57:32 +0000</pubDate>
-      <guid>https://yangly0.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
   </channel>

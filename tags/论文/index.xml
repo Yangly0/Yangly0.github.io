@@ -12,8 +12,183 @@
     <generator>Hugo</generator>
     <language>zh</language>
     <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
-    <lastBuildDate>Sat, 15 Aug 2026 22:51:54 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 16:16:00 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/%E8%AE%BA%E6%96%87/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>论文阅读之计算机视觉</title>
+      <link>https://yangly0.github.io/posts/20261102161600/</link>
+      <pubDate>Mon, 02 Nov 2026 16:16:00 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102161600/</guid>
+      <description>&lt;h2 id=&#34;计算机视觉之图像分类任务&#34;&gt;计算机视觉之图像分类任务&lt;/h2&gt;
+&lt;h3 id=&#34;vit202010&#34;&gt;ViT(2020/10)&lt;/h3&gt;
+&lt;p&gt;An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale, Google, 2022&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/pdf/2010.11929&#34;&gt;https://arxiv.org/pdf/2010.11929&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/445122996&#34;&gt;https://zhuanlan.zhihu.com/p/445122996&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文中最核心的结论是，当拥有足够多的数据进行预训练的时候，ViT的表现就会超过CNN，突破transformer缺少归纳偏置的限制，可以在下游任务中获得较好的迁移效果。&lt;/p&gt;
+&lt;p&gt;整体思路：ViT将输入图片分为多个patch（16x16），再将每个patch投影为固定长度的向量送入Transformer，后续encoder的操作和原始Transformer中完全相同。但是因为对图片分类，因此在输入序列中加入一个特殊的token，该token对应的输出即为最后的类别预测。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Patch embedding：用分块思想将图像转换为序列，输入序列长度W/16 x H/16，每个patch维度16x16x3。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;这里主要是为了模型结构同原始的transformer解决，采用了类似于BERT的做法，加入特殊字符cls，因此patch维度是16x16x3+1，最终会将特殊字符cls对于的输出z^0_L作为encoder的最终输出，表示image presentation（另一种做法，不加cls字符，对所有的tokens的输出做平均，再接一个MLP进行图像分类）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Positional encoding：可学习位置编码，这里若有9个patch（3x3），那么1D位置编码就是1到9，如果是2维位置编码就是11，12，……，33，如。位置编码的大小同embedding维度大相同，位置编码结果和embedding是相加操作，得到带位置编码的embedding信息。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;多头注意力机制，多组QKV，每组的维度是原维度/多头数量，最后拼接输出&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;进一步讨论了CNN+Transformer，结合CNN的归纳偏置特征和Transformer的全局归纳建模能力，先用CNN提取16x16的特征图，拉成一共向量，长度为196，后续操作和ViT相同。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;transformer201706&#34;&gt;Transformer（2017/06）&lt;/h3&gt;
+&lt;p&gt;Attention Is All You Need&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/1706.03762&#34;&gt;https://arxiv.org/abs/1706.03762&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文提出了基于注意力机制的全新网络Transformer架构。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;整个论文，内容解析，Abstract中主要强调了老方法现状、新方法、对应实验效果以及额外特点，Introduction中阐述了循环神经网络优点和缺点、注意力机制优点、本文方法及优点，Background中介绍了减少序列计算量，自注意力，端到端记忆网络三个方面。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;网络架构：宏观上采用编码-解码架构，微观上以注意力机制和全连接层实现；而编码层是 N个 多头自注意力机制、逐点全连接前馈网络、残差连接以及层归一化，解码层则类似，不过是把对多头自注意力机制引进掩码机制，自注意力机制改为交叉注意力机制。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;注意力机制中QKV含义：Q表示查询向量，当前位置希望获得的信息，可类比搜索关键词；K表示关键向量，序列中各位置能提供的信息，可类比索引；V表示数值向量，当查询和键匹配时，实际从各位置获取的实际内容，可类比实际内容。因此，Q和K的相似度或匹配程度决定输出V的权重大小。注意力机制公式 如下：Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自注意力机制和交叉注意力机制？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;多头注意力机制？&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;暂时无法在飞书文档外展示此内容&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;位置编码：位置编码本质上是为了解决transformer的位置不变性（位置和空间不敏感），论文采用了正余弦位置编码，参考[&lt;a href=&#34;https://zhuanlan.zhihu.com/p/580739696&#34;&gt;link&lt;/a&gt;]，对于序列中每个位置pos，隐藏层维度大小d_{model}、隐藏层中的每个维度索引i，位置编码的第i个原始PE(pos, 2i) 和 PE(pos, 2i+1) 分布通过正弦和余弦函数计算：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;PE(pos, 2i) = \sin(\frac{pos}{10000^{2i/d_{model}}}), PE(pos, 2i+1) = \cos(\frac{pos}{10000^{2i/d_{model}}})&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;分子项：分子项用来表示位置关系，对于固定的维度i来说，位置pos的变化，会导致PE编码呈现周期变化。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;分母项：分母项用来表示维度关系，控制位置编码的频率衰减速度，对于固定的位置pos来说，高频维度（低i值，变化敏感）对应短距离（相对位置）依赖，低频维度（高i值，变化缓慢）对应长距离（全局位置）依赖。而这里常数10000是波长，用来控制不同维度之间的频率差异，让不同维度的正余弦函数具有不同的周期。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实现上，可以用对数优化求解过程 \frac{1}{10000^{2i/d_{model}}} = exp(-(2i)*ln(10000) /d_{model})。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>论文阅读之2D目标检测</title>
+      <link>https://yangly0.github.io/posts/20261102161039/</link>
+      <pubDate>Mon, 02 Nov 2026 16:10:39 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102161039/</guid>
+      <description>&lt;h2 id=&#34;计算机视觉之目标检测&#34;&gt;计算机视觉之目标检测&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.zhihu.com/column/c_1825558830546808832&#34;&gt;https://www.zhihu.com/column/c_1825558830546808832&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;deformable-detr202010&#34;&gt;Deformable DETR(2020/10)&lt;/h3&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/2010.04159&#34;&gt;https://arxiv.org/abs/2010.04159&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考论文：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/372116181&#34;&gt;https://zhuanlan.zhihu.com/p/372116181&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;论文想解决DETR收敛慢而且能够处理的特征分辨率有限的问题，从而提出了稀疏采样的注意力机制。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Multi-Scale Features &amp;amp; Scale-Level Embedding，采用一个可学习的位置编码参数，再和position embedding 相加得到完整的位置信息，用于解决多层特征的位置编码。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Deformable Attention(&amp;amp; Multi-Scale)，对于每个query，仅在全局位置中采样部分位置的key，并且value也是基于这些位置进行采样插值得到的，最后将这个局部&amp;amp;稀疏的注意力权重施加在对应的value上。如，可变形卷积一样，位置偏移是可学习的，由query经过全连接层得到。并且，注意力权重也一样，直接由query经过全连接层得到。同时，在K个采样点之间归一化，而非像Transformer般是由query与key交互计算得出的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;detr202005&#34;&gt;DETR(2020/05)&lt;/h3&gt;
+&lt;p&gt;DETR：End-to-End Object Detection with Transformers&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/2005.12872&#34;&gt;https://arxiv.org/abs/2005.12872&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;代码链接：&lt;a href=&#34;https://github.com/facebookresearch/detr&#34;&gt;https://github.com/facebookresearch/detr&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/430198800&#34;&gt;https://zhuanlan.zhihu.com/p/430198800&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;概述&lt;/strong&gt;：该论文提出 DETR 的端到端目标检测框架，将目标检测转化为直接集合预测问题，通过 Transformer 编解码器与二分图匹配全局损失，实现端到端检测，并可扩展至全景分割，性能比肩 Faster RCNN 且无需手工设计组件。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;疑惑&lt;/strong&gt;：按照&lt;a href=&#34;https://link.zhihu.com/?target=https%3A//www.bilibili.com/video/BV1H44y1t75x&#34;&gt;李沐老师读论文&lt;/a&gt;的方式，“首先先问一下自己，如果是你来做，会怎样实现这一思想？”或者说，“看完论文的Abstract之后，我思考一番产生了怎样的疑惑？”我的问题点是，（1）集合预测问题如何定义？（2）集合的全局损失如何实现？（3）Transformer如何实现？&lt;/p&gt;
+&lt;p&gt;带着以上疑惑，我们来逐渐拆解DETR。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;集合预测：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;利用深度学习模型输出具有无序性、可变长度且需避免重复的元素集合，核心需解决无序性带来的损失函数设计（如基于匈牙利算法的二分匹配损失）、重复元素抑制及动态长度建模等问题。目标检测：预测图像中所有目标的位置和类别（每个目标是集合中的一个元素）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;业界上，无标准深度学习模型的集合预测，类似的是多标签分类&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;无重复约束，集合元素需唯一，问题点是目标检测中不会对同一物体预测多个重复框，老方法是NMS，新方法是全局推理机制&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;不变性，导致的损失函数设计困难：传统损失函数（如分类交叉熵）依赖元素顺序，而集合没有固定顺序，需要设计排列不变（permutation-invariant） 的损失函数（例如通过匈牙利算法进行二分匹配，确保预测与真实标签的最优对应）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;可变长度，预设最大集合大小（如 100），模型输出固定数量的元素，其中真实元素用有效标签，多余部分用 “空（no object）” 标签标记。推理时过滤掉 “空元素” 即可。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;模型结构：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;（1）Backbone：采用CNN网络提取图像特征，实现上用ResNet-50网络，下采样32倍，扩通道至2048维&lt;/p&gt;
+&lt;p&gt;（2）Transformer：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Encoder部分是标准的多头自注意层和前馈神经网络构成，但Encoder输入需要先用1x1 卷积降低图像特征通道到d维再合并HW维度生成Sequence，每一编码层还增加固定位置编码去解决排列不变性。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;position_embedding：图像如何编码？以mask（NxHxW）为对象，xy方向分别编码再stack一起。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;三角编码 + learning编码&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Decoder部分是参考标准的Transformer结构，以多头交叉注意力层解码dxN维 Embedding，差异点是在每一个解码层并行解码N个目标，每一解码层增加可学习的位置编码。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;利用所有对象之间的成对关系进行全局推理，同时能够将整张图像作为上下文来使用&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;将提取的特征图送Transformer的encoder结构中进行自注意力的交互，获取特征图中每个像素和其他像素之间关系。decoder首先预设了N个查询，该N个查询首先进行自注意力机制除去模型中的冗余框，之后与来自Encoder的特征进行交互形成数量为N查询特征；&lt;/p&gt;
+&lt;p&gt;（3）Prediction heads：用线性网络层预测N个固定长度的目标类别和边界框输出，N要远大于图片上包含的目标数量，用0表示不含对象的特殊类别。&lt;/p&gt;
+&lt;p&gt;（4）Loss：每一个Decoder层，先增加一个共享层归一化操作，随后输入到一个共享参数的预测头，最后用匈牙利损失计算误差，其能优化每类别的目标数量的精度。&lt;/p&gt;
+&lt;h3 id=&#34;centernet201904&#34;&gt;CenterNet(2019/04)&lt;/h3&gt;
+&lt;p&gt;Objects as Points&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/1904.07850&#34;&gt;https://arxiv.org/abs/1904.07850&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>论文阅读之自动驾驶专题</title>
+      <link>https://yangly0.github.io/posts/20261102111832/</link>
+      <pubDate>Mon, 02 Nov 2026 11:18:32 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102111832/</guid>
+      <description>&lt;h2 id=&#34;bev-目标检测分割&#34;&gt;BEV 目标检测/分割&lt;/h2&gt;
+&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;什么叫做BEV自底向上方法？&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/567880155&#34;&gt;https://zhuanlan.zhihu.com/p/567880155&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;occ&#34;&gt;OCC&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/Charmve/OccNet-Course&#34;&gt;https://github.com/Charmve/OccNet-Course&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;综述&#34;&gt;综述&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving&#34;&gt;https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;3D Object Detection for Autonomous Driving: A Review and New Outlooks&lt;/p&gt;
+&lt;p&gt;NVAutoNet: Fast and Accurate 360∘ 3D Visual Perception For Self Driving，2023&lt;/p&gt;
+&lt;h3 id=&#34;vision-centric-bev-perception-a-survey&#34;&gt;Vision-Centric BEV Perception: A Survey&lt;/h3&gt;
+&lt;h3 id=&#34;sparselif&#34;&gt;SparseLIF&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.zhihu.com/column/c_1658611768455737344&#34;&gt;https://www.zhihu.com/column/c_1658611768455737344&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;SparseLIF: High-Performance Sparse LiDAR-Camera Fusion for 3D Object Detection&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/675420354&#34;&gt;https://zhuanlan.zhihu.com/p/675420354&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.volcengine.com/articles/7402139307621744667&#34;&gt;https://developer.volcengine.com/articles/7402139307621744667&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;selfocc&#34;&gt;SelfOcc&lt;/h3&gt;
+&lt;h3 id=&#34;uniocc&#34;&gt;UniOcc&lt;/h3&gt;
+&lt;h3 id=&#34;renderocc&#34;&gt;RenderOcc&lt;/h3&gt;
+&lt;h3 id=&#34;sparseocc&#34;&gt;SparseOcc&lt;/h3&gt;
+&lt;h3 id=&#34;surroundocc&#34;&gt;SurroundOcc&lt;/h3&gt;
+&lt;h3 id=&#34;deep-height-decoupling-for-precise-vision-based-3d-occupancy-prediction&#34;&gt;Deep Height Decoupling for Precise Vision-based 3D Occupancy Prediction&lt;/h3&gt;
+&lt;h3 id=&#34;occformer2023&#34;&gt;OccFormer(2023)&lt;/h3&gt;
+&lt;p&gt;Dual-path Transformer for Vision-based 3D Semantic Occupancy Prediction [ICCV 2023]&lt;/p&gt;</description>
+    </item>
     <item>
       <title>AdamW: Decoupled Weight Decay Regularization</title>
       <link>https://yangly0.github.io/posts/20260815225154/</link>
