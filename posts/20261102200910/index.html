@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>自动驾驶之基础概念 | 所见所思</title>
+<meta name="keywords" content="文章, 自动驾驶">
+<meta name="description" content="【第1话：基础概念】自动驾驶扫盲 &#43; 功能缩写大全 &#43; 技术栈梳理
+一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5）
+
+	
+			
+					级别
+					名称
+					谁开车
+					谁兜底
+					典型功能
+			
+	
+	
+			
+					L0
+					应急辅助
+					人
+					人
+					AEB、LDW、BSD
+			
+			
+					L1
+					部分辅助
+					人&#43;系统（单维度）
+					人
+					ACC 或 LCC（二选一）
+			
+			
+					L2
+					组合辅助
+					系统（横&#43;纵）
+					人
+					ACC&#43;LCC、NOA、APA
+			
+			
+					L3
+					有条件自动
+					系统
+					系统ODD（设计运行域），人需接管
+					交通拥堵引导（TJP）
+			
+			
+					L4
+					高度自动
+					系统
+					系统ODD（设计运行域），可不接管
+					Robotaxi、AVP
+			
+			
+					L5
+					完全自动
+					系统
+					系统无ODD（设计运行域）限制
+					尚不存在
+			
+	
+
+关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。
+二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同
+行车（Driving）—— 中高速、结构化道路
+ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。
+LCC（Lane Centering Control）车道居中：只管横向，沿车道线走。">
+<meta name="author" content="Yangly">
+<link rel="canonical" href="https://yangly0.github.io/posts/20261102200910/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yangly0.github.io/images/avatar.webp">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yangly0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yangly0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yangly0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yangly0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://yangly0.github.io/posts/20261102200910/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+    integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+    integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh"
+    crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            
+            
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            
+            throwOnError: false
+        });
+    });
+</script> 
+<meta property="og:url" content="https://yangly0.github.io/posts/20261102200910/">
+  <meta property="og:site_name" content="所见所思">
+  <meta property="og:title" content="自动驾驶之基础概念">
+  <meta property="og:description" content="【第1话：基础概念】自动驾驶扫盲 &#43; 功能缩写大全 &#43; 技术栈梳理 一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5） 级别 名称 谁开车 谁兜底 典型功能 L0 应急辅助 人 人 AEB、LDW、BSD L1 部分辅助 人&#43;系统（单维度） 人 ACC 或 LCC（二选一） L2 组合辅助 系统（横&#43;纵） 人 ACC&#43;LCC、NOA、APA L3 有条件自动 系统 系统ODD（设计运行域），人需接管 交通拥堵引导（TJP） L4 高度自动 系统 系统ODD（设计运行域），可不接管 Robotaxi、AVP L5 完全自动 系统 系统无ODD（设计运行域）限制 尚不存在 关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。
+二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同 行车（Driving）—— 中高速、结构化道路 ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。
+LCC（Lane Centering Control）车道居中：只管横向，沿车道线走。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-11-02T20:09:10+00:00">
+    <meta property="article:modified_time" content="2026-11-02T20:09:10+00:00">
+    <meta property="article:tag" content="文章">
+    <meta property="article:tag" content="自动驾驶">
+      <meta property="og:image" content="https://yangly0.github.io/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yangly0.github.io/images/avatar.webp">
+  <meta name="twitter:title" content="自动驾驶之基础概念">
+  <meta name="twitter:description" content="【第1话：基础概念】自动驾驶扫盲 &#43; 功能缩写大全 &#43; 技术栈梳理 一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5） 级别 名称 谁开车 谁兜底 典型功能 L0 应急辅助 人 人 AEB、LDW、BSD L1 部分辅助 人&#43;系统（单维度） 人 ACC 或 LCC（二选一） L2 组合辅助 系统（横&#43;纵） 人 ACC&#43;LCC、NOA、APA L3 有条件自动 系统 系统ODD（设计运行域），人需接管 交通拥堵引导（TJP） L4 高度自动 系统 系统ODD（设计运行域），可不接管 Robotaxi、AVP L5 完全自动 系统 系统无ODD（设计运行域）限制 尚不存在 关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。
+二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同 行车（Driving）—— 中高速、结构化道路 ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。
+LCC（Lane Centering Control）车道居中：只管横向，沿车道线走。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yangly0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "自动驾驶之基础概念",
+      "item": "https://yangly0.github.io/posts/20261102200910/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "自动驾驶之基础概念",
+  "name": "自动驾驶之基础概念",
+  "description": "【第1话：基础概念】自动驾驶扫盲 + 功能缩写大全 + 技术栈梳理 一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5） 级别 名称 谁开车 谁兜底 典型功能 L0 应急辅助 人 人 AEB、LDW、BSD L1 部分辅助 人+系统（单维度） 人 ACC 或 LCC（二选一） L2 组合辅助 系统（横+纵） 人 ACC+LCC、NOA、APA L3 有条件自动 系统 系统ODD（设计运行域），人需接管 交通拥堵引导（TJP） L4 高度自动 系统 系统ODD（设计运行域），可不接管 Robotaxi、AVP L5 完全自动 系统 系统无ODD（设计运行域）限制 尚不存在 关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。\n二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同 行车（Driving）—— 中高速、结构化道路 ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。\nLCC（Lane Centering Control）车道居中：只管横向，沿车道线走。\n",
+  "keywords": [
+    "文章", "自动驾驶"
+  ],
+  "articleBody": "【第1话：基础概念】自动驾驶扫盲 + 功能缩写大全 + 技术栈梳理 一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5） 级别 名称 谁开车 谁兜底 典型功能 L0 应急辅助 人 人 AEB、LDW、BSD L1 部分辅助 人+系统（单维度） 人 ACC 或 LCC（二选一） L2 组合辅助 系统（横+纵） 人 ACC+LCC、NOA、APA L3 有条件自动 系统 系统ODD（设计运行域），人需接管 交通拥堵引导（TJP） L4 高度自动 系统 系统ODD（设计运行域），可不接管 Robotaxi、AVP L5 完全自动 系统 系统无ODD（设计运行域）限制 尚不存在 关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。\n二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同 行车（Driving）—— 中高速、结构化道路 ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。\nLCC（Lane Centering Control）车道居中：只管横向，沿车道线走。\nACC + LCC 组合辅助： L2，横纵向同时管，称”高速领航的青春版”。\nNOA（Navigate on Autopilot，导航辅助驾驶）：L2++，在 LCC 基础上叠加导航路径，能自主变道、上下匝道、过路口等）。\nHNOA（Hight NOA）高速导航辅助驾驶：适用于高速和快速路，ODD（设计运行域）简单。\nCNOA（City NOA）城区导航辅助驾驶：适用于城市道路，要处理红绿灯、无保护左转、非机动车混行、路口通行等复杂场景。\nRobotaxi（自动驾驶出租车）及变种：L4，在限定 ODD（设计运行范围）内完全无人驾驶，不需要安全员。变种，包括无人物流、无人卡车、特定场景作业车辆（矿区无人矿卡、港口无人集卡、机场物流）等。\n泊车（Parking）—— 低速、封闭/半封闭场景 PCA（Parking Camera Assist）倒车影像，AVM（ Around View Monitor ）全景影像，PDC-F/-R（Park Distance Control Front/Rear）前/后泊车辅助，BSD（Blind Spot Detection ）超声波盲点检测，RFBAV（ Right Front Blind Area View ）右前盲区：L0基础功能，”应急辅助/信息提示”，人全责全控。\nPEB（Parking Emergency Brakin）超声波紧急制动：L1功能，系统实际接管了纵向制动（低速紧急刹停），这是”控制介入”的分水岭\nAPA（Auto Parking Assist）自动泊车：人在车内，系统在停车场内巡航找位 + 泊入/泊出车位（垂直/侧方/斜列），低速（\u003c30 km/h），靠超声波+环视相机。\nRPA（Remote Parking Assist）遥控泊车：人下车，用手机/钥匙在车外遥控车辆短距离泊入泊出，解决”车位太窄人下不来”。\nHPA（Home-zone Parking Assist）记忆泊车 / 家区泊车：先由人示范一条路线（如从小区门口到自家固定车位），系统建图记忆，之后可自主重复这条路线并泊入，覆盖”最后 1–2 公里”低速场景。\nAVP（Automated Valet Parking）代客泊车：终极形态——人在停车场入口下车，车自己找车位、自己泊入、召之即来。ODD （设计运行域）限定停车场，法规上可定义为 L4。需要车端智能 + 场端设施（或纯车端记忆/建图方案）配合。\n三、技术栈全景梳理：传感器-\u003e感知-\u003e定位-\u003e地图-\u003e预测-\u003e规划-\u003e控制-\u003e底软 传感器层 摄像头：信息量最大，车道线/红绿灯/物体语义全靠它；4x环视（泊车）、3x前视（行车）、4x周视（行车）\n毫米波雷达：测速准、全天候，但分辨率低；4D 成像雷达是升级方向\n激光雷达（LiDAR）：精确 3D 测距，城区 NOA 安全冗余主力；半固态转镜/MEMS 是当前量产主流\n超声波雷达（USS）：近距测距，APA 的核心传感器，便宜但只有距离没有语义\n传感器配置是分级标志：L2 基础版 ≈ 纯视觉（特斯拉路线）；L2+ 高阶 ≈ 多传感器融合（国内主流：1–3 颗 LiDAR + 11x摄像头 + 5x毫米波 + 12xUSS）\n感知算法层 2D 检测 → BEV + Transformer：把多摄像头图像特征投影到统一鸟瞰空间（BEVFormer、BEVFusion 是代表工作，你前面翻译的就是 BEVFormer v2）\nOccupancy Network（占用网络）：3D 体素占用预测，解决异形障碍物（特斯拉首倡，国内 2023 起跟进）\n多传感器融合：前融合（特征级）vs 后融合（目标级）；BEV 空间融合是主流\n车道线/道路拓扑：在线建图（Mapless / 轻地图路线），摆脱对高精地图的依赖是 2023 后城区 NOA 落地的关键\n端到端（End-to-End）：感知-预测-规划一体化神经网络（特斯拉 FSD v12 引爆，国内 2024–2025 全面跟进），VLA（视觉-语言-动作）大模型是最新方向\n定位层 GNSS + IMU（组合惯导）、轮速计\n高精地图定位（车道级，依赖 HD Map）vs 视觉/激光 SLAM 定位（无图路线）\n泊车场景：视觉语义定位（车位线、柱子）、激光反射定位\n地图层 高精地图（HD Map）：车道级拓扑+几何，精度 cm 级；贵、鲜度差、资质受限（国内甲级测绘资质仅十几家）\n轻地图 / 无图：SD 导航地图 + 在线实时建图，城区 NOA 快速开城的胜负手\n预测与规划决策层 预测（Prediction）：他车/行人轨迹意图预测（常与感知融合为 Transformer 一体输出）\n规划（Planning）：路由规划（选路）→ 行为规划（变道/超车/让行决策）→ 运动规划（轨迹生成，常用优化/采样方法如 Lattice、EM Planner、MPC）\n规则驱动 vs 学习驱动 vs 端到端的路线之争就发生在这一层\n控制层 纵向（油门/制动）+ 横向（转向）跟踪控制：PID、MPC\n线控底盘（brake-by-wire / steer-by-wire）是执行基础，冗余线控是 L3+ 前提\n计算平台与软件架构 芯片：NVIDIA Orin-X（254 TOPS，当前主流）、地平线 J6、华为 MDC、特斯拉 FSD 芯片；下一代 Thor（2000 TOPS）\n域控制器：智驾域（ADAS 域）集中式架构，行车泊车共享算力（舱驾一体是趋势）\n中间件：ROS / 百度 CyberRT / AUTOSAR AP；SOA 软件架构\n工具链：仿真（场景库+闭环仿真）、数据闭环（采集→挖掘→标注→训练→OTA）是量产迭代的生命线\n功能安全与预期功能安全 ISO 26262（功能安全，ASIL 分级）、ISO 21448（SOTIF 预期功能安全）、ISO 21434（网络安全）\nL3+ 必须做系统冗余：双电源、双算力、双制动、双转向\n四、自动驾驶公司 L2+：特斯拉FSD ，华为 ADS、小鹏 XNGP、理想 AD Max、Momenta ，蔚来 NOP+\nL4：Waymo、百度萝卜快跑、小马智行、文远知行\n高速干线重卡：图森、嬴彻、DeepWay\n城市末端配送小车：新石器、白犀牛\n",
+  "wordCount" : "282",
+  "inLanguage": "zh",
+  "image": "https://yangly0.github.io/images/avatar.webp","datePublished": "2026-11-02T20:09:10Z",
+  "dateModified": "2026-11-02T20:09:10Z",
+  "author":{
+    "@type": "Person",
+    "name": "Yangly"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yangly0.github.io/posts/20261102200910/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "所见所思",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yangly0.github.io/images/avatar.webp"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://yangly0.github.io/" accesskey="h" title="所见所思 (Alt + H)">所见所思</a>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="https://yangly0.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://yangly0.github.io/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">主页</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      自动驾驶之基础概念
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-11-02T20:09:10+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="第1话基础概念自动驾驶扫盲--功能缩写大全--技术栈梳理">【第1话：基础概念】自动驾驶扫盲 + 功能缩写大全 + 技术栈梳理<a hidden class="anchor" aria-hidden="true" href="#第1话基础概念自动驾驶扫盲--功能缩写大全--技术栈梳理">#</a></h2>
+<h3 id="一自动驾驶等级sae-j3016--国标-gbt-40429-分级l0l5">一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5）<a hidden class="anchor" aria-hidden="true" href="#一自动驾驶等级sae-j3016--国标-gbt-40429-分级l0l5">#</a></h3>
+<table>
+	<thead>
+			<tr>
+					<th>级别</th>
+					<th>名称</th>
+					<th>谁开车</th>
+					<th>谁兜底</th>
+					<th>典型功能</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>L0</td>
+					<td>应急辅助</td>
+					<td>人</td>
+					<td>人</td>
+					<td>AEB、LDW、BSD</td>
+			</tr>
+			<tr>
+					<td>L1</td>
+					<td>部分辅助</td>
+					<td>人+系统（单维度）</td>
+					<td>人</td>
+					<td>ACC 或 LCC（二选一）</td>
+			</tr>
+			<tr>
+					<td>L2</td>
+					<td>组合辅助</td>
+					<td>系统（横+纵）</td>
+					<td>人</td>
+					<td>ACC+LCC、NOA、APA</td>
+			</tr>
+			<tr>
+					<td>L3</td>
+					<td>有条件自动</td>
+					<td>系统</td>
+					<td>系统ODD（设计运行域），人需接管</td>
+					<td>交通拥堵引导（TJP）</td>
+			</tr>
+			<tr>
+					<td>L4</td>
+					<td>高度自动</td>
+					<td>系统</td>
+					<td>系统ODD（设计运行域），可不接管</td>
+					<td>Robotaxi、AVP</td>
+			</tr>
+			<tr>
+					<td>L5</td>
+					<td>完全自动</td>
+					<td>系统</td>
+					<td>系统无ODD（设计运行域）限制</td>
+					<td>尚不存在</td>
+			</tr>
+	</tbody>
+</table>
+<p>关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。</p>
+<h3 id="二自动驾驶功能行车功能-vs-泊车功能两大场景族技术栈有重叠但侧重不同">二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同<a hidden class="anchor" aria-hidden="true" href="#二自动驾驶功能行车功能-vs-泊车功能两大场景族技术栈有重叠但侧重不同">#</a></h3>
+<h3 id="行车driving-中高速结构化道路">行车（Driving）—— 中高速、结构化道路<a hidden class="anchor" aria-hidden="true" href="#行车driving-中高速结构化道路">#</a></h3>
+<p>ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。</p>
+<p>LCC（Lane Centering Control）车道居中：只管横向，沿车道线走。</p>
+<p>ACC + LCC 组合辅助： L2，横纵向同时管，称”高速领航的青春版”。</p>
+<p>NOA（Navigate on Autopilot，导航辅助驾驶）：L2++，在 LCC 基础上叠加导航路径，能自主变道、上下匝道、过路口等）。</p>
+<ul>
+<li>
+<p>HNOA（Hight NOA）高速导航辅助驾驶：适用于高速和快速路，ODD（设计运行域）简单。</p>
+</li>
+<li>
+<p>CNOA（City NOA）城区导航辅助驾驶：适用于城市道路，要处理红绿灯、无保护左转、非机动车混行、路口通行等复杂场景。</p>
+</li>
+</ul>
+<p>Robotaxi（自动驾驶出租车）及变种：L4，在限定 ODD（设计运行范围）内完全无人驾驶，不需要安全员。变种，包括无人物流、无人卡车、特定场景作业车辆（矿区无人矿卡、港口无人集卡、机场物流）等。</p>
+<h3 id="泊车parking-低速封闭半封闭场景">泊车（Parking）—— 低速、封闭/半封闭场景<a hidden class="anchor" aria-hidden="true" href="#泊车parking-低速封闭半封闭场景">#</a></h3>
+<p>PCA（Parking Camera Assist）倒车影像，AVM（ Around View Monitor ）全景影像，PDC-F/-R（Park Distance Control Front/Rear）前/后泊车辅助，BSD（Blind Spot Detection ）超声波盲点检测，RFBAV（ Right Front Blind Area View ）右前盲区：L0基础功能，”应急辅助/信息提示”，人全责全控。</p>
+<p>PEB（Parking Emergency Brakin）超声波紧急制动：L1功能，系统实际接管了纵向制动（低速紧急刹停），这是”控制介入”的分水岭</p>
+<p>APA（Auto Parking Assist）自动泊车：人在车内，系统在停车场内巡航找位 + 泊入/泊出车位（垂直/侧方/斜列），低速（&lt;30 km/h），靠超声波+环视相机。</p>
+<p>RPA（Remote Parking Assist）遥控泊车：人下车，用手机/钥匙在车外遥控车辆短距离泊入泊出，解决”车位太窄人下不来”。</p>
+<p>HPA（Home-zone Parking Assist）记忆泊车 / 家区泊车：先由人示范一条路线（如从小区门口到自家固定车位），系统建图记忆，之后可自主重复这条路线并泊入，覆盖”最后 1–2 公里”低速场景。</p>
+<p>AVP（Automated Valet Parking）代客泊车：终极形态——人在停车场入口下车，车自己找车位、自己泊入、召之即来。ODD （设计运行域）限定停车场，法规上可定义为 L4。需要车端智能 + 场端设施（或纯车端记忆/建图方案）配合。</p>
+<h3 id="三技术栈全景梳理传感器-感知-定位-地图-预测-规划-控制-底软">三、技术栈全景梳理：传感器-&gt;感知-&gt;定位-&gt;地图-&gt;预测-&gt;规划-&gt;控制-&gt;底软<a hidden class="anchor" aria-hidden="true" href="#三技术栈全景梳理传感器-感知-定位-地图-预测-规划-控制-底软">#</a></h3>
+<h3 id="传感器层">传感器层<a hidden class="anchor" aria-hidden="true" href="#传感器层">#</a></h3>
+<ul>
+<li>
+<p>摄像头：信息量最大，车道线/红绿灯/物体语义全靠它；4x环视（泊车）、3x前视（行车）、4x周视（行车）</p>
+</li>
+<li>
+<p>毫米波雷达：测速准、全天候，但分辨率低；4D 成像雷达是升级方向</p>
+</li>
+<li>
+<p>激光雷达（LiDAR）：精确 3D 测距，城区 NOA 安全冗余主力；半固态转镜/MEMS 是当前量产主流</p>
+</li>
+<li>
+<p>超声波雷达（USS）：近距测距，APA 的核心传感器，便宜但只有距离没有语义</p>
+</li>
+</ul>
+<p>传感器配置是分级标志：L2 基础版 ≈ 纯视觉（特斯拉路线）；L2+ 高阶 ≈ 多传感器融合（国内主流：1–3 颗 LiDAR + 11x摄像头 + 5x毫米波 + 12xUSS）</p>
+<h3 id="感知算法层">感知算法层<a hidden class="anchor" aria-hidden="true" href="#感知算法层">#</a></h3>
+<ul>
+<li>
+<p>2D 检测 → BEV + Transformer：把多摄像头图像特征投影到统一鸟瞰空间（BEVFormer、BEVFusion 是代表工作，你前面翻译的就是 BEVFormer v2）</p>
+</li>
+<li>
+<p>Occupancy Network（占用网络）：3D 体素占用预测，解决异形障碍物（特斯拉首倡，国内 2023 起跟进）</p>
+</li>
+<li>
+<p>多传感器融合：前融合（特征级）vs 后融合（目标级）；BEV 空间融合是主流</p>
+</li>
+<li>
+<p>车道线/道路拓扑：在线建图（Mapless / 轻地图路线），摆脱对高精地图的依赖是 2023 后城区 NOA 落地的关键</p>
+</li>
+<li>
+<p>端到端（End-to-End）：感知-预测-规划一体化神经网络（特斯拉 FSD v12 引爆，国内 2024–2025 全面跟进），VLA（视觉-语言-动作）大模型是最新方向</p>
+</li>
+</ul>
+<h3 id="定位层">定位层<a hidden class="anchor" aria-hidden="true" href="#定位层">#</a></h3>
+<ul>
+<li>
+<p>GNSS + IMU（组合惯导）、轮速计</p>
+</li>
+<li>
+<p>高精地图定位（车道级，依赖 HD Map）vs 视觉/激光 SLAM 定位（无图路线）</p>
+</li>
+<li>
+<p>泊车场景：视觉语义定位（车位线、柱子）、激光反射定位</p>
+</li>
+</ul>
+<h3 id="地图层">地图层<a hidden class="anchor" aria-hidden="true" href="#地图层">#</a></h3>
+<ul>
+<li>
+<p>高精地图（HD Map）：车道级拓扑+几何，精度 cm 级；贵、鲜度差、资质受限（国内甲级测绘资质仅十几家）</p>
+</li>
+<li>
+<p>轻地图 / 无图：SD 导航地图 + 在线实时建图，城区 NOA 快速开城的胜负手</p>
+</li>
+</ul>
+<h3 id="预测与规划决策层">预测与规划决策层<a hidden class="anchor" aria-hidden="true" href="#预测与规划决策层">#</a></h3>
+<ul>
+<li>
+<p>预测（Prediction）：他车/行人轨迹意图预测（常与感知融合为 Transformer 一体输出）</p>
+</li>
+<li>
+<p>规划（Planning）：路由规划（选路）→ 行为规划（变道/超车/让行决策）→ 运动规划（轨迹生成，常用优化/采样方法如 Lattice、EM Planner、MPC）</p>
+</li>
+<li>
+<p>规则驱动 vs 学习驱动 vs 端到端的路线之争就发生在这一层</p>
+</li>
+</ul>
+<h3 id="控制层">控制层<a hidden class="anchor" aria-hidden="true" href="#控制层">#</a></h3>
+<ul>
+<li>
+<p>纵向（油门/制动）+ 横向（转向）跟踪控制：PID、MPC</p>
+</li>
+<li>
+<p>线控底盘（brake-by-wire / steer-by-wire）是执行基础，冗余线控是 L3+ 前提</p>
+</li>
+</ul>
+<h3 id="计算平台与软件架构">计算平台与软件架构<a hidden class="anchor" aria-hidden="true" href="#计算平台与软件架构">#</a></h3>
+<ul>
+<li>
+<p>芯片：NVIDIA Orin-X（254 TOPS，当前主流）、地平线 J6、华为 MDC、特斯拉 FSD 芯片；下一代 Thor（2000 TOPS）</p>
+</li>
+<li>
+<p>域控制器：智驾域（ADAS 域）集中式架构，行车泊车共享算力（舱驾一体是趋势）</p>
+</li>
+<li>
+<p>中间件：ROS / 百度 CyberRT / AUTOSAR AP；SOA 软件架构</p>
+</li>
+<li>
+<p>工具链：仿真（场景库+闭环仿真）、数据闭环（采集→挖掘→标注→训练→OTA）是量产迭代的生命线</p>
+</li>
+</ul>
+<ol>
+<li>功能安全与预期功能安全</li>
+</ol>
+<ul>
+<li>
+<p>ISO 26262（功能安全，ASIL 分级）、ISO 21448（SOTIF 预期功能安全）、ISO 21434（网络安全）</p>
+</li>
+<li>
+<p>L3+ 必须做系统冗余：双电源、双算力、双制动、双转向</p>
+</li>
+</ul>
+<h3 id="四自动驾驶公司">四、自动驾驶公司<a hidden class="anchor" aria-hidden="true" href="#四自动驾驶公司">#</a></h3>
+<ul>
+<li>
+<p>L2+：特斯拉FSD ，华为 ADS、小鹏 XNGP、理想 AD Max、Momenta ，蔚来 NOP+</p>
+</li>
+<li>
+<p>L4：Waymo、百度萝卜快跑、小马智行、文远知行</p>
+</li>
+<li>
+<p>高速干线重卡：图森、嬴彻、DeepWay</p>
+</li>
+<li>
+<p>城市末端配送小车：新石器、白犀牛</p>
+</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yangly0.github.io/tags/%E6%96%87%E7%AB%A0/">文章</a></li>
+      <li><a href="https://yangly0.github.io/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/">自动驾驶</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://yangly0.github.io/posts/20261115051242/">
+    <span class="title">« 上一页</span>
+    <span>OCC3D占用预测感知</span>
+  </a>
+  <a class="next" href="https://yangly0.github.io/posts/20261102173855/">
+    <span class="title">下一页 »</span>
+    <span>论文阅读之世界模型</span>
+  </a>
+</nav>
+
+  </footer><div id="twikoo"></div>
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: "https://twikoo.yangly1993.top/", 
+    el: "#twikoo",
+    lang: "zh-CN",
+    
+    onCommentLoaded: function() {
+      
+      
+    }
+  });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>©<a href="https://github.com/Yangly0">Yangly</a> | Since 2024 | <a href="https://beian.miit.gov.cn/">渝ICP备2025051440号-1</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        
+        let menuScrollTimeout;
+        menu.addEventListener("scroll", function () {
+            clearTimeout(menuScrollTimeout);
+            menuScrollTimeout = setTimeout(function () {
+                localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+            }, 150);
+        }, { passive: true });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            const target = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                target.scrollIntoView();
+            }
+            
+            
+            if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
+                target.setAttribute("tabindex", "-1");
+            }
+            target.focus({ preventScroll: true });
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

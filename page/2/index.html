@@ -78,7 +78,7 @@
   ]
 }
 </script>
-	<meta name="generator" content="Hugo 0.170.0">
+	<meta name="generator" content="Hugo 0.170.1">
 </head>
 <body class="list" id="top">
     <header class="header">
@@ -101,6 +101,66 @@
     </nav>
 </header>
 <main class="main"> 
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之自动驾驶专题
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>BEV 目标检测/分割 问题 什么叫做BEV自底向上方法？ https://zhuanlan.zhihu.com/p/567880155
+OCC https://github.com/Charmve/OccNet-Course
+综述 https://github.com/PointsCoder/Awesome-3D-Object-Detection-for-Autonomous-Driving
+3D Object Detection for Autonomous Driving: A Review and New Outlooks
+NVAutoNet: Fast and Accurate 360∘ 3D Visual Perception For Self Driving，2023
+Vision-Centric BEV Perception: A Survey SparseLIF https://www.zhihu.com/column/c_1658611768455737344
+SparseLIF: High-Performance Sparse LiDAR-Camera Fusion for 3D Object Detection
+https://zhuanlan.zhihu.com/p/675420354
+https://developer.volcengine.com/articles/7402139307621744667
+SelfOcc UniOcc RenderOcc SparseOcc SurroundOcc Deep Height Decoupling for Precise Vision-based 3D Occupancy Prediction OccFormer(2023) Dual-path Transformer for Vision-based 3D Semantic Occupancy Prediction [ICCV 2023]
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T11:18:32+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之自动驾驶专题" href="https://yangly0.github.io/posts/20261102111832/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>博客与博主 黄浴，https://www.zhihu.com/people/yuhuang2019 https://www.zhihu.com/column/c_1596466202909507584 https://www.zhihu.com/column/c_1806461708782407680 World Model 世界模型 VLM / VLA 视觉语言模型/视觉语言动作 参考：从“看懂”到“预判”：VLA&#43;世界模型如何重塑自动驾驶
+在自动驾驶领域，VLA模型将视觉语言模型所具备的语义理解和推理能力统一引入到驾驶决策。其本质是将VLM的
+“推理引擎&#34;与车辆驾驶的&#34;动作输出模块“整合在同一个架构中。
+典型的VLA模型由三大组件构成:
+视觉编码器负责接收多视角环视图像、LiDAR点云或BEV鸟瞰图特征，将原始环境信息编码为特征向量; VLM在海量图文数据上预训练后，拥有丰富的世界常识和推理能力，能理解交通标志、行人意图、场景语义等 动作解码器则将VLM的推理结果映射为实际可执行的驾驶信号–方向盘转角、油门开度、刹车力度等。 三者通过“多模态输入→ 统一编码与跨模态对齐- Transformer融合推理→ 动作解码输出”的完整链路，协同构成
+看见一理解一行动”的闭环。
+然而，VLA从理论走向车端量产的过程中，正面临工程实现与认知能力的双重瓶颈，
+工程层面，车载芯片算力不足与模型高算力需求之间的矛盾导致推理延迟难以稳定控制在安全阈值内，且高质量多模态驾驶数据的采集与标注成本极为高昂。
+认知层面，VLA依赖的语言模型基于互联网图文预训练，其&#34;常识”与现实物理世界的动力学规律存在本质脱节
+——系统虽能理解交通标志的语义，却无法像人类一样直觉性地预判湿滑路面的刹车距离或行人的突发意图,。
+此外，跨模态特征对齐的固有困难以及决策过程缺乏形式化验证手段，进一步放大了系统在安全认证上的隐患。
+综合来看，这些短板使得当前的VLA模型虽然具备了“看得懂、说得清”的能力，却尚难独立胜任“开得稳、开得安全”
+的实时驾驶任务。
+OmniDrive-NVIDIA-CVPR 2025 ParkingWorld: End-to-End Autonomous Parking Reinforcement Learning from Corrective Experience in 3DGS Simulation 链接：https://arxiv.org/abs/2506.05667
+总结：
+E2E 端到端 https://arxiv.org/pdf/2605.25029
+(VAVAD,DriveVLM)
+DINO, RTRT-DETR
+MultiPark(2025/08) MultiPark: Multimodal Parking Transformer with Next-Segment Prediction
+https://arxiv.org/abs/2508.11537
+https://r2.yangly1993.top/1788143823899.png
+通用的BEV表征：2D图像特征 &#43; IPM投影到BEV空间 &#43; FSD/OCC 头 VAD v2 VAD BEV 空间 综述：
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-08-31T13:20:44+00:00'>2026年8月31日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读" href="https://yangly0.github.io/posts/20260831132044/"></a>
+</article>
 
 <article class="post-entry"> 
   <header class="entry-header">
@@ -208,6 +268,26 @@ LSS 显示预测离散的深度信息，以深度信息和2D特征计算BEV特�
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">BEVFormer: Learning Bird’s-Eye-ViewRepresentation from Multi-Camera Images viaSpatiotemporal Transformers
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+BEVFormer，从BEV空间的3D Query出发，得到参考点和采样点，再通过多相机的内外参投影到多视角2D图片上，和相应特征进行交互。但DETR3D的object queries是稀疏的，每个query代表一个可能的目标框，而BevFormer的bev queries是稠密的，大小为HxWxC，H,W为设定的bev特征尺度，每个query代表一个网格（grid）的查询，这样可以得到稠密的bev特征。
+1、grid-shaped BEV queries
+2、spatial cross-attention
+3、temporal self-aattention
+参考：https://zhuanlan.zhihu.com/p/545067020
+</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2025-04-19T15:05:13+00:00'>2025年4月19日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to BEVFormer: Learning Bird’s-Eye-ViewRepresentation from Multi-Camera Images viaSpatiotemporal Transformers" href="https://yangly0.github.io/posts/20250419150513/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">个人密码管理器vaultwarden
     </h2>
   </header>
@@ -245,27 +325,12 @@ Vaultwarden下image镜像为1.30.5，最新版本网页端无法登录； Vaultw
 <span title='2024-11-23T21:51:51+00:00'>2024年11月23日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
   <a class="entry-link" aria-label="post link to 如何搭建一个博客系统？" href="https://yangly0.github.io/posts/20241123215151/"></a>
 </article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">数据结构与算法 个人篇
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>本文是个人日常对数据结构与算法的学习内容，部分参考AcWing和OI Wiki。
-输入输出 ref：OJ的自我修养：C&#43;&#43;输入输出总结_c&#43;&#43; oj的输入输出-CSDN博客
-#include &lt;bits/stdc&#43;&#43;.h&gt; //全部头文件 using namespace std; // c语言 int n; while(scanf(&#34;%d&#34;, &amp;n) != EOF &amp;&amp; n!= 0){ int a, b; for(int i=0; i &lt; n; &#43;&#43;i){ scanf(&#34;%d%d&#34;, &amp;a, &amp;b); printf(&#34;%d %d\n&#34;, a, b); } } // c&#43;&#43;语言 /*&gt;&gt; 数值带定长 */ int n, a; while(cin &gt;&gt; n){ // 忽略空格，回车，Tab，遇到EOF会跳出循环 for(int i=0; i &lt; n; &#43;&#43;i){ cin &gt;&gt; a; cout &lt;&lt; a &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 数值带不定长 */ int m, b; cin &gt;&gt; m; for (int i = 0; i &lt; m; i&#43;&#43;) { while (cin &gt;&gt; b) { cout &lt;&lt; b &lt;&lt; &#39; &#39;; if (getchar() == &#39;\n&#39;){ // 遇到回车结束 cout &lt;&lt; &#39;\n&#39;; break; } } } /*&gt;&gt; 字符串 */ string str; cin &gt;&gt; str; // cin遇到空格结束读取 /*&gt;&gt; 字符串带空格 */ string str; // getline函数可以获取包含空格的字符，以回车键结束 while(getline(cin, str)){ // 遇到EOF或者CTRL&#43;Z退出 cout &lt; str &lt;&lt; &#39;\n&#39;; } /*&gt;&gt; 字符串带逗号 */ string strs, str; cin &gt;&gt; strs; stringstream input(strs); while(getline(input, str, &#39;,&#39;)){ cout &lt;&lt; str &lt;&lt; &#39; &#39;; } cout &lt;&lt; &#39;\n&#39;; // python 版本 while True: try: n = int(input()) for _ in range(n): lis = list(map(int, input().split())) print(sum(lis[1:])) except: break 数据结构 有序数组 区间范围值$[l,r]$：upper_bounder(…,…,r) - lower_bounder(…,…,l)
-...</p>
-  </div>
-  <footer class="entry-footer">
-
-<span title='2024-10-26T09:57:32+00:00'>2024年10月26日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
-  <a class="entry-link" aria-label="post link to 数据结构与算法 个人篇" href="https://yangly0.github.io/posts/20241026095732/"></a>
-</article>
 <footer class="page-footer">
   <nav class="pagination">
     <a class="prev" href="https://yangly0.github.io/">
       «&nbsp;上一页&nbsp;
+    </a>
+    <a class="next" href="https://yangly0.github.io/page/3/">下一页&nbsp;&nbsp;»
     </a>
   </nav>
 </footer>

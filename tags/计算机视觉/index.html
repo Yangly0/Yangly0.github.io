@@ -151,6 +151,34 @@ Transformer（2017/06） Attention Is All You Need
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">论文阅读之图像分割
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>计算机视觉之图像分割 FCN(2014/11) FCN: Fully Convolutional Networks for Semantic Segmentation
+论文链接：https://arxiv.org/abs/1411.4038v1
+FCN，语义分割开山之作，后续 U-Net、SegNet、DeepLab 等系列分割网络都是该思想的拓展。论文的核心贡献点是提出了FCN全卷积网络架构，将图像分割升级到像素级语义分割任务，主要解决了两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，解决了全连接导致空间信息损失的问题，同时可以支持任意尺寸输入；二是提出了反卷积上采样和跳跃连接，解决了下采样分辨率丢失的问题。
+可参考：https://www.cnblogs.com/carpell/p/18883197
+SegNet DeconvNet U-Net(2015/03) U-Net: Convolutional Networks for Biomedical Image Segmentation
+论文链接：https://arxiv.org/abs/1505.04597
+参考：https://www.cnblogs.com/carpell/p/18908044
+U-net的设计初衷是为了解决医学图像分割中的挑战，即小样本问题以及高精度需求。
+PSPNet Mask R-CNN 链接：https://zhuanlan.zhihu.com/p/75333140
+DeepLab V1 DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs
+参考link，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；
+DeepLab V2 DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs
+（1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；
+DeepLab V3 DeepLab V3：Rethinking Atrous Convolution for Semantic Image Segmentation
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T16:15:47+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 论文阅读之图像分割" href="https://yangly0.github.io/posts/20261102161547/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">论文阅读之2D目标检测
     </h2>
   </header>

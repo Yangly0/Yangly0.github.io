@@ -123,29 +123,6 @@
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <title>论文阅读之图像分割</title>
-      <link>https://yangly0.github.io/posts/20261102161547/</link>
-      <pubDate>Mon, 02 Nov 2026 16:15:47 +0000</pubDate>
-      <guid>https://yangly0.github.io/posts/20261102161547/</guid>
-      <description>&lt;h2 id=&#34;计算机视觉之图像分割&#34;&gt;计算机视觉之图像分割&lt;/h2&gt;
-&lt;h3 id=&#34;fcn-fully-convolutional-networks-for-semantic-segmentation&#34;&gt;FCN: Fully Convolutional Networks for Semantic Segmentation&lt;/h3&gt;
-&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/1411.4038v1&#34;&gt;https://arxiv.org/abs/1411.4038v1&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;论文代码：&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;语义分割开山之作&lt;/strong&gt;，首次提出&lt;strong&gt;全卷积网络（FCN）&lt;/strong&gt;，彻底把分类 CNN 改造为像素级分割模型，后续 U-Net、SegNet、DeepLab 等所有分割网络均基于 FCN 思想拓展。&lt;/p&gt;
-&lt;p&gt;论文提出了FCN网络架构，主要为了解决两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，全连接导致的空间信息损失问题；二是转置卷积上采样 + 跳跃连接，解决下采样带来分辨率丢失问题。当然，额外还有一些优点，比如实现了对任意大小输入图像的像素级分类输出。&lt;/p&gt;
-&lt;h3 id=&#34;segnetdeconvnet&#34;&gt;SegNet/DeconvNet&lt;/h3&gt;
-&lt;h3 id=&#34;u-net&#34;&gt;U-Net&lt;/h3&gt;
-&lt;h3 id=&#34;pspnet&#34;&gt;PSPNet&lt;/h3&gt;
-&lt;h3 id=&#34;mask-r-cnn&#34;&gt;Mask R-CNN&lt;/h3&gt;
-&lt;p&gt;链接：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/75333140&#34;&gt;https://zhuanlan.zhihu.com/p/75333140&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&#34;deeplab-v1semantic-image-segmentation-with-deep-convolutional-nets-and-fully-connected-crfs&#34;&gt;DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs&lt;/h3&gt;
-&lt;p&gt;参考&lt;a href=&#34;https://zhuanlan.zhihu.com/p/75333140&#34;&gt;link&lt;/a&gt;，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；&lt;/p&gt;
-&lt;h3 id=&#34;deeplab-v2deeplab-semantic-image-segmentation-with-deep-convolutional-nets-atrous-convolution-and-fully-connected-crfs&#34;&gt;DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs&lt;/h3&gt;
-&lt;p&gt;（1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；&lt;/p&gt;
-&lt;h3 id=&#34;deeplab-v3rethinking-atrous-convolution-for-semantic-image-segmentation&#34;&gt;DeepLab V3：&lt;a href=&#34;https://arxiv.org/abs/1706.05587&#34;&gt;Rethinking Atrous Convolution for Semantic Image Segmentation&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;参考&lt;a href=&#34;https://blog.csdn.net/qq_36560894/article/details/106352573&#34;&gt;link&lt;/a&gt;，两个挑战，一是下采样，二是分割多尺度特征；（1）通用架构，深层用空洞卷积；（2）级联模块；（3）ASPP + BN + Image-Level ；（4）移除CRF；&lt;/p&gt;</description>
-    </item>
-    <item>
       <title>论文阅读</title>
       <link>https://yangly0.github.io/posts/20260831132044/</link>
       <pubDate>Mon, 31 Aug 2026 13:20:44 +0000</pubDate>

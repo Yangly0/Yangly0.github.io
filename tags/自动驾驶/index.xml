@@ -12,8 +12,85 @@
     <generator>Hugo</generator>
     <language>zh</language>
     <copyright>©Yangly | Since 2024 | 渝ICP备2025051440号-1</copyright>
-    <lastBuildDate>Mon, 02 Nov 2026 11:18:32 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 05:12:42 +0000</lastBuildDate>
     <atom:link href="https://yangly0.github.io/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>OCC3D占用预测感知</title>
+      <link>https://yangly0.github.io/posts/20261115051242/</link>
+      <pubDate>Sun, 15 Nov 2026 05:12:42 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261115051242/</guid>
+      <description>&lt;h2 id=&#34;数据层面&#34;&gt;数据层面&lt;/h2&gt;
+&lt;p&gt;1、OCC真值生成
+原始的LiDAR点云稀疏、有遮挡，且动静态物体分离与体素化存在挑战。当前有SurroundOcc、Occ3D等&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>自动驾驶之基础概念</title>
+      <link>https://yangly0.github.io/posts/20261102200910/</link>
+      <pubDate>Mon, 02 Nov 2026 20:09:10 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102200910/</guid>
+      <description>&lt;h2 id=&#34;第1话基础概念自动驾驶扫盲--功能缩写大全--技术栈梳理&#34;&gt;【第1话：基础概念】自动驾驶扫盲 + 功能缩写大全 + 技术栈梳理&lt;/h2&gt;
+&lt;h3 id=&#34;一自动驾驶等级sae-j3016--国标-gbt-40429-分级l0l5&#34;&gt;一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5）&lt;/h3&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;级别&lt;/th&gt;
+					&lt;th&gt;名称&lt;/th&gt;
+					&lt;th&gt;谁开车&lt;/th&gt;
+					&lt;th&gt;谁兜底&lt;/th&gt;
+					&lt;th&gt;典型功能&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;L0&lt;/td&gt;
+					&lt;td&gt;应急辅助&lt;/td&gt;
+					&lt;td&gt;人&lt;/td&gt;
+					&lt;td&gt;人&lt;/td&gt;
+					&lt;td&gt;AEB、LDW、BSD&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;L1&lt;/td&gt;
+					&lt;td&gt;部分辅助&lt;/td&gt;
+					&lt;td&gt;人+系统（单维度）&lt;/td&gt;
+					&lt;td&gt;人&lt;/td&gt;
+					&lt;td&gt;ACC 或 LCC（二选一）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;L2&lt;/td&gt;
+					&lt;td&gt;组合辅助&lt;/td&gt;
+					&lt;td&gt;系统（横+纵）&lt;/td&gt;
+					&lt;td&gt;人&lt;/td&gt;
+					&lt;td&gt;ACC+LCC、NOA、APA&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;L3&lt;/td&gt;
+					&lt;td&gt;有条件自动&lt;/td&gt;
+					&lt;td&gt;系统&lt;/td&gt;
+					&lt;td&gt;系统ODD（设计运行域），人需接管&lt;/td&gt;
+					&lt;td&gt;交通拥堵引导（TJP）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;L4&lt;/td&gt;
+					&lt;td&gt;高度自动&lt;/td&gt;
+					&lt;td&gt;系统&lt;/td&gt;
+					&lt;td&gt;系统ODD（设计运行域），可不接管&lt;/td&gt;
+					&lt;td&gt;Robotaxi、AVP&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;L5&lt;/td&gt;
+					&lt;td&gt;完全自动&lt;/td&gt;
+					&lt;td&gt;系统&lt;/td&gt;
+					&lt;td&gt;系统无ODD（设计运行域）限制&lt;/td&gt;
+					&lt;td&gt;尚不存在&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。&lt;/p&gt;
+&lt;h3 id=&#34;二自动驾驶功能行车功能-vs-泊车功能两大场景族技术栈有重叠但侧重不同&#34;&gt;二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同&lt;/h3&gt;
+&lt;h3 id=&#34;行车driving-中高速结构化道路&#34;&gt;行车（Driving）—— 中高速、结构化道路&lt;/h3&gt;
+&lt;p&gt;ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。&lt;/p&gt;
+&lt;p&gt;LCC（Lane Centering Control）车道居中：只管横向，沿车道线走。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>论文阅读之自动驾驶专题</title>
       <link>https://yangly0.github.io/posts/20261102111832/</link>
@@ -47,6 +124,18 @@
 &lt;h3 id=&#34;deep-height-decoupling-for-precise-vision-based-3d-occupancy-prediction&#34;&gt;Deep Height Decoupling for Precise Vision-based 3D Occupancy Prediction&lt;/h3&gt;
 &lt;h3 id=&#34;occformer2023&#34;&gt;OccFormer(2023)&lt;/h3&gt;
 &lt;p&gt;Dual-path Transformer for Vision-based 3D Semantic Occupancy Prediction [ICCV 2023]&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>BEVFormer: Learning Bird’s-Eye-ViewRepresentation from Multi-Camera Images viaSpatiotemporal Transformers</title>
+      <link>https://yangly0.github.io/posts/20250419150513/</link>
+      <pubDate>Sat, 19 Apr 2025 15:05:13 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20250419150513/</guid>
+      <description>&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;../resources/images/Pasted%20image%2020250419150524.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;BEVFormer，从BEV空间的3D Query出发，得到参考点和采样点，再通过多相机的内外参投影到多视角2D图片上，和相应特征进行交互。但DETR3D的object queries是稀疏的，每个query代表一个可能的目标框，而BevFormer的bev queries是稠密的，大小为HxWxC，H,W为设定的bev特征尺度，每个query代表一个网格（grid）的查询，这样可以得到稠密的bev特征。&lt;/p&gt;
+&lt;p&gt;1、grid-shaped BEV queries&lt;/p&gt;
+&lt;p&gt;2、spatial cross-attention&lt;/p&gt;
+&lt;p&gt;3、temporal self-aattention&lt;/p&gt;
+&lt;p&gt;参考：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/545067020&#34;&gt;https://zhuanlan.zhihu.com/p/545067020&lt;/a&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

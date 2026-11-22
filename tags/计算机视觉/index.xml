@@ -84,6 +84,36 @@
 &lt;/ul&gt;</description>
     </item>
     <item>
+      <title>论文阅读之图像分割</title>
+      <link>https://yangly0.github.io/posts/20261102161547/</link>
+      <pubDate>Mon, 02 Nov 2026 16:15:47 +0000</pubDate>
+      <guid>https://yangly0.github.io/posts/20261102161547/</guid>
+      <description>&lt;h2 id=&#34;计算机视觉之图像分割&#34;&gt;计算机视觉之图像分割&lt;/h2&gt;
+&lt;h3 id=&#34;fcn201411&#34;&gt;FCN(2014/11)&lt;/h3&gt;
+&lt;p&gt;FCN: Fully Convolutional Networks for Semantic Segmentation&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/1411.4038v1&#34;&gt;https://arxiv.org/abs/1411.4038v1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;FCN，语义分割开山之作，后续 U-Net、SegNet、DeepLab 等系列分割网络都是该思想的拓展。论文的核心贡献点是提出了FCN全卷积网络架构，将图像分割升级到像素级语义分割任务，主要解决了两个问题，一是将传统卷积神经网络（CNN）的全连接层替换为卷积层，解决了全连接导致空间信息损失的问题，同时可以支持任意尺寸输入；二是提出了反卷积上采样和跳跃连接，解决了下采样分辨率丢失的问题。&lt;/p&gt;
+&lt;p&gt;可参考：https://www.cnblogs.com/carpell/p/18883197&lt;/p&gt;
+&lt;h3 id=&#34;segnet&#34;&gt;SegNet&lt;/h3&gt;
+&lt;h3 id=&#34;deconvnet&#34;&gt;DeconvNet&lt;/h3&gt;
+&lt;h3 id=&#34;u-net201503&#34;&gt;U-Net(2015/03)&lt;/h3&gt;
+&lt;p&gt;U-Net: Convolutional Networks for Biomedical Image Segmentation&lt;/p&gt;
+&lt;p&gt;论文链接：&lt;a href=&#34;https://arxiv.org/abs/1505.04597&#34;&gt;https://arxiv.org/abs/1505.04597&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考：https://www.cnblogs.com/carpell/p/18908044&lt;/p&gt;
+&lt;p&gt;U-net的设计初衷是为了解决医学图像分割中的挑战，即小样本问题以及高精度需求。&lt;/p&gt;
+&lt;h3 id=&#34;pspnet&#34;&gt;PSPNet&lt;/h3&gt;
+&lt;h3 id=&#34;mask-r-cnn&#34;&gt;Mask R-CNN&lt;/h3&gt;
+&lt;p&gt;链接：&lt;a href=&#34;https://zhuanlan.zhihu.com/p/75333140&#34;&gt;https://zhuanlan.zhihu.com/p/75333140&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;deeplab-v1&#34;&gt;DeepLab V1&lt;/h3&gt;
+&lt;p&gt;DeepLab V1：Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs&lt;/p&gt;
+&lt;p&gt;参考&lt;a href=&#34;https://zhuanlan.zhihu.com/p/75333140&#34;&gt;link&lt;/a&gt;，一是空洞卷积解决池化导致丢失信息，二是引进条件随机场；（CRF）优化分割精度；&lt;/p&gt;
+&lt;h3 id=&#34;deeplab-v2&#34;&gt;DeepLab V2&lt;/h3&gt;
+&lt;p&gt;DeepLab V2：DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs&lt;/p&gt;
+&lt;p&gt;（1）ASPP解决池化（提高感受野）导致细节损失和边界模糊；（2）ResNet ；（3）多学习率；&lt;/p&gt;
+&lt;h3 id=&#34;deeplab-v3&#34;&gt;DeepLab V3&lt;/h3&gt;
+&lt;p&gt;DeepLab V3：&lt;a href=&#34;https://arxiv.org/abs/1706.05587&#34;&gt;Rethinking Atrous Convolution for Semantic Image Segmentation&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>论文阅读之2D目标检测</title>
       <link>https://yangly0.github.io/posts/20261102161039/</link>
       <pubDate>Mon, 02 Nov 2026 16:10:39 +0000</pubDate>

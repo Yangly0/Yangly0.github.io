@@ -114,6 +114,38 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">OCC3D占用预测感知
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>数据层面 1、OCC真值生成 原始的LiDAR点云稀疏、有遮挡，且动静态物体分离与体素化存在挑战。当前有SurroundOcc、Occ3D等
+</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-15T05:12:42+00:00'>2026年11月15日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to OCC3D占用预测感知" href="https://yangly0.github.io/posts/20261115051242/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">自动驾驶之基础概念
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>【第1话：基础概念】自动驾驶扫盲 &#43; 功能缩写大全 &#43; 技术栈梳理 一、自动驾驶等级：SAE J3016 / 国标 GB/T 40429 分级（L0–L5） 级别 名称 谁开车 谁兜底 典型功能 L0 应急辅助 人 人 AEB、LDW、BSD L1 部分辅助 人&#43;系统（单维度） 人 ACC 或 LCC（二选一） L2 组合辅助 系统（横&#43;纵） 人 ACC&#43;LCC、NOA、APA L3 有条件自动 系统 系统ODD（设计运行域），人需接管 交通拥堵引导（TJP） L4 高度自动 系统 系统ODD（设计运行域），可不接管 Robotaxi、AVP L5 完全自动 系统 系统无ODD（设计运行域）限制 尚不存在 关键认知：L2 和 L3 的分水岭是责任归属。目前量产乘用车上所有 NOA/HPA/AVP 功能，无论多”智能”，法规上都属于 L2（AVP 若限定停车场 ODD 可算 L4）。L2→L3 的跨越难在责任界定、冗余硬件、法规准入三件事。
+二、自动驾驶功能：行车功能 vs 泊车功能，两大场景族技术栈有重叠但侧重不同 行车（Driving）—— 中高速、结构化道路 ACC（Adaptive Cruise Control）自适应巡航：只管纵向，实现跟车和定速功能。
+LCC（Lane Centering Control）车道居中：只管横向，沿车道线走。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-11-02T20:09:10+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to 自动驾驶之基础概念" href="https://yangly0.github.io/posts/20261102200910/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">论文阅读之自动驾驶专题
     </h2>
   </header>
@@ -134,6 +166,26 @@ SelfOcc UniOcc RenderOcc SparseOcc SurroundOcc Deep Height Decoupling for Precis
 
 <span title='2026-11-02T11:18:32+00:00'>2026年11月2日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
   <a class="entry-link" aria-label="post link to 论文阅读之自动驾驶专题" href="https://yangly0.github.io/posts/20261102111832/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">BEVFormer: Learning Bird’s-Eye-ViewRepresentation from Multi-Camera Images viaSpatiotemporal Transformers
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+BEVFormer，从BEV空间的3D Query出发，得到参考点和采样点，再通过多相机的内外参投影到多视角2D图片上，和相应特征进行交互。但DETR3D的object queries是稀疏的，每个query代表一个可能的目标框，而BevFormer的bev queries是稠密的，大小为HxWxC，H,W为设定的bev特征尺度，每个query代表一个网格（grid）的查询，这样可以得到稠密的bev特征。
+1、grid-shaped BEV queries
+2、spatial cross-attention
+3、temporal self-aattention
+参考：https://zhuanlan.zhihu.com/p/545067020
+</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2025-04-19T15:05:13+00:00'>2025年4月19日</span>&nbsp;·&nbsp;<span>Yangly</span></footer>
+  <a class="entry-link" aria-label="post link to BEVFormer: Learning Bird’s-Eye-ViewRepresentation from Multi-Camera Images viaSpatiotemporal Transformers" href="https://yangly0.github.io/posts/20250419150513/"></a>
 </article>
     </main>
     
